@@ -1,5 +1,5 @@
 {
-  "name": "machine-runner",
+  "name": "node-runner",
   "version": "0.0.0",
   "description": "",
   "main": "index.js",
@@ -7,9 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC",
+  "license": "TBD",
   "dependencies": {
-    "node-switchback": "^0.1.0",
-    "lodash": "^2.4.1"
+    "node-switchback": "~0.1.0",
+    "lodash": "~2.4.1"
   }
 }
