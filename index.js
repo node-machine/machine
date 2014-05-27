@@ -3,6 +3,7 @@
  */
 
 var _ = require('lodash');
+var util = require('util');
 var switchback = require('node-switchback');
 
 
@@ -22,38 +23,86 @@ function Machine(definition) {
   definition = definition||{};
   definition._configuredInputs = {};
   definition._configuredExits = {};
-
-  // TODO: resolve dependencies
+  definition._node_modules = {};
 
   _.extend(this, definition);
+
+  // TODO: resolve dependencies propertly
+  _.each(this.dependencies||{}, function (versionStr, moduleName) {
+    // var requireStr = util.format('%s@%s', moduleName, versionStr);
+    var requireStr = util.format('%s', moduleName);
+
+    var code;
+    try {
+      code = require(requireStr);
+    }
+    catch(e) { throw e; }
+
+    this._node_modules[moduleName] = code;
+
+  }, this);
+
 }
 
-Machine.prototype.inputs =
-Machine.prototype.configure = function (configuredInputs) {
+/**
+ * @param  {[type]} configuredInputs [description]
+ * @chainable
+ */
+Machine.prototype.configureInputs = function (configuredInputs) {
   _.extend(this._configuredInputs, _.cloneDeep(configuredInputs));
+
+  return this;
 };
 
-Machine.prototype.exits = function (configuredExits) {
+/**
+ * @param  {[type]} configuredExits [description]
+ * @chainable
+ */
+Machine.prototype.configureExits = function (configuredExits) {
   _.extend(this._configuredExits, _.cloneDeep(configuredExits));
 
   // Switchbackify
-  configuredExits = _.mapValues(configuredExits, function (handler, exitName) {
+  this._configuredExits = switchback(this._configuredExits);
 
-    // TODO: fwd any unspecified exits to catchall
-    // TODO: if a formerly unspecified exit is specified, undo the fwding and make it explicit
+  // TODO: fwd any unspecified exits to catchall
+  // TODO: if a formerly unspecified exit is specified, undo the fwding and make it explicit
 
-    return switchback(handler);
-  });
+  return this;
 };
 
+
+/**
+ * [configure description]
+ * @param  {[type]} configuredInputs [description]
+ * @param  {[type]} configuredExits  [description]
+ * @chainable
+ */
+Machine.prototype.configure = function (configuredInputs, configuredExits) {
+  if (configuredExits) {
+    this.configureExits(configuredExits);
+  }
+  if (configuredInputs) {
+    this.configureInputs(configuredInputs);
+  }
+  return this;
+};
+
+
+/**
+ * [exec description]
+ * @param  {[type]} configuredExits [description]
+ * @chainable
+ */
 Machine.prototype.exec = function (configuredExits) {
   if (configuredExits) {
-    this.exits(configuredExits);
+    this.configureExits(configuredExits);
   }
 
   // TODO: implement Deferred/promise usage
 
-  this.fn(this._configuredInputs, this._configuredExits);
+  this.fn(this._configuredInputs, this._configuredExits, this._node_modules);
+
+  return this;
 };
 
 
@@ -64,12 +113,12 @@ Machine.prototype.exec = function (configuredExits) {
 //
 // var someMachine = new Machine( require('machine-somemachine') );
 //
-// someMachine.configure({
+// someMachine
+// .configure({
 //   someInput: 'foo',
 //   someOtherInput: 'bar'
-// };
-//
-// someMachine.exec({
+// }
+// .exec({
 //   success: function (results){...},
 //   error: function (err){...},
 //   invalid: function (err){...},
