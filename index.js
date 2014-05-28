@@ -127,8 +127,14 @@ function Machine(machineDefinition, dependenciesModuleContext) {
  */
 Machine.require = function (moduleName) {
 
+  // TODO:
+  // find the package.json and use the actual root module path
+  // from the machine module (really only comes up when developing/testing
+  // since 'moduleName' might actually be a relative require path)
+
   // TODO: look up dependencies in the machine's package.json and merge them
   // into the `dependencies` key in the machine definition
+
 
   var machineDefinition;
   try {
