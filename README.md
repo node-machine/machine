@@ -20,6 +20,13 @@ someMachine
 ```
 
 
+<!--
+// Alternative usage
+// var Machine = require('node-machine');
+// var def = require('../listTemplates');
+// var machine = new Machine(def);
+-->
+
 ## License
 
 MIT
