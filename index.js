@@ -53,36 +53,21 @@ function Machine(machineDefinition, dependenciesModuleContext) {
   // Default to the machine module as the dependency context
   // (find it by fuzzy-searching in `module.parent.children`
   //  for the most likely match)
-  dependenciesModuleContext = dependenciesModuleContext||
-  _(module.parent.children)
-  .max(function rankEachModule (moduleRequiredByParent) {
-    var _machineLikenessRank = 0;
+  dependenciesModuleContext = dependenciesModuleContext || getFromModuleRequiredModule(Machine._requireCtx, machineDefinition.moduleName);
 
-    // Guess the likelihood of this being the correct module
-    // by splitting the `id` on slashes and building a certainty
-    // score (a % percentage) based on how far to the right-hand-side
-    // the modulename appears as a substring in the `id` path.
-    _(path.dirname(moduleRequiredByParent.id).split('/'))
-    .reverse()
-    .each(function (pathPart, i) {
-      if (pathPart.match(machineDefinition.moduleName)) {
-        _machineLikenessRank += 1.0/(i+1);
-      }
-      // console.log('(1.0/(i+1) :: ',(1.0/(i+1)));
-      // console.log('(module.parent.children*1.0) :: ',(module.parent.children.length*1.0));
-    });
-    _machineLikenessRank *= 100*(1.0/module.parent.children.length);
-    // console.log('I think it is %s% likely that "%s" is the machine you\'re looking for', _machineLikenessRank, moduleRequiredByParent.id);
-    return _machineLikenessRank;
-  }).valueOf();
   // console.log('dependenciesModuleContext:', dependenciesModuleContext);
 
   // Require dependencies for this machine, but do it from
   // the __dirname context of the machine machineDefinition module:
   _.each(this.dependencies||{}, function (versionStr, moduleName) {
 
-    // handle case where dependenciesModuleContext could not be guessed
-    if (!dependenciesModuleContext) {
+
+    // Special case for `node-machine`
+    // (require it from the context of the machine module)
+    var _dependenciesModuleContext = dependenciesModuleContext;
+
+    // handle case where _dependenciesModuleContext could not be guessed
+    if (!_dependenciesModuleContext) {
       var err = new Error();
       err.code = 'MODULE_NOT_FOUND';
       err.message = util.format('Cannot resolve a context module to use for requiring dependencies of machine: "%s"',machineDefinition.moduleName);
@@ -91,19 +76,29 @@ function Machine(machineDefinition, dependenciesModuleContext) {
     }
 
     var machineCode;
-    try {
-      machineCode = dependenciesModuleContext.require(moduleName);
+
+    if (moduleName === 'node-machine') {
+      machineCode = _.cloneDeep(Machine);
+      machineCode._requireCtx = dependenciesModuleContext;
+      // dependenciesModuleContext.require('node-machine');
+      // _dependenciesModuleContext = getFromModuleRequiredModule(dependenciesModuleContext, moduleName);
+      // console.log('looking for %s in "%s"',moduleName,dependenciesModuleContext.id, '\ngot:',dependenciesModuleContext);
     }
-    catch (e) {
-      var err = new Error();
-      err.code = 'MODULE_NOT_FOUND';
-      err.message = util.format(
-      'Cannot find module: "%s", a dependency of machine: "%s"\n'+
-      '(attempted from the machine module\'s context: "%s")'+
-      '\n%s',
-      moduleName,machineDefinition.moduleName, module.parent.filename, e.stack||util.inspect(e));
-      this.error(err);
-      return false;
+    else {
+      try {
+        machineCode = _dependenciesModuleContext.require(moduleName);
+      }
+      catch (e) {
+        var err = new Error();
+        err.code = 'MODULE_NOT_FOUND';
+        err.message = util.format(
+        'Cannot find module: "%s", a dependency of machine: "%s"\n'+
+        '(attempted from the machine module\'s context: "%s")'+
+        '\n%s',
+        moduleName,machineDefinition.moduleName, _dependenciesModuleContext.filename, e.stack||util.inspect(e));
+        this.error(err);
+        return false;
+      }
     }
 
     this._dependencies[moduleName] = machineCode;
@@ -127,6 +122,9 @@ function Machine(machineDefinition, dependenciesModuleContext) {
  */
 Machine.require = function (moduleName) {
 
+  // Context for loading machine definitions
+  Machine._requireCtx = Machine._requireCtx || module.parent;
+
   // TODO:
   // find the package.json and use the actual root module path
   // from the machine module (really only comes up when developing/testing
@@ -135,19 +133,19 @@ Machine.require = function (moduleName) {
   // TODO: look up dependencies in the machine's package.json and merge them
   // into the `dependencies` key in the machine definition
 
-
+  var requireCtx = Machine._requireCtx;
   var machineDefinition;
   try {
-    machineDefinition = module.parent.require(moduleName);
+    machineDefinition = requireCtx.require(moduleName);
   }
   catch(e) {
     var err = new Error();
     err.code = 'MODULE_NOT_FOUND';
     err.message = util.format(
     'Cannot find machine: "%s"\n'+
-    '(attempted from from `module.parent`, i.e.: "%s")'+
+    '(attempted from from `%s`, i.e.: "%s")'+
     '\n%s',
-    moduleName, module.parent.filename, e.stack||util.inspect(e));
+    moduleName, requireCtx.filename, e.stack||util.inspect(e));
     throw err;
   }
 
@@ -304,3 +302,36 @@ Machine.prototype.warn = function () {
     console.error.apply(console, Array.prototype.slice.call(arguments));
   }).apply(this, Array.prototype.slice.call(arguments));
 };
+
+
+
+
+/**
+ * [getMachineModule description]
+ * @api private
+ * @return {[type]} [description]
+ */
+function getFromModuleRequiredModule (parentModule, moduleName) {
+
+  return _(parentModule.children)
+  .max(function rankEachModule (moduleRequiredByParent) {
+    var _machineLikenessRank = 0;
+
+    // Guess the likelihood of this being the correct module
+    // by splitting the `id` on slashes and building a certainty
+    // score (a % percentage) based on how far to the right-hand-side
+    // the modulename appears as a substring in the `id` path.
+    _(path.dirname(moduleRequiredByParent.id).split('/'))
+    .reverse()
+    .each(function (pathPart, i) {
+      if (pathPart.match(moduleName)) {
+        _machineLikenessRank += 1.0/(i+1);
+      }
+      // console.log('(1.0/(i+1) :: ',(1.0/(i+1)));
+      // console.log('(parentModule.children*1.0) :: ',(parentModule.children.length*1.0));
+    });
+    _machineLikenessRank *= 100*(1.0/parentModule.children.length);
+    // console.log('I think it is %s% likely that "%s" is the machine you\'re looking for', _machineLikenessRank, moduleRequiredByParent.id);
+    return _machineLikenessRank;
+  }).valueOf();
+}
