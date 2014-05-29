@@ -80,9 +80,6 @@ function Machine(machineDefinition, dependenciesModuleContext) {
     if (moduleName === 'node-machine') {
       machineCode = _.cloneDeep(Machine);
       machineCode._requireCtx = dependenciesModuleContext;
-      // dependenciesModuleContext.require('node-machine');
-      // _dependenciesModuleContext = getFromModuleRequiredModule(dependenciesModuleContext, moduleName);
-      // console.log('looking for %s in "%s"',moduleName,dependenciesModuleContext.id, '\ngot:',dependenciesModuleContext);
     }
     else {
       try {
@@ -152,6 +149,16 @@ Machine.require = function (moduleName) {
   return new Machine(machineDefinition);
 
 };
+
+
+/**
+ * Machine.machine()
+ *
+ * Alias for `Machine.require()`
+ *
+ * @type {Machine}
+ */
+Machine.machine = Machine.require;
 
 
 /**
