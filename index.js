@@ -226,12 +226,6 @@ Machine.prototype.setInputs = function (configuredInputs) {
 Machine.prototype.setExits = function (configuredExits) {
   _.extend(this._configuredExits, _.cloneDeep(configuredExits));
 
-  // Switchbackify
-  this._configuredExits = switchback(this._configuredExits);
-
-  // TODO: fwd any unspecified exits to catchall
-  // TODO: if a formerly unspecified exit is specified, undo the fwding and make it explicit
-
   return this;
 };
 
@@ -263,9 +257,12 @@ Machine.prototype.exec = function (configuredExits) {
     this.setExits(configuredExits);
   }
 
+  // TODO: fwd any unspecified exits to catchall
+  // TODO: if a formerly unspecified exit is specified, undo the fwding and make it explicit
+
   // TODO: implement Deferred/promise usage
 
-  this.fn(this._configuredInputs, this._configuredExits, this._dependencies);
+  this.fn(this._configuredInputs, switchback(this._configuredExits), this._dependencies);
 
   return this;
 };
