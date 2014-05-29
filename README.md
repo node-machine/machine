@@ -1,31 +1,34 @@
 # node-machine
-
+# - Zolmeister
 
 ## Basic Usage
 
 ```js
-var someMachine = require('node-machine').require('machine-somemachine');
+var Machine = require('..')
+var Err = Machine.Err
 
-someMachine
-.configure({
-  someInput: 'foo',
-  someOtherInput: 'bar'
-}
-.exec({
-  success: function (results){...},
-  error: function (err){...},
-  invalid: function (err){...},
-  etc...
-});
+var addingMachine = Machine(function (a, b) {
+  if (a === Infinity || b === Infinity) {
+    throw {name: 'AddedInfinity', message: 'You may not add Infinity'}
+  }
+
+  if (a === 0 || b === 0) {
+    throw {name: 'AddedZero', message: 'You may not add Zero'}
+  }
+
+  return a + b
+})
+
+
+addingMachine(1, 0).then(function () {
+  expect(false).to.equal(true)
+}).catch(Err('nothing'), function (err) {
+  expect(false).to.equal(true)
+}).catch(Err('AddedZero'), function (err) {
+  expect(err.message).to.equal('You may not add Zero')
+})
+
 ```
-
-
-<!--
-// Alternative usage
-// var Machine = require('node-machine');
-// var def = require('../listTemplates');
-// var machine = new Machine(def);
--->
 
 ## License
 
