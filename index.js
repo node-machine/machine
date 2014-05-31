@@ -245,7 +245,7 @@ Machine.prototype.exec = function (configuredExits) {
 
   // TODO: implement Deferred/promise usage
 
-  this.fn(this._configuredInputs, this._configuredExits, this._dependencies);
+  this.fn(this._configuredInputs, switchback(this._configuredExits), this._dependencies);
 
   return this;
 };
