@@ -161,7 +161,7 @@ Machine.toAction = require('./lib/Machine.toAction');
 
 Machine.require = function (/* ∞ */){
 
-  // Build require context for loading machine definitions
+  // Build require context for loading machine definitions/dependencies
   // If not otherwise provided, default to using the module that
   // required `node-machine`.
   Machine._requireCtx = Machine._requireCtx || module.parent;
