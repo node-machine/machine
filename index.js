@@ -103,6 +103,7 @@ function Machine(machineDefinition, dependenciesModuleContext) {
     this._dependencies[moduleName] = machineCode;
 
   }, this);
+
 }
 
 
