@@ -37,6 +37,9 @@ module.exports = Machine;
 function Machine(machineDefinition, dependenciesModuleContext) {
   if (!machineDefinition) return Machine.noop();
 
+  // Context for loading machine definitions
+  Machine._requireCtx = Machine._requireCtx || module.parent;
+
   // Ensure deps, inputs, and exits are defined
   machineDefinition.dependencies = machineDefinition.dependencies||{};
   machineDefinition.inputs = machineDefinition.inputs||{};
