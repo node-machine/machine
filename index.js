@@ -5,7 +5,6 @@
 var util = require('util');
 var path = require('path');
 var _ = require('lodash');
-_.partialApply = require('partial-apply');
 var switchback = require('node-switchback');
 
 /**
@@ -61,12 +60,12 @@ function Machine(machineDefinition, dependenciesModuleContext) {
   // console.log('dependenciesModuleContext:', dependenciesModuleContext);
 
   // Require dependencies for this machine, but do it from
-  // the __dirname context of the machine machineDefinition module:
+  // the __dirname context of the `machineDefinition module:
   _.each(this.dependencies||{}, function (versionStr, moduleName) {
 
 
     // Special case for `node-machine`
-    // (require it from the context of the machine module)
+    // (require it from the context of the machine module, or if the machine definition didn't come from another module, require it from the calling module)
     var _dependenciesModuleContext = dependenciesModuleContext;
 
     // handle case where _dependenciesModuleContext could not be guessed
@@ -131,7 +130,7 @@ Machine.require = function (/* ∞ */){
   // required `node-machine`.
   Machine._requireCtx = Machine._requireCtx || module.parent;
 
-  _.partialApply(require('./lib/Machine.require'),Array.prototype.slice.call(arguments));
+  return require('./lib/Machine.require').apply(Machine,Array.prototype.slice.call(arguments));
 };
 
 
@@ -208,7 +207,7 @@ Machine.prototype.setInputs = function (configuredInputs) {
  * @chainable
  */
 Machine.prototype.setExits = function (configuredExits) {
-  _.extend(this._configuredExits, _.cloneDeep(configuredExits));
+  _.extend(this._configuredExits, switchback(configuredExits));
 
   return this;
 };
@@ -246,7 +245,7 @@ Machine.prototype.exec = function (configuredExits) {
 
   // TODO: implement Deferred/promise usage
 
-  this.fn(this._configuredInputs, switchback(this._configuredExits), this._dependencies);
+  this.fn(this._configuredInputs, this._configuredExits, this._dependencies);
 
   return this;
 };
