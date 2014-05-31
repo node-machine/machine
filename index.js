@@ -106,6 +106,41 @@ function Machine(machineDefinition, dependenciesModuleContext) {
 
 }
 
+/**
+ * TODO: this could just be moved into the constructor
+ * (i.e. have constructor return a wrapper fn with the same properties
+ * as the underlying instance- rather than being forced to call Machine.build)
+ * @param  {[type]} machineDefinition [description]
+ * @return {[type]}                   [description]
+ */
+Machine.build = function (machineDefinition) {
+
+  // Instantiate new machine
+  var machine = new Machine(machineDefinition);
+
+  // Finally, wrap things up so that the return value is not actually
+  // the machine instance itself, but rather a function which allows
+  // a machine's user to configure the inputs and/or exits.  This
+  // configuration function returns the underlying machine instance.
+  var _callableMachineWrapper = function _callableMachineWrapper (){
+    return machine.configure.apply(machine, arguments);
+  };
+  // But first, also merge the most important of the machine instance's
+  // properties/methods into the callable wrapper so that they can be
+  // accessed as if the wrapper function was the real thing.
+  _callableMachineWrapper.exec = _.bind(machine.exec, machine);
+  _callableMachineWrapper.configure = _.bind(machine.configure, machine);
+
+  _callableMachineWrapper.inputs = machine.inputs;
+  _callableMachineWrapper.exits = machine.exits;
+  _callableMachineWrapper.fn = machine.fn;
+  _callableMachineWrapper.id = machine.id;
+  _callableMachineWrapper.description = machine.description;
+  _callableMachineWrapper.moduleName = machine.moduleName;
+
+  return _callableMachineWrapper;
+};
+
 
 Machine.toAction = require('./lib/Machine.toAction');
 
@@ -154,7 +189,7 @@ Machine.machine = Machine.require;
  * @return {Machine}
  */
 Machine.noop = function () {
-  return new Machine({
+  return Machine.build({
     id: '_noop',
     fn: function (inputs,exits,dependencies) {
       exits.success();
@@ -184,7 +219,7 @@ Machine.halt = function (error) {
     return DEFAULT_HALT_ERROR;
   })();
 
-  return new Machine({
+  return Machine.build({
     id: '_halt',
     fn: function (inputs,exits,dependencies) {
       exits.error(error);
