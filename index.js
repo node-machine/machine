@@ -5,8 +5,8 @@
 var util = require('util');
 var path = require('path');
 var _ = require('lodash');
+_.partialApply = require('partial-apply');
 var switchback = require('node-switchback');
-
 
 /**
  * @type {Machine.constructor}
@@ -107,6 +107,9 @@ function Machine(machineDefinition, dependenciesModuleContext) {
 }
 
 
+Machine.toAction = require('./lib/Machine.toAction');
+
+
 /**
  * Machine.require()
  *
@@ -120,37 +123,15 @@ function Machine(machineDefinition, dependenciesModuleContext) {
  *
  * @return {Machine}
  */
-Machine.require = function (moduleName) {
 
-  // Context for loading machine definitions
+Machine.require = function (/* ∞ */){
+
+  // Build require context for loading machine definitions
+  // If not otherwise provided, default to using the module that
+  // required `node-machine`.
   Machine._requireCtx = Machine._requireCtx || module.parent;
 
-  // TODO:
-  // find the package.json and use the actual root module path
-  // from the machine module (really only comes up when developing/testing
-  // since 'moduleName' might actually be a relative require path)
-
-  // TODO: look up dependencies in the machine's package.json and merge them
-  // into the `dependencies` key in the machine definition
-
-  var requireCtx = Machine._requireCtx;
-  var machineDefinition;
-  try {
-    machineDefinition = requireCtx.require(moduleName);
-  }
-  catch(e) {
-    var err = new Error();
-    err.code = 'MODULE_NOT_FOUND';
-    err.message = util.format(
-    'Cannot find machine: "%s"\n'+
-    '(attempted from from `%s`, i.e.: "%s")'+
-    '\n%s',
-    moduleName, requireCtx.filename, e.stack||util.inspect(e));
-    throw err;
-  }
-
-  return new Machine(machineDefinition);
-
+  _.partialApply(require('./lib/Machine.require'),Array.prototype.slice.call(arguments));
 };
 
 
