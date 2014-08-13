@@ -1,6 +1,6 @@
 {
   "name": "node-machine",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Configure and execute a machine using inputs and exits",
   "main": "index.js",
   "scripts": {
