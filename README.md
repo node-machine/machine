@@ -66,3 +66,11 @@ require('node-machine').build(require('./foo'))
   console.log('all done.');
 });
 ```
+
+
+
+
+
+## Advanced
+
+Since machine definitions are completely static, we must consider all of the various methods by which we might deserialize them and inject the runtime scope.
