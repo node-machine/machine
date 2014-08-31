@@ -1,5 +1,25 @@
 # node-machine
 
+## Quick example
+
+```bash
+$ node
+> require('machinepack-github').getRepo
+-----------------------------------------
+ [Machine: get-repo]
+ Fetch metadata about a github repo.
+ 
+ Inputs:
+  • repo      (type: string)
+  • user      (type: string)
+-----------------------------------------
+
+> require('machinepack-github').getRepo({repo: 'sails', user: 'balderdashy'}).exec(console.log)
+
+{ ... }
+```
+
+
 
 ## Using a machine
 
@@ -90,9 +110,25 @@ Since machine definitions are completely static, we must consider all of the var
 
 When you require `node-machine`, you get the global `Machine` constructor:
 
+
+```bash
+$ node
+```
+
 ```javascript
 var Machine = require('node-machine');
 ```
+
+```bash
+-----------------------------------------
+ node-machine
+ v0.2.2
+ 
+ • License  : MIT
+ • Docs     : http://node-machine.org
+-----------------------------------------
+```
+
 
 As with the top-level value exported from any node module, you really shouldn't make changes to this object since it would pollute the module elsewhere in the currently-running process (in other functions, other files, and even other modules!)
 
