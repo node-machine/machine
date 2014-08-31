@@ -108,18 +108,13 @@ Since machine definitions are completely static, we must consider all of the var
 
 #### The `Machine` constructor
 
-When you require `node-machine`, you get the global `Machine` constructor:
-
-
-```bash
-$ node
-```
+When you require `node-machine`, you get the stateless `Machine` constructor:
 
 ```javascript
 var Machine = require('node-machine');
-```
 
-```bash
+console.log(Machine);
+/*
 -----------------------------------------
  node-machine
  v0.2.2
@@ -127,6 +122,7 @@ var Machine = require('node-machine');
  • License  : MIT
  • Docs     : http://node-machine.org
 -----------------------------------------
+*/
 ```
 
 
@@ -197,6 +193,6 @@ ls
 .configure({
 
 })
-.cache(2000) // this is the ttl, 2000ms === 2 seconds
+.cache({ttl: 2000}) // this is the ttl, 2000ms === 2 seconds
 .exec(console.log)
 ```
