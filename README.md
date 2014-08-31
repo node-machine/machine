@@ -1,17 +1,41 @@
 # node-machine
 
 
-## Basic Usage
+## Using a machine
 
-```js
-var Machines = require('node-machine');
+```javascript
+var Machine = require('node-machine');
+```
 
-var getRepo = Machines.load('machinepack-github/get-repo');
+With a callback function:
 
-getRepo({
+```javascript
+var Machine = require('node-machine');
+
+Machine.build(require('machinepack-github/get-repo'))
+.configure({
   user: 'balderdashy',
   repo: 'sails'
-}).exec({
+})
+.exec(function (err, results){
+  if (err) {
+    // ...
+  }
+
+  // ...
+});
+```
+
+
+With a switchback:
+
+```javascript
+Machine.build(require('machinepack-github/get-repo'))
+.configure({
+  user: 'balderdashy',
+  repo: 'sails'
+})
+.exec({
   success: function (results){ /*...*/ },
   error: function (err){ /*...*/ },
   invalidApiKey: function (err){ /*...*/ },
@@ -19,3 +43,26 @@ getRepo({
 });
 ```
 
+
+## Building your own machine
+
+Machines are mostly just simple functions that always have the same usage paradigm:
+
+```javascript
+function (inputs, cb) {
+  return cb();
+}
+```
+
+
+If you define a function that way (let's say you export it from a local module called "foo.js"), you can actually use it as a machine like this:
+
+```javascript
+require('node-machine').build(require('./foo'))
+.configure({
+  // input values go here
+})
+.exec(function (err) {
+  console.log('all done.');
+});
+```
