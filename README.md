@@ -1,6 +1,6 @@
 # node-machine
 
-## Quick example
+First, here's a quick example:
 
 ```bash
 $ node
