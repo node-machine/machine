@@ -3,34 +3,25 @@
 
 ## Using a machine
 
-```javascript
-var Machine = require('node-machine');
-```
-
-With a callback function:
+With traditional options+callback function usage:
 
 ```javascript
-var Machine = require('node-machine');
+var Github = require('machinepack-github');
 
-Machine.build(require('machinepack-github/get-repo'))
-.configure({
+
+Github.getRepo({
   user: 'balderdashy',
   repo: 'sails'
-})
-.exec(function (err, results){
-  if (err) {
-    // ...
-  }
-
-  // ...
-});
+}, function (err, result) { /* ... */ });
 ```
 
 
-With a switchback:
+With chainable helper functions and a switchback:
 
 ```javascript
-Machine.build(require('machinepack-github/get-repo'))
+var Github = require('machinepack-github');
+
+Github.getRepo
 .configure({
   user: 'balderdashy',
   repo: 'sails'
@@ -42,6 +33,26 @@ Machine.build(require('machinepack-github/get-repo'))
   // etc.
 });
 ```
+
+With machinepack-independent/low-level usage:
+
+```javascript
+var Machine = require('node-machine');
+
+Machine.build(require('machinepack-github/get-repo'))
+.configure({
+  user: 'balderdashy',
+  repo: 'sails'
+}).exec(function (err, results){
+  if (err) {
+    // ...
+  }
+
+  // ...
+})
+```
+
+
 
 
 ## Building your own machine
@@ -153,25 +164,3 @@ ls
 .cache(2000) // this is the ttl, 2000ms === 2 seconds
 .exec(console.log)
 ```
-
-#### Best-practices
-
-```javascript
-/**
- * Module dependencies
- */
-
-var Machine = require('node-machine');
-var M = {};
-M.ls = Machine.build(require('machinepack-fs/ls'));
-M.cp = Machine.build(require('machinepack-fs/cp'));
-
-M.ls({
-  dir: './'
-})
-.exec(function (err, result) {
-  // and so on...
-});
-```
-
-
