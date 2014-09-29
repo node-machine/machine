@@ -8,7 +8,7 @@ $ node
 -----------------------------------------
  [Machine: get-repo]
  Fetch metadata about a github repo.
- 
+
  Inputs:
   • repo      (type: string)
   • user      (type: string)
@@ -23,38 +23,51 @@ $ node
 
 ## Using a machine
 
-With traditional options+callback function usage:
+##### With traditional options+callback function usage:
 
 ```javascript
-var Github = require('machinepack-github');
-
-
 Github.getRepo({
   user: 'balderdashy',
   repo: 'sails'
-}, function (err, result) { /* ... */ });
+}, function (err, repo) { /* ... */ });
 ```
 
 
-With chainable helper functions and a switchback:
+##### With chainable helper function(s) and a switchback:
 
 ```javascript
-var Github = require('machinepack-github');
-
-Github.getRepo
-.configure({
+Github.getRepo({
   user: 'balderdashy',
   repo: 'sails'
 })
 .exec({
-  success: function (results){ /*...*/ },
+  success: function (repo){ /*...*/ },
   error: function (err){ /*...*/ },
   invalidApiKey: function (err){ /*...*/ },
   // etc.
 });
 ```
 
-With machinepack-independent/low-level usage:
+
+##### With an environment:
+
+```javascript
+Github.getRepo({
+  user: 'balderdashy',
+  repo: 'sails'
+})
+.setEnvironment({
+  config: sails.config.githubCredentials
+})
+.exec(function (err, repo) {
+  // ...
+});
+
+
+
+##### Low-level usage:
+
+> (machinepack-independent)
 
 ```javascript
 var Machine = require('node-machine');
@@ -118,7 +131,7 @@ console.log(Machine);
 -----------------------------------------
  node-machine
  v0.2.2
- 
+
  • License  : MIT
  • Docs     : http://node-machine.org
 -----------------------------------------
