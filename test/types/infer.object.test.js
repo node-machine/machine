@@ -12,7 +12,7 @@ describe('Inferring types from example', function() {
         baz: false
       };
 
-      var types = T.rttc.infer(obj);
+      var types = T.infer(obj);
 
       assert(types.foo);
       assert(types.bar);
@@ -33,7 +33,7 @@ describe('Inferring types from example', function() {
         }
       };
 
-      var types = T.rttc.infer(obj);
+      var types = T.infer(obj);
 
       assert(types.foo);
       assert(types.bar);
