@@ -10,7 +10,11 @@
   "docs": {
     "url": "http://node-machine.org"
   },
-  "author": "Mike McNeil",
+  "author": "Mike McNeil <@mikermcneil>",
+  "contributors": [
+    "Cody Stoltman <@particlebanana>",
+    "Scott Gress <@sgress454>"
+  ],
   "license": "MIT",
   "dependencies": {
     "node-switchback": "~0.1.0",
