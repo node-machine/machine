@@ -18,7 +18,7 @@ describe('Inferring types from example', function() {
       assert(types.bar);
       assert(types.baz);
       assert.strictEqual(types.foo, 'string');
-      assert.strictEqual(types.bar, 'integer');
+      assert.strictEqual(types.bar, 'number');
       assert.strictEqual(types.baz, 'boolean');
     });
 
@@ -43,7 +43,7 @@ describe('Inferring types from example', function() {
 
       assert.strictEqual(types.foo, 'string');
       assert.strictEqual(types.bar.foo, 'boolean');
-      assert.strictEqual(types.bar.baz.foo, 'integer');
+      assert.strictEqual(types.bar.baz.foo, 'number');
     });
 
   });

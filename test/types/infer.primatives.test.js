@@ -10,9 +10,9 @@ describe('Inferring types from example', function() {
       assert.strictEqual(type, 'string');
     });
 
-    it('should set type "integer"', function() {
+    it('should set type "number"', function() {
       var type = T.infer(5);
-      assert.strictEqual(type, 'integer');
+      assert.strictEqual(type, 'number');
     });
 
     it('should set type "boolean"', function() {

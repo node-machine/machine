@@ -12,7 +12,7 @@ describe('Run-time type checking', function() {
         required: true
       },
       bar: {
-        type: 'integer',
+        type: 'number',
         required: false
       },
       baz: {

@@ -12,6 +12,7 @@ node-switchback@~0.1.0                           : MIT
 lodash@~2.4.1                                    : MIT
 partial-apply@~0.1.0                             : MIT
 object-hash@~0.3.0                               : MIT
+convert-to-ecmascript-compatible-varname@^0.1.0  : MIT
 
 Found a module that is incorrectly or not detected at all but does
 have a valid license? Please report this at:

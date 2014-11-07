@@ -14,14 +14,14 @@ describe('Run-time type checking', function() {
           },
           foo: {
             bar: {
-              baz: 'integer'
+              baz: 'number'
             }
           }
         },
         required: true
       },
       bar: {
-        type: 'integer',
+        type: 'number',
         required: false
       }
     };
