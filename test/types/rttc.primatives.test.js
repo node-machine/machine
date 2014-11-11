@@ -33,7 +33,7 @@ describe('Run-time type checking', function() {
       };
 
       assert.doesNotThrow(function() {
-        T.rttc(inputSchema, test);
+        T.rttc(inputSchema, test, {coerce: true});
       });
     });
 
@@ -45,7 +45,7 @@ describe('Run-time type checking', function() {
       };
 
       assert.doesNotThrow(function() {
-        T.rttc(inputSchema, test);
+        T.rttc(inputSchema, test, {coerce: true});
       });
     });
 
@@ -59,19 +59,19 @@ describe('Run-time type checking', function() {
       };
 
       assert.throws(function() {
-        T.rttc(inputSchema, test);
+        T.rttc(inputSchema, test, {coerce: true});
       }, Error);
     });
 
     it('should not validate when all keys are not valid', function() {
       var test = {
         foo: 'bar',
-        bar: '2',
+        bar: Infinity,
         baz: false
       };
 
       assert.throws(function() {
-        T.rttc(inputSchema, test);
+        T.rttc(inputSchema, test, {coerce: true});
       }, Error);
     });
 

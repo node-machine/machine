@@ -64,7 +64,7 @@ describe('Run-time type checking', function() {
       };
 
       assert.doesNotThrow(function() {
-        T.rttc(inputSchema, test);
+        T.rttc(inputSchema, test, {coerce: true});
       });
     });
 
@@ -86,7 +86,7 @@ describe('Run-time type checking', function() {
       };
 
       assert.doesNotThrow(function() {
-        T.rttc(inputSchema, test);
+        T.rttc(inputSchema, test, {coerce: true});
       });
     });
 
@@ -100,7 +100,7 @@ describe('Run-time type checking', function() {
       };
 
       assert.throws(function() {
-        T.rttc(inputSchema, test);
+        T.rttc(inputSchema, test, {coerce: true});
       }, Error);
     });
 
@@ -113,7 +113,7 @@ describe('Run-time type checking', function() {
             },
             foo: {
               bar: {
-                baz: 'world'
+                baz: Infinity
               }
             }
           }
@@ -133,7 +133,7 @@ describe('Run-time type checking', function() {
       };
 
       assert.throws(function() {
-        T.rttc(inputSchema, test);
+        T.rttc(inputSchema, test, {coerce: true});
       }, Error);
     });
 

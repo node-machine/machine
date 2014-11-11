@@ -35,14 +35,28 @@ describe('Machine test', function() {
     });
   });
 
-  it('should error with invalid inputs', function(done) {
+  it('should error with invalid inputs when input coercion is off', function(done) {
     M.build(machine)
     .configure({
       foo: 'hello',
       bar: '4'
     })
+    .inputCoercion(false)
     .exec(function(err, result) {
       assert(err);
+      done();
+    });
+  });
+
+  it('should not error with invalid inputs when input coercion is on', function(done) {
+    M.build(machine)
+    .configure({
+      foo: 'hello',
+      bar: '4'
+    })
+    .inputCoercion(true)
+    .exec(function(err, result) {
+      if(err) return done(err);
       done();
     });
   });
