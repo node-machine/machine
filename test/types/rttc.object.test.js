@@ -103,6 +103,32 @@ describe('Run-time type checking', function() {
       }, Error);
     });
 
+    ////////////////////////////////
+    // Key Stripping
+    ////////////////////////////////
+
+    it('should remove keys that do not have a value in the schema', function() {
+      var test = {
+        foo: {
+          bar: {
+            baz: 'hello'
+          },
+          foo: {
+            bar: {
+              baz: 23
+            }
+          },
+          boo: 'world'
+        }
+      };
+
+      assert.doesNotThrow(function() {
+        T.rttc(inputSchema, test);
+      });
+
+      assert(!test.foo.boo);
+    });
+
   });
 
 });
