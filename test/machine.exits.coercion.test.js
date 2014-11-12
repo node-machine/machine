@@ -65,5 +65,36 @@ describe('Machine exit coercion', function() {
     });
   });
 
+  it('should provide base types for values not present in the exit data', function(done) {
+    var machine = {
+      inputs: {
+        foo: {
+          example: 'foo bar'
+        }
+      },
+      exits: {
+        success: {
+          example: 4
+        },
+        error: {
+          example: 'world'
+        }
+      },
+      fn: function (inputs, exits, deps) {
+        exits(null);
+      }
+    };
+
+    M.build(machine)
+    .configure({
+      foo: 'hello'
+    })
+    .exec(function(err, result) {
+      if(err) return done(err);
+      assert(result === 0);
+      done();
+    });
+  });
+
 
 });
