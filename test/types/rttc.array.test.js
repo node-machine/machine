@@ -136,6 +136,126 @@ describe('Run-time type checking', function() {
         T.rttc(inputSchema, test, {coerce: true});
       }, Error);
     });
+  });
+
+  describe('when an array with a star is used', function() {
+
+    describe('and primative values are given at run-time', function() {
+
+      ////////////////////////////////
+      // Valid
+      ////////////////////////////////
+
+      it('should validate when all the items are numbers', function() {
+
+        // Build an example input schema
+        var inputSchema = {
+          key: {
+            type: ['*'],
+            required: true
+          }
+        };
+
+        var test = {
+          key: [1,2]
+        };
+
+        assert.doesNotThrow(function() {
+          T.rttc(inputSchema, test, {coerce: true});
+        });
+      });
+
+      it('should validate when all the items are strings', function() {
+
+        // Build an example input schema
+        var inputSchema = {
+          key: {
+            type: ['*'],
+            required: true
+          }
+        };
+
+        var test = {
+          key: ['foo', 'bar']
+        };
+
+        assert.doesNotThrow(function() {
+          T.rttc(inputSchema, test, {coerce: true});
+        });
+      });
+
+      ////////////////////////////////
+      // Invalid
+      ////////////////////////////////
+
+      it('should NOT validate when all the items are not numbers', function() {
+
+        // Build an example input schema
+        var inputSchema = {
+          key: {
+            type: ['*'],
+            required: true
+          }
+        };
+
+        var test = {
+          key: [1, 'foo']
+        };
+
+        assert.throws(function() {
+          T.rttc(inputSchema, test, {coerce: true, baseType: false});
+        });
+      });
+    });
+
+    describe('and objects are given at run-time', function() {
+
+      ////////////////////////////////
+      // Valid
+      ////////////////////////////////
+
+      it('should validate when all the items are the same', function() {
+
+        // Build an example input schema
+        var inputSchema = {
+          key: {
+            type: ['*'],
+            required: true
+          }
+        };
+
+        var test = {
+          key: [{ name: 'bob' }, { name: 'susan' }]
+        };
+
+        assert.doesNotThrow(function() {
+          T.rttc(inputSchema, test, {coerce: true});
+        });
+      });
+
+      ////////////////////////////////
+      // Invalid
+      ////////////////////////////////
+
+      it('should NOT validate when all the items are not the same', function() {
+
+        // Build an example input schema
+        var inputSchema = {
+          key: {
+            type: ['*'],
+            required: true
+          }
+        };
+
+        var test = {
+          key: [{ name: 'bob' }, { age: 22 }]
+        };
+
+        assert.throws(function() {
+          T.rttc(inputSchema, test, {coerce: true, baseType: false});
+        });
+      });
+    });
 
   });
 
