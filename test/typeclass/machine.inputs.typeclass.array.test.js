@@ -1,0 +1,66 @@
+var assert = require('assert');
+var M = require('../../lib/Machine.constructor');
+
+describe('Machine inputs typeclass array', function() {
+
+  var machine = {
+    inputs: {
+      foo: {
+        typeclass: 'array'
+      }
+    },
+
+    exits: {
+      success: {},
+      error: {}
+    },
+
+    fn: function (inputs, exits, deps) {
+      exits();
+    }
+  };
+
+
+  ////////////////////////////////
+  // Valid
+  ////////////////////////////////
+
+  it('should run with an array of objects where each object is the same', function(done) {
+    M.build(machine)
+    .configure({
+      foo: [{ bar: 'baz' }, { bar: 'foo' }]
+    })
+    .exec(function(err, result) {
+      if(err) return done(err);
+      done();
+    });
+  });
+
+  it('should run with an empty array', function(done) {
+    M.build(machine)
+    .configure({
+      foo: []
+    })
+    .exec(function(err, result) {
+      if(err) return done(err);
+      done();
+    });
+  });
+
+
+  ////////////////////////////////
+  // Invalid
+  ////////////////////////////////
+
+  it('should not run with an array of objects where each object is NOT the same', function(done) {
+    M.build(machine)
+    .configure({
+      foo: [{ bar: 'baz' }, { foo: 'bar' }]
+    })
+    .exec(function(err, result) {
+      assert(err);
+      done();
+    });
+  });
+
+});
