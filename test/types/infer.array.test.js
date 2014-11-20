@@ -54,4 +54,28 @@ describe('Inferring types from example', function() {
 
   });
 
+  describe('when an array of primatives is used', function() {
+
+    it('should parse an array with a single string', function() {
+      var arr = ['foo'];
+      var types = T.infer(arr);
+
+      assert(Array.isArray(types));
+      assert.strictEqual(types.length, 1);
+
+      assert.strictEqual(types[0], 'string');
+    });
+
+    it('should parse an array with a single number', function() {
+      var arr = [1];
+      var types = T.infer(arr);
+
+      assert(Array.isArray(types));
+      assert.strictEqual(types.length, 1);
+
+      assert.strictEqual(types[0], 'number');
+    });
+
+  });
+
 });
