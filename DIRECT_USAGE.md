@@ -80,9 +80,17 @@ Github.getRepo({
 > (machinepack-independent)
 
 ```javascript
-var Machine = require('node-machine');
-
-Machine.build(require('machinepack-github/get-repo'))
+require('machine')
+.build({
+  inputs: {
+    foo: {example: 'bar'}
+  },
+  exits: {
+    success: {void: true}
+  },
+  catchallExit: 'success',
+  fn: function (inputs, exits){ /* ... */ }
+})
 .configure({
   user: 'balderdashy',
   repo: 'sails'
@@ -112,7 +120,7 @@ function (inputs, cb) {
 If you define a function that way (let's say you export it from a local module called "foo.js"), you can actually use it as a machine like this:
 
 ```javascript
-require('node-machine').build(require('./foo'))
+require('machine').build(require('./foo'))
 .configure({
   // input values go here
 })
@@ -127,14 +135,14 @@ require('node-machine').build(require('./foo'))
 
 ## Advanced Usage
 
-Since machine definitions are completely static, we must consider all of the various methods by which we might deserialize them and inject the runtime scope.
+Since machine definitions are completely static and context-free, we must consider all of the various methods by which we might deserialize them and inject the runtime scope.
 
 #### The `Machine` constructor
 
 When you require `node-machine`, you get the stateless `Machine` constructor:
 
 ```javascript
-var Machine = require('node-machine');
+var Machine = require('machine');
 
 console.log(Machine);
 /*
@@ -157,7 +165,7 @@ As with the top-level value exported from any node module, you really shouldn't 
 `Machine.build()` is a static factory method which constructs callable functions.
 
 ```javascript
-var Machine = require('node-machine');
+var Machine = require('machine');
 var foobar = Machine.build(function foobar(inputs, cb){ return cb(); });
 ```
 
@@ -209,7 +217,7 @@ thisFoobar.exec(function (err, result){
 Machines know how to cache their own results.
 
 ```javascript
-var Machine = require('node-machine');
+var Machine = require('machine');
 var ls = Machine.build(require('machinepack-fs/ls'));
 
 ls
