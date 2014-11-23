@@ -16,6 +16,17 @@
     "Scott Gress <@sgress454>"
   ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/node-machine/machine.git"
+  },
+  "bugs": {
+    "url": "http://github.com/node-machine/machine/issues"
+  },
+  "engines": {
+    "node": ">= 0.10.0",
+    "npm": ">= 1.4.0"
+  },
   "dependencies": {
     "node-switchback": "~0.1.0",
     "lodash": "~2.4.1",
