@@ -1,7 +1,7 @@
 {
   "name": "machine",
   "version": "1.0.4",
-  "description": "Configure and execute a machine using inputs and exits",
+  "description": "Configure and execute machines",
   "main": "index.js",
   "scripts": {
     "test": "mocha --recursive",
@@ -28,9 +28,8 @@
     "npm": ">= 1.4.0"
   },
   "dependencies": {
-    "node-switchback": "~0.1.0",
+    "switchback": "~1.0.0",
     "lodash": "~2.4.1",
-    "partial-apply": "~0.1.0",
     "object-hash": "~0.3.0",
     "convert-to-ecmascript-compatible-varname": "^0.1.0"
   },
