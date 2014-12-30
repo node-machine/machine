@@ -8,7 +8,7 @@ Resolving dependencies, this might take a while
 
 Licenses information:
 
-switchback@~1.0.0                                : MIT
+switchback@~1.1.0                                : MIT
 lodash@~2.4.1                                    : MIT
 object-hash@~0.3.0                               : MIT
 convert-to-ecmascript-compatible-varname@^0.1.0  : MIT
