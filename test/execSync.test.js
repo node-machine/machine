@@ -22,12 +22,51 @@ describe('Machine.prototype.execSync()', function (){
     var result = Machine.build(machineFixtures[1]).execSync();
     assert.equal(result,'stuff');
   });
+
   it('should throw an Error when called on a configured machine that triggers any non-default exit and sends back an Error instance');
-  it('should throw an Error when called on a configured machine that triggers any non-default exit and sends back a string');
-  it('should throw an Error when called on a configured machine that triggers any non-default exit and sends back a boolean');
-  it('should throw an Error when called on a configured machine that triggers any non-default exit and sends back a number');
-  it('should throw an Error when called on a configured machine that triggers any non-default exit and sends back an array');
-  it('should throw an Error when called on a configured machine that triggers any non-default exit and sends back an object');
+  // TODO: just implement another fixture below that sends back a new Error()
+
+  it('should throw an Error when called on a configured machine that triggers any non-default exit and sends back a string', function (){
+    var m = Machine.build(machineFixtures[2]);
+    m.configure({value: 'hi'});
+    assert.throws(function (){
+      m.execSync();
+    });
+  });
+
+  it('should throw an Error when called on a configured machine that triggers any non-default exit and sends back a boolean', function (){
+    var m = Machine.build(machineFixtures[2]);
+    m.configure({value: true});
+    assert.throws(function (){
+      m.execSync();
+    });
+  });
+
+  it('should throw an Error when called on a configured machine that triggers any non-default exit and sends back a number', function (){
+    var m = Machine.build(machineFixtures[2]);
+    m.configure({value: -234.2});
+    assert.throws(function (){
+      m.execSync();
+    });
+  });
+
+  it('should throw an Error when called on a configured machine that triggers any non-default exit and sends back an array', function (){
+    var m = Machine.build(machineFixtures[2]);
+    m.configure({value: ['stuff', 'and', 'things']});
+    assert.throws(function (){
+      m.execSync();
+    });
+  });
+
+  it('should throw an Error when called on a configured machine that triggers any non-default exit and sends back an object', function (){
+    var m = Machine.build(machineFixtures[2]);
+    m.configure({value: {
+      email: 'ricketorsomething@stark.io'
+    }});
+    assert.throws(function (){
+      m.execSync();
+    });
+  });
 
 });
 
@@ -53,7 +92,7 @@ var machineFixtures = [
         example: 'world'
       }
     },
-    fn: function (inputs, exits, deps) {
+    fn: function (inputs, exits) {
       exits.success('stuff');
     }
   },
@@ -76,8 +115,34 @@ var machineFixtures = [
         example: 'world'
       }
     },
-    fn: function (inputs, exits, deps) {
+    fn: function (inputs, exits) {
       exits.success('stuff');
+    }
+  },
+  // Sync machine which calls a non-default exit with whatever
+  // was passed into the `value` input.
+  {
+    sync: true,
+    inputs: {
+      value: {
+        typeclass: '*'
+      }
+    },
+    exits: {
+      success: {
+        example: 'hello'
+      },
+      someOtherExit: {
+        getExample: function (inputs){
+          return inputs.value;
+        }
+      },
+      error: {
+        example: 'world'
+      }
+    },
+    fn: function (inputs, exits) {
+      exits.someOtherExit(inputs.value);
     }
   }
 ];
