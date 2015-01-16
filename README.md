@@ -33,7 +33,7 @@ If you're implementing a machinepack, you'll need to use this module to `.pack()
 
 If you're implementing a one-off machine (i.e. just to take advantage of the caching or type-checking this module provides), you may need lower-level access to the methods herein.
 
-See [DIRECT_USAGE.md](./DIRECT_USAGE.md) for information on how to use all the lower-level features of this module.
+See [docs/DIRECT_USAGE.md](./docs/DIRECT_USAGE.md) for information on how to use all the lower-level features of this module.
 
 
 ### License
