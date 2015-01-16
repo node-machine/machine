@@ -1,10 +1,11 @@
 var assert = require('assert');
-var M = require('../lib/Machine.constructor');
+var Machine = require('../lib/Machine.constructor');
 
 describe('Machine exit coercion', function() {
 
   it('should return the valid data from the exit', function(done) {
-    var machine = {
+
+    Machine.build({
       inputs: {
         foo: {
           example: 'foo bar'
@@ -21,9 +22,7 @@ describe('Machine exit coercion', function() {
       fn: function (inputs, exits, deps) {
         exits(null, 'foo');
       }
-    };
-
-    M.build(machine)
+    })
     .configure({
       foo: 'hello'
     })
@@ -35,7 +34,8 @@ describe('Machine exit coercion', function() {
   });
 
   it('should coerce invalid exit data into the correct types', function(done) {
-    var machine = {
+
+    Machine.build({
       inputs: {
         foo: {
           example: 'foo bar'
@@ -52,9 +52,7 @@ describe('Machine exit coercion', function() {
       fn: function (inputs, exits, deps) {
         exits(null, '100');
       }
-    };
-
-    M.build(machine)
+    })
     .configure({
       foo: 'hello'
     })
@@ -66,7 +64,8 @@ describe('Machine exit coercion', function() {
   });
 
   it('should provide base types for values not present in the exit data', function(done) {
-    var machine = {
+
+    Machine.build({
       inputs: {
         foo: {
           example: 'foo bar'
@@ -83,9 +82,7 @@ describe('Machine exit coercion', function() {
       fn: function (inputs, exits, deps) {
         exits(null);
       }
-    };
-
-    M.build(machine)
+    })
     .configure({
       foo: 'hello'
     })
