@@ -29,17 +29,22 @@ describe('Machine input coercion', function() {
       }
     };
 
-    M.build(machine)
-    .configure({
-      foo: '20',
-      bar: 20
-    })
-    .exec(function(err, result) {
-      if(err) return done(err);
-      assert(_inputs.foo === 20);
-      assert(_inputs.bar === '20')
-      done();
-    });
+    try {
+      M.build(machine)
+      .configure({
+        foo: '20',
+        bar: 20
+      })
+      .exec(function(err, result) {
+        if(err) return done(err);
+        assert.strictEqual(_inputs.foo,20);
+        assert.strictEqual(_inputs.bar,'20');
+        done();
+      });
+    }
+    catch (e){
+      assert(false, 'Should not throw');
+    }
   });
 
   it('should error if an example is not given for an input', function() {
