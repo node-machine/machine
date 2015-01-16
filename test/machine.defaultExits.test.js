@@ -51,7 +51,7 @@ describe('Default exits test', function() {
         foo: 'error'
       }, {
         "then": function() {done();},
-        "else": function(err) {assert(err);done();}
+        "else": function(err) {assert(err, 'expected `'+err+'` to be truthy');done();}
       })
       .exec();
     });
