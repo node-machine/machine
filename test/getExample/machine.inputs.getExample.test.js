@@ -1,7 +1,7 @@
 var assert = require('assert');
 var M = require('../../lib/Machine.constructor');
 
-describe.only('Machine inputs getExample', function() {
+describe('Machine inputs getExample', function() {
 
   var machine = {
     inputs: {
@@ -66,7 +66,7 @@ describe.only('Machine inputs getExample', function() {
       bar: 'abc'
     })
     .exec(function(err, result) {
-      assert(err);
+      assert(err, 'expected error because (for input `foo`) getExample() returned an array but a number was provided');
       done();
     });
   });

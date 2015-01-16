@@ -50,6 +50,20 @@ describe('Machine inputs typeclass dictionary', function() {
     });
   });
 
+  it('should not tamper with object of arrays which was passed in', function(done) {
+    M.build(machine)
+    .configure({
+      foo: [{foo: { bar: ['baz']}}]
+    })
+    .exec(function(err, result) {
+      if(err) return done(err);
+      assert.deepEqual(result, {
+        foo: [{foo: { bar: ['baz']}}]
+      });
+      done();
+    });
+  });
+
 
   ////////////////////////////////
   // Invalid
@@ -61,7 +75,7 @@ describe('Machine inputs typeclass dictionary', function() {
       foo: [{ bar: 'baz' }, { foo: 'bar' }]
     })
     .exec(function(err, result) {
-      assert(err);
+      assert(err, 'expected error because an array was passed in to a typeclass dictionary input');
       done();
     });
   });

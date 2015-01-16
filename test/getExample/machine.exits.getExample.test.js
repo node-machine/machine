@@ -22,7 +22,7 @@ describe('Machine exits getExample', function() {
             return {
               code: 400,
               status: 'ok'
-            }
+            };
           }
         },
         error: {}
@@ -103,7 +103,7 @@ describe('Machine exits getExample', function() {
             return {
               code: 400,
               status: 'ok'
-            }
+            };
           }
         },
         error: {}
