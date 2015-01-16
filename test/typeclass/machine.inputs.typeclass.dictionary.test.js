@@ -36,6 +36,20 @@ describe('Machine inputs typeclass dictionary', function() {
     });
   });
 
+  it('should not tamper with object which was passed in', function(done) {
+    M.build(machine)
+    .configure({
+      foo: { bar: 'baz'}
+    })
+    .exec(function(err, result) {
+      if(err) return done(err);
+      assert.deepEqual(result, {
+        foo: { bar: 'baz'}
+      });
+      done();
+    });
+  });
+
 
   ////////////////////////////////
   // Invalid
