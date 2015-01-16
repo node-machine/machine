@@ -112,6 +112,45 @@ describe('Machine exit coercion', function() {
     });
   });
 
+  it('should coerce null to example ([])', function(done) {
+
+    Machine.build({
+      inputs: {},
+      exits: {
+        success: {
+          example: []
+        }
+      },
+      fn: function (inputs, exits, deps) {
+        exits.success(null);
+      }
+    }).exec(function(err, result) {
+      if(err) return done(err);
+      assert.deepEqual(result,[]);
+      done();
+    });
+  });
+
+  it('should coerce 0 to example ([])', function(done) {
+
+    Machine.build({
+      inputs: {},
+      exits: {
+        success: {
+          example: []
+        }
+      },
+      fn: function (inputs, exits, deps) {
+        exits.success(0);
+      }
+    }).exec(function(err, result) {
+      if(err) return done(err);
+      assert.deepEqual(result,[]);
+      done();
+    });
+  });
+
+
 
 
 
