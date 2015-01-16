@@ -52,7 +52,15 @@ describe('Machine inputs typeclass array', function() {
   // Invalid
   ////////////////////////////////
 
-  it('should not run with an array of objects where each object is NOT the same', function(done) {
+  // NOTE:
+  // This functionality was temporarily disabled because it adds a lot of code, and can slow
+  // things down for large arrays of big objects with large arrays of more big objects, etc.
+  // In the future, perhaps this particular validation could be toggled on or off via configuration.
+  //
+  // ~Mike
+  // Jan 16, 2015
+
+  it.skip('should not run with an array of objects where each object is NOT the same', function(done) {
     M.build(machine)
     .configure({
       foo: [{ bar: 'baz' }, { foo: 'bar' }]

@@ -60,7 +60,6 @@ describe('Machine inputs getExample', function() {
   ////////////////////////////////
 
   it('should fail when the run-time inputs don\'t match the results of getExample', function(done) {
-    console.log('\n\n\n------------');
     M.build(machine)
     .configure({
       foo: 123,
