@@ -58,7 +58,7 @@ describe('Machine inputs typeclass array', function() {
       foo: [{ bar: 'baz' }, { foo: 'bar' }]
     })
     .exec(function(err, result) {
-      assert(err);
+      assert(err, 'should not have allowed heterogeneous array in a typeclass:array input');
       done();
     });
   });

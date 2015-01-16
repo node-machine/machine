@@ -3,6 +3,8 @@ var M = require('../../lib/Machine.constructor');
 
 describe('Machine inputs typeclass dictionary', function() {
 
+  var _inputValsInFn;
+
   var machine = {
     inputs: {
       foo: {
@@ -16,6 +18,7 @@ describe('Machine inputs typeclass dictionary', function() {
     },
 
     fn: function (inputs, exits, deps) {
+      _inputValsInFn = inputs;
       exits();
     }
   };
@@ -43,7 +46,7 @@ describe('Machine inputs typeclass dictionary', function() {
     })
     .exec(function(err, result) {
       if(err) return done(err);
-      assert.deepEqual(result, {
+      assert.deepEqual(_inputValsInFn, {
         foo: { bar: 'baz'}
       });
       done();
@@ -53,12 +56,12 @@ describe('Machine inputs typeclass dictionary', function() {
   it('should not tamper with object of arrays which was passed in', function(done) {
     M.build(machine)
     .configure({
-      foo: [{foo: { bar: ['baz']}}]
+      foo: {foo: [{ bar: ['baz']}]}
     })
     .exec(function(err, result) {
       if(err) return done(err);
-      assert.deepEqual(result, {
-        foo: [{foo: { bar: ['baz']}}]
+      assert.deepEqual(_inputValsInFn, {
+        foo: {foo: [{ bar: ['baz']}]}
       });
       done();
     });
