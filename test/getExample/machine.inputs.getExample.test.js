@@ -60,13 +60,14 @@ describe('Machine inputs getExample', function() {
   ////////////////////////////////
 
   it('should fail when the run-time inputs don\'t match the results of getExample', function(done) {
+    console.log('\n\n\n------------');
     M.build(machine)
     .configure({
       foo: 123,
       bar: 'abc'
     })
     .exec(function(err, result) {
-      assert(err, 'expected error because (for input `foo`) getExample() returned an array but a number was provided');
+      assert(err, 'expected error because (for input `foo`) getExample() returned an array but a number was provided as the configured value');
       done();
     });
   });
