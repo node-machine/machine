@@ -74,6 +74,45 @@ describe('Machine exit coercion', function() {
   });
 
 
+  it('should coerce undefined to example ({})', function(done) {
+
+    Machine.build({
+      inputs: {},
+      exits: {
+        success: {
+          example: {}
+        }
+      },
+      fn: function (inputs, exits, deps) {
+        exits.success();
+      }
+    }).exec(function(err, result) {
+      if(err) return done(err);
+      assert.deepEqual(result,{});
+      done();
+    });
+  });
+
+  it('should coerce undefined to example ([])', function(done) {
+
+    Machine.build({
+      inputs: {},
+      exits: {
+        success: {
+          example: []
+        }
+      },
+      fn: function (inputs, exits, deps) {
+        exits.success();
+      }
+    }).exec(function(err, result) {
+      if(err) return done(err);
+      assert.deepEqual(result,[]);
+      done();
+    });
+  });
+
+
 
 
   it('should coerce invalid exit data into the correct types', function(done) {
