@@ -1,4 +1,6 @@
 var assert = require('assert');
+var util = require('util');
+var _ = require('lodash');
 var M = require('../lib/Machine.constructor');
 
 describe('Machine input coercion', function() {
@@ -71,28 +73,77 @@ describe('Machine input coercion', function() {
   });
 
 
-  it('should fail if input expects string, but object is provided', function(done) {
-
-    var _inputsInFn;
-    var outputValue;
-    var inputDef = { example: 'asdf' };
-    var machine = M.build({
-      inputs: {
-        x: inputDef
-      },
-      fn: function (inputs, exits) {
-        _inputsInFn = inputs;
-        exits(null, outputValue);
-      }
-    });
-
-    machine({ x: {} }).exec(function (err){
+  it('should fail if input expects string, but empty object ({}) is provided', function(done) {
+    testInputConfiguration({
+      example: 'asdf',
+      actual: {}
+    }, function (err, result){
       if (!err) {
-        return done(new Error('Expected `error` outcome'));
+        return done(new Error('Expected `error` outcome- instead no error, and got result:'+util.inspect(result)));
       }
       return done();
     });
+  });
+  it('should fail if input expects string, but empty array ([]) is provided', function(done) {
+    testInputConfiguration({
+      example: 'asdf',
+      actual: []
+    }, function (err, result){
+      if (!err) {
+        return done(new Error('Expected `error` outcome- instead no error, and got result:'+util.inspect(result)));
+      }
+      return done();
+    });
+  });
 
+  it('should fail if input expects string, but `{foo:"bar"}` is provided', function(done) {
+    testInputConfiguration({
+      example: 'asdf',
+      actual: {foo: 'bar'}
+    }, function (err, result){
+      if (!err) {
+        return done(new Error('Expected `error` outcome- instead no error, and got result:'+util.inspect(result)));
+      }
+      return done();
+    });
   });
 
 });
+
+
+
+
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////// HELPERS ///////////////
+
+function testInputConfiguration(options, cb){
+  var _inputsInFn;
+  var outputValue;
+  var machine = M.build({
+    inputs: {
+      x: (function _determineInputDefinition(){
+        var def = {};
+        if (!_.isUndefined(options.example)) {
+          def.example = options.example;
+        }
+        return def;
+      })()
+    },
+    exits: {
+      error: {},
+      success: {}
+    },
+    fn: function (inputs, exits) {
+      _inputsInFn = inputs;
+      exits(null, outputValue);
+    }
+  });
+
+  machine.exec(function (err, result){
+    return cb(err, result);
+  });
+}
