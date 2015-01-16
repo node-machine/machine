@@ -71,38 +71,26 @@ describe('Machine input coercion', function() {
   });
 
 
-  it('should fail if input expects string, but number is provided', function(done) {
+  it('should fail if input expects string, but object is provided', function(done) {
 
     var _inputsInFn;
-    M.build({
+    var outputValue;
+    var inputDef = { example: 'asdf' };
+    var machine = M.build({
       inputs: {
-        foo: {
-          example: 'asdf'
-        }
+        x: inputDef
       },
-      exits: {
-        success: { example: 'hello' },
-        error: {}
-      },
-      fn: function (inputs, exits, deps) {
+      fn: function (inputs, exits) {
         _inputsInFn = inputs;
-        exits(null, 'foo');
+        exits(null, outputValue);
       }
-    })
-    .configure({
-      foo: 123
-    })
-    .exec(function (err){
+    });
 
-      console.log(_inputsInFn.foo);
-      console.log(err);
-
+    machine({ x: {} }).exec(function (err){
       if (!err) {
         return done(new Error('Expected `error` outcome'));
       }
-
       return done();
-
     });
 
   });
