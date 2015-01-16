@@ -76,5 +76,5 @@ This is a quick reference sheet for seeing how validation and coercion work for 
 > TODO: objects and arrays
 
 ## Special cases
-+ The `error` exit always outputs an instance of Error.
++ If the `error` exit does not have an `example` or `getExample()`, it outputs an instance of Error.
 + The configured `inputs` object accessible to `getExample()` are not guaranteed to have been coerced.  You should make sure your custom `getExample()` function takes this into account (e.g. if a user passes the value `"3"` into some input (x) with a numeric example, the `getExample` function for one of your exits might receive `inputs.x` as either `"3"` or `3`)

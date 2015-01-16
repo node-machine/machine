@@ -35,7 +35,7 @@ describe('Machine test', function() {
     });
   });
 
-  it.skip('should error with invalid inputs when input coercion is off', function(done) {
+  it('should error with mildly-invalid inputs when input coercion is off', function(done) {
     M.build(machine)
     .configure({
       foo: 'hello',
@@ -43,12 +43,12 @@ describe('Machine test', function() {
     })
     .inputCoercion(false)
     .exec(function(err, result) {
-      assert(err);
+      assert(err, 'expected error providing `"4"` to an input with example === `4`');
       done();
     });
   });
 
-  it('should not error with invalid inputs when input coercion is on', function(done) {
+  it('should not error with mildly-invalid inputs when input coercion is on', function(done) {
     M.build(machine)
     .configure({
       foo: 'hello',
