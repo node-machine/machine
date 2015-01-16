@@ -3,7 +3,7 @@ var Machine = require('../lib/Machine.constructor');
 
 describe('Machine exit coercion', function() {
 
-  it('should return the valid data from the exit', function(done) {
+  it('should pass through expected data', function(done) {
 
     Machine.build({
       inputs: {
@@ -32,6 +32,28 @@ describe('Machine exit coercion', function() {
       done();
     });
   });
+
+
+  it('should coerce string to number', function(done) {
+
+    Machine.build({
+      inputs: {},
+      exits: {
+        success: {
+          example: 4
+        }
+      },
+      fn: function (inputs, exits, deps) {
+        exits.success('whatever');
+      }
+    }).exec(function(err, result) {
+      if(err) return done(err);
+      assert.strictEqual(result,0);
+      done();
+    });
+  });
+
+
 
   it('should coerce invalid exit data into the correct types', function(done) {
 
