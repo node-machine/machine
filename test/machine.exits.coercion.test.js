@@ -54,6 +54,27 @@ describe('Machine exit coercion', function() {
   });
 
 
+  it('should coerce boolean to number', function(done) {
+
+    Machine.build({
+      inputs: {},
+      exits: {
+        success: {
+          example: 4
+        }
+      },
+      fn: function (inputs, exits, deps) {
+        exits.success(true);
+      }
+    }).exec(function(err, result) {
+      if(err) return done(err);
+      assert.strictEqual(result,1);
+      done();
+    });
+  });
+
+
+
 
   it('should coerce invalid exit data into the correct types', function(done) {
 
