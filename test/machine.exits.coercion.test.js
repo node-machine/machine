@@ -60,7 +60,7 @@ describe('Machine exit coercion', function() {
     })
     .exec(function(err, result) {
       if(err) return done(err);
-      assert(result === 100);
+      assert.strictEqual(result,100);
       done();
     });
   });
@@ -91,7 +91,7 @@ describe('Machine exit coercion', function() {
     })
     .exec(function(err, result) {
       if(err) return done(err);
-      assert(result === 0);
+      assert.strictEqual(result,0);
       done();
     });
   });
