@@ -141,9 +141,11 @@ function testInputConfiguration(options, cb){
       _inputsInFn = inputs;
       exits(null, outputValue);
     }
-  });
-
-  machine.exec(function (err, result){
+  })
+  .configure({
+    x: options.actual
+  })
+  .exec(function (err, result){
     return cb(err, result);
   });
 }
