@@ -1,7 +1,7 @@
 var assert = require('assert');
-var M = require('../../lib/Machine.constructor');
+var M = require('../lib/Machine.constructor');
 
-describe('Machine inputs validate', function() {
+describe('Custom `validate()`', function() {
 
   ////////////////////////////////
   // Valid

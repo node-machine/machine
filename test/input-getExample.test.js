@@ -1,5 +1,5 @@
 var assert = require('assert');
-var M = require('../../lib/Machine.constructor');
+var M = require('../lib/Machine.constructor');
 
 describe('Machine inputs getExample', function() {
 
