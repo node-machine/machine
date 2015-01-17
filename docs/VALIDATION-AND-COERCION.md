@@ -2,6 +2,16 @@
 
 This is a quick reference sheet for seeing how validation and coercion work for inputs and exits.
 
+This may be slightly out-of-date-- check the tests in `test/output-coercion.test.js` and `test/input-validation.test.js` for the latest.
+
+> These tables will eventually be automatically generated.
+
+## Principles
+
+Validation and coercion tend to be _**forgiving** and **protective** of the user_ but _harsh to the implementor_.
+
+For instance, a user can pass in `"2"` (a string) to an input expecting a number example and the value will be cast to the number `2`.
+
 
 ## Inputs
 
