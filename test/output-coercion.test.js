@@ -11,9 +11,11 @@ var testExitCoercion = require('./helpers/test-exit-coercion.helper');
 describe('exit output coercion', function (){
 
   var EXIT_TEST_SUITE = [
+
     ////////////////////////////////////////////
     // STRINGS
     ////////////////////////////////////////////
+
     { example: 'foo', actual: 'bar', result: 'bar' },
     { example: 'foo', actual: '', result: '' },
 
@@ -38,6 +40,7 @@ describe('exit output coercion', function (){
     { example: 'foo', actual: [{}], result: '' },
     { example: 'foo', actual: [{foo:'bar'}], result: '' },
 
+    { example: 'foo', actual: undefined, result: '' },
     { example: 'foo', actual: NaN, result: '' },
     { example: 'foo', actual: Infinity, result: '' },
     { example: 'foo', actual: -Infinity, result: '' },
@@ -79,6 +82,7 @@ describe('exit output coercion', function (){
     { example: 123, actual: [{}], result: 0 },
     { example: 123, actual: [{foo:'bar'}], result: 0 },
 
+    { example: 123, actual: undefined, result: 0 },
     { example: 123, actual: NaN, result: 0 },
     { example: 123, actual: Infinity, result: 0 },
     { example: 123, actual: -Infinity, result: 0 },
@@ -121,6 +125,7 @@ describe('exit output coercion', function (){
     { example: true, actual: [{}], result: false },
     { example: true, actual: [{foo:'bar'}], result: false },
 
+    { example: true, actual: undefined, result: false },
     { example: true, actual: NaN, result: false },
     { example: true, actual: Infinity, result: false },
     { example: true, actual: -Infinity, result: false },
@@ -130,6 +135,8 @@ describe('exit output coercion', function (){
     // DICTIONARIES
     ////////////////////////////////////////////
 
+
+
     ////////////////////////////////////////////
     // ARRAYS
     ////////////////////////////////////////////
@@ -138,6 +145,8 @@ describe('exit output coercion', function (){
     ////////////////////////////////////////////
     // MISC
     ////////////////////////////////////////////
+
+
   ];
 
   _.each(EXIT_TEST_SUITE, function (test){

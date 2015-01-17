@@ -79,6 +79,12 @@ describe('input validation/coercion', function (){
     ////////////////////////////////////////////
     // MISC
     ////////////////////////////////////////////
+
+    { typeclass: '*', actual: NaN, result: NaN },
+    { typeclass: '*', actual: Infinity, result: Infinity },
+    { typeclass: '*', actual: -Infinity, result: -Infinity },
+    { typeclass: '*', actual: null, result: null },
+    { typeclass: '*', actual: undefined, result: undefined },
   ];
 
   _.each(INPUT_TEST_SUITE, function (test){
