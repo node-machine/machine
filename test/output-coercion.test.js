@@ -14,77 +14,69 @@ describe('exit output coercion', function (){
     ////////////////////////////////////////////
     // STRINGS
     ////////////////////////////////////////////
-    {
-      example: 'foo',
-      actual: 'bar',
-      result: 'bar'
-    },
-    {
-      example: 'foo',
-      actual: 'bar',
-      result: 'bar'
-    },
-    {
-      example: 'foo',
-      actual: 1,
-      result: '1'
-    },
-    {
-      example: 'foo',
-      actual: -1.1,
-      result: '-1.1'
-    },
-    {
-      example: 'foo',
-      actual: true,
-      result: 'true'
-    },
-    {
-      example: 'foo',
-      actual: false,
-      result: 'false'
-    },
+    { example: 'foo', actual: 'bar', result: 'bar' },
+    { example: 'foo', actual: '', result: '' },
+
+    { example: 'foo', actual: 0, result: '0' },
+    { example: 'foo', actual: 1, result: '1' },
+    { example: 'foo', actual: -1.1, result: '-1.1' },
+
+    { example: 'foo', actual: true, result: 'true' },
+    { example: 'foo', actual: false, result: 'false' },
+
+    { example: 'foo', actual: {}, result: '' },
+    { example: 'foo', actual: {foo:'bar'}, result: '' },
+    { example: 'foo', actual: {foo:{bar:{baz:{}}}}, result: '' },
+    { example: 'foo', actual: {foo:['bar']}, result: '' },
+    { example: 'foo', actual: {foo:{bar:{baz:[{}]}}}, result: '' },
+
+    { example: 'foo', actual: [], result: '' },
+    { example: 'foo', actual: ['asdf'], result: '' },
+    { example: 'foo', actual: [''], result: '' },
+    { example: 'foo', actual: [235], result: '' },
+    { example: 'foo', actual: [false], result: '' },
+    { example: 'foo', actual: [{}], result: '' },
+    { example: 'foo', actual: [{foo:'bar'}], result: '' },
+
     ////////////////////////////////////////////
     // NUMBERS
     ////////////////////////////////////////////
-    {
-      actual: 4.5,
-      example: 123,
-      result: 4.5
-    },
-    {
-      actual: '4.5',
-      example: 123,
-      result: 4.5
-    },
-    {
-      actual: '-4.5',
-      example: 123,
-      result: -4.5
-    },
-    {
-      actual: 'asgasdgjasdg',
-      example: 123,
-      result: 0,
-    },
+
+    { example: 123, actual: 'bar', result: 0 },
+    { example: 123, actual: '', result: 0 },
+    { example: 123, actual: '0', result: 0 },
+    { example: 123, actual: '1', result: 1 },
+    { example: 123, actual: '-1.1', result: -1.1 },
+    { example: 123, actual: 'NaN', result: 0 },
+
+    { example: 123, actual: 0, result: 0 },
+    { example: 123, actual: 1, result: 1 },
+    { example: 123, actual: -1.1, result: -1.1 },
+
+    { example: 123, actual: true, result: 1 },
+    { example: 123, actual: false, result: 0 },
+
+    { example: 123, actual: {}, result: 0 },
+    { example: 123, actual: {foo:'bar'}, result: 0 },
+    { example: 123, actual: {foo:{bar:{baz:{}}}}, result: 0 },
+    { example: 123, actual: {foo:['bar']}, result: 0 },
+    { example: 123, actual: {foo:{bar:{baz:[{}]}}}, result: 0 },
+
+    { example: 123, actual: [], result: 0 },
+    { example: 123, actual: ['asdf'], result: 0 },
+    { example: 123, actual: [''], result: 0 },
+    { example: 123, actual: [235], result: 0 },
+    { example: 123, actual: [false], result: 0 },
+    { example: 123, actual: [{}], result: 0 },
+    { example: 123, actual: [{foo:'bar'}], result: 0 },
+
     ////////////////////////////////////////////
     // BOOLEANS
     ////////////////////////////////////////////
-    {
-      actual: true,
-      example: false,
-      result: true
-    },
-    {
-      actual: 'true',
-      example: false,
-      result: true
-    },
-    {
-      actual: 'false',
-      example: false,
-      result: false
-    },
+    { actual: true, example: false, result: true },
+    { actual: 'true', example: false, result: true },
+    { actual: 'false', example: false, result: false },
+
     ////////////////////////////////////////////
     // DICTIONARIES
     ////////////////////////////////////////////
