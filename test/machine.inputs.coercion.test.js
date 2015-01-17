@@ -108,8 +108,32 @@ describe('Machine input coercion', function() {
     });
   });
 
-});
+  it('should fail if input expects string, but `{foo:{bar: "baz"}}` is provided', function(done) {
+    testInputConfiguration({
+      example: 'asdf',
+      actual: {foo:{bar: "baz"}}
+    }, function (err, result){
+      if (!err) {
+        return done(new Error('Expected `error` outcome- instead no error, and got result:'+util.inspect(result)));
+      }
+      return done();
+    });
+  });
 
+  it('should fail if input expects number, but `{foo:{bar: "baz"}}` is provided', function(done) {
+    testInputConfiguration({
+      example: 1234,
+      actual: {foo:{bar: "baz"}}
+    }, function (err, result){
+      if (!err) {
+        return done(new Error('Expected `error` outcome- instead no error, and got result:'+util.inspect(result)));
+      }
+      return done();
+    });
+  });
+
+
+});
 
 
 
