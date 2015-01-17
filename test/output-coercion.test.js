@@ -11,16 +11,42 @@ var testExitCoercion = require('./helpers/test-exit-coercion.helper');
 describe('exit output coercion', function (){
 
   var EXIT_TEST_SUITE = [
+    ////////////////////////////////////////////
+    // STRINGS
+    ////////////////////////////////////////////
     {
-      actual: 'bar',
       example: 'foo',
+      actual: 'bar',
       result: 'bar'
     },
     {
-      actual: 'bar',
       example: 'foo',
+      actual: 'bar',
       result: 'bar'
     },
+    {
+      example: 'foo',
+      actual: 1,
+      result: '1'
+    },
+    {
+      example: 'foo',
+      actual: -1.1,
+      result: '-1.1'
+    },
+    {
+      example: 'foo',
+      actual: true,
+      result: 'true'
+    },
+    {
+      example: 'foo',
+      actual: false,
+      result: 'false'
+    },
+    ////////////////////////////////////////////
+    // NUMBERS
+    ////////////////////////////////////////////
     {
       actual: 4.5,
       example: 123,
@@ -41,6 +67,9 @@ describe('exit output coercion', function (){
       example: 123,
       result: 0,
     },
+    ////////////////////////////////////////////
+    // BOOLEANS
+    ////////////////////////////////////////////
     {
       actual: true,
       example: false,
@@ -56,6 +85,18 @@ describe('exit output coercion', function (){
       example: false,
       result: false
     },
+    ////////////////////////////////////////////
+    // DICTIONARIES
+    ////////////////////////////////////////////
+
+    ////////////////////////////////////////////
+    // ARRAYS
+    ////////////////////////////////////////////
+
+
+    ////////////////////////////////////////////
+    // MISC
+    ////////////////////////////////////////////
   ];
 
   _.each(EXIT_TEST_SUITE, function (test){

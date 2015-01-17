@@ -37,7 +37,7 @@ module.exports = function testExitCoercion(options, cb){
 
     // validate against expected output
     if (!_.isEqual(result, options.result)){
-      return cb(err, result);
+      return cb(new Error('Unexpected result; got:' + util.inspect(result,false, null)));
     }
     return cb();
   });
