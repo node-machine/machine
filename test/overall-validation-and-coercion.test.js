@@ -127,7 +127,7 @@ describe('exit coercion', function (){
     {
       actual: 'asgasdgjasdg',
       example: 123,
-      error: true
+      result: 0,
     },
     {
       actual: true,
@@ -174,7 +174,7 @@ describe('exit coercion', function (){
       }
       else {
         it(util.format('should coerce %s', util.inspect(test.actual, false, null), 'into '+util.inspect(test.result, false, null)+''), function (done){
-          testInputValidation(test, done);
+          testExitCoercion(test, done);
         });
       }
     });
@@ -266,8 +266,11 @@ function testExitCoercion(options, cb){
   })
   .exec(function (err, result){
     if (err) return cb(new Error('Unexpected error:'+require('util').inspect(err, false, null)));
-    var expectedOutputValue = options.result;
-    // TODO validate against expected output
-    return cb(err, result);
+
+    // validate against expected output
+    if (!_.isEqual(result, options.result)){
+      return cb(err, result);
+    }
+    return cb();
   });
 }
