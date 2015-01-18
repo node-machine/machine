@@ -296,6 +296,7 @@ describe('input validation/coercion', function (){
 
   ];
 
+  // Initially run all tests as-is.
   _.each(INPUT_TEST_SUITE, function runTest(test){
 
 
@@ -318,7 +319,15 @@ describe('input validation/coercion', function (){
       });
     }
 
-    // // Inject extra tests if an example is specified....
+    describeAndExecuteTest(test);
+  });
+
+
+
+  // Now loop through the entire suite again to inject extra tests
+  // to ensure correct behavior when recursive examples/values are provided.
+  _.each(INPUT_TEST_SUITE, function runTest(test){
+
     // if (!_.isUndefined(test.example)){
     //   // test one level of additional dictionary nesting
     //   runTest({
@@ -327,9 +336,8 @@ describe('input validation/coercion', function (){
     //     result: { xtra: test.result }
     //   });
     // }
-
-    describeAndExecuteTest(test);
   });
+
 });
 
 
