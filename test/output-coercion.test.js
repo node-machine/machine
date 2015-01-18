@@ -241,6 +241,9 @@ describe('exit output coercion', function (){
     // Skip tests that expect errors
     if (test.error) return;
 
+    // Skip tests that expect a void output
+    if (test.void) return;
+
     // Skip tests that expect `undefined`
     // (nested behavior is different in this case)
     if (test.result === undefined) return;
@@ -319,6 +322,9 @@ function describeAndExecuteTest(test){
 
   describe((function _determineDescribeMsg(){
     var msg = '';
+    if (test._meta) {
+      msg += '['+test._meta+']';
+    }
     if (test.void){
       msg += 'void exit ';
     }
