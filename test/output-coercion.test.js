@@ -223,6 +223,50 @@ describe('exit output coercion', function (){
     { example: [], actual: new Buffer('asdf'), result: [] },
     { example: [], actual: new Error('asdf'), result: [] },
 
+    ////////////////////////////////////////////
+    // MISC
+    ////////////////////////////////////////////
+
+    { example: undefined, actual: 'bar', result: 'bar',  },
+    { example: undefined, actual: '', result: '',  },
+    { example: undefined, actual: '-1.1', result: '-1.1',  },
+    { example: undefined, actual: 'NaN', result: 'NaN',  },
+    { example: undefined, actual: 'undefined', result: 'undefined',  },
+    { example: undefined, actual: 'null', result: 'null',  },
+    { example: undefined, actual: '-Infinity', result: '-Infinity',  },
+    { example: undefined, actual: 'Infinity', result: 'Infinity',  },
+    { example: undefined, actual: 'true', result: 'true',  },
+    { example: undefined, actual: 'false', result: 'false',  },
+    { example: undefined, actual: '0', result: '0',  },
+    { example: undefined, actual: '1', result: '1',  },
+
+    { example: undefined, actual: 0, result: 0,  },
+    { example: undefined, actual: 1, result: 1,  },
+    { example: undefined, actual: -1.1, result: -1.1,  },
+
+    { example: undefined, actual: true, result: true,  },
+    { example: undefined, actual: false, result: false,  },
+
+    { example: undefined, actual: {}, result: {},  },
+    { example: undefined, actual: {foo:'bar'}, result: {foo:'bar'},  },
+    { example: undefined, actual: {foo:{bar:{baz:{}}}}, result: {foo:{bar:{baz:{}}}},  },
+    { example: undefined, actual: {foo:['bar']}, result: {foo:['bar']},  },
+    { example: undefined, actual: {foo:{bar:{baz:[{}]}}}, result: {foo:{bar:{baz:[{}]}}},  },
+
+    { example: undefined, actual: [], result: [],  },
+    { example: undefined, actual: ['asdf'], result: ['asdf'],  },
+    { example: undefined, actual: [''], result: [''],  },
+    { example: undefined, actual: [235], result: [235],  },
+    { example: undefined, actual: [false], result: [false],  },
+    { example: undefined, actual: [{}], result: [{}],  },
+    { example: undefined, actual: [{foo:'bar'}], result: [{foo:'bar'}],  },
+
+    { example: undefined, actual: undefined, result: undefined,  },
+
+    { example: undefined, actual: NaN, result: NaN,  },
+    { example: undefined, actual: Infinity, result: Infinity,  },
+    { example: undefined, actual: -Infinity, result: -Infinity,  },
+    { example: undefined, actual: null, result: null,  },
 
   ];
 
@@ -234,84 +278,84 @@ describe('exit output coercion', function (){
 
   // Now loop through the entire suite again to inject extra tests
   // to ensure correct behavior when recursive examples/values are provided.
-  _.each(EXIT_TEST_SUITE, function (test){
-    // Skip tests without examples
-    if (_.isUndefined(test.example)) return;
+  // _.each(EXIT_TEST_SUITE, function (test){
+  //   // Skip tests without examples
+  //   if (_.isUndefined(test.example)) return;
 
-    // Skip tests that expect errors
-    if (test.error) return;
+  //   // Skip tests that expect errors
+  //   if (test.error) return;
 
-    // Skip tests that expect a void output
-    if (test.void) return;
+  //   // Skip tests that expect a void output
+  //   if (test.void) return;
 
-    // Skip tests that expect `undefined`
-    // (nested behavior is different in this case)
-    if (test.result === undefined) return;
+  //   // Skip tests that expect `undefined`
+  //   // (nested behavior is different in this case)
+  //   if (test.result === undefined) return;
 
-    // test one level of additional array nesting
-    describeAndExecuteTest({
-      example: [ test.example ],
-      actual: [ test.actual ],
-      result: [ test.result ],
-      _meta: '+1 array depth'
-    });
+  //   // test one level of additional array nesting
+  //   describeAndExecuteTest({
+  //     example: [ test.example ],
+  //     actual: [ test.actual ],
+  //     result: [ test.result ],
+  //     _meta: '+1 array depth'
+  //   });
 
-    // test one level of additional dictionary nesting
-    describeAndExecuteTest({
-      example: { xtra: test.example },
-      actual: { xtra: test.actual },
-      result: { xtra: test.result },
-      _meta: '+1 dictionary depth'
-    });
+  //   // test one level of additional dictionary nesting
+  //   describeAndExecuteTest({
+  //     example: { xtra: test.example },
+  //     actual: { xtra: test.actual },
+  //     result: { xtra: test.result },
+  //     _meta: '+1 dictionary depth'
+  //   });
 
-    // test one level of additional dictionary nesting AND 1 level of additional array nesting
-    describeAndExecuteTest({
-      example: [ { xtra: test.example } ],
-      actual: [ { xtra: test.actual } ],
-      result: [ { xtra: test.result } ],
-      _meta: '+1 array depth, +1 dictionary depth'
-    });
+  //   // test one level of additional dictionary nesting AND 1 level of additional array nesting
+  //   describeAndExecuteTest({
+  //     example: [ { xtra: test.example } ],
+  //     actual: [ { xtra: test.actual } ],
+  //     result: [ { xtra: test.result } ],
+  //     _meta: '+1 array depth, +1 dictionary depth'
+  //   });
 
-    // test two levels of additional dictionary nesting
-    describeAndExecuteTest({
-      example: { xtra: { xtra2: test.example } },
-      actual: { xtra: { xtra2: test.actual } },
-      result: { xtra:{ xtra2: test.result } },
-      _meta: '+2 dictionary depth'
-    });
+  //   // test two levels of additional dictionary nesting
+  //   describeAndExecuteTest({
+  //     example: { xtra: { xtra2: test.example } },
+  //     actual: { xtra: { xtra2: test.actual } },
+  //     result: { xtra:{ xtra2: test.result } },
+  //     _meta: '+2 dictionary depth'
+  //   });
 
-    // test two levels of additional array nesting
-    describeAndExecuteTest({
-      example: [ [ test.example ] ],
-      actual:  [ [ test.actual ] ],
-      result:  [ [ test.result ] ],
-      _meta: '+2 array depth'
-    });
+  //   // test two levels of additional array nesting
+  //   describeAndExecuteTest({
+  //     example: [ [ test.example ] ],
+  //     actual:  [ [ test.actual ] ],
+  //     result:  [ [ test.result ] ],
+  //     _meta: '+2 array depth'
+  //   });
 
-    // test two levels of additional dictionary nesting AND 1 level of array nesting
-    describeAndExecuteTest({
-      example: [ { xtra: { xtra2: test.example } } ],
-      actual: [ { xtra: { xtra2: test.actual } } ],
-      result: [ { xtra:{ xtra2: test.result } } ],
-      _meta: '+1 array depth, +2 dictionary depth'
-    });
+  //   // test two levels of additional dictionary nesting AND 1 level of array nesting
+  //   describeAndExecuteTest({
+  //     example: [ { xtra: { xtra2: test.example } } ],
+  //     actual: [ { xtra: { xtra2: test.actual } } ],
+  //     result: [ { xtra:{ xtra2: test.result } } ],
+  //     _meta: '+1 array depth, +2 dictionary depth'
+  //   });
 
-    // test two levels of additional dictionary nesting and one level of array nesting, then WITHIN that, 1 level of array nesting
-    describeAndExecuteTest({
-      example: [ { xtra: { xtra2: [test.example] } } ],
-      actual: [ { xtra: { xtra2: [test.actual] } } ],
-      result: [ { xtra:{ xtra2: [test.result] } } ],
-      _meta: '+1 array depth, +2 dictionary depth, +1 nested array depth'
-    });
+  //   // test two levels of additional dictionary nesting and one level of array nesting, then WITHIN that, 1 level of array nesting
+  //   describeAndExecuteTest({
+  //     example: [ { xtra: { xtra2: [test.example] } } ],
+  //     actual: [ { xtra: { xtra2: [test.actual] } } ],
+  //     result: [ { xtra:{ xtra2: [test.result] } } ],
+  //     _meta: '+1 array depth, +2 dictionary depth, +1 nested array depth'
+  //   });
 
-    // test two levels of additional dictionary nesting and one level of array nesting, then WITHIN that, 2 levels of array nesting
-    describeAndExecuteTest({
-      example: [ { xtra: { xtra2: [[test.example]] } } ],
-      actual: [ { xtra: { xtra2: [[test.actual]] } } ],
-      result: [ { xtra:{ xtra2: [[test.result]] } } ],
-      _meta: '+1 array depth, +2 dictionary depth, +2 nested array depth'
-    });
-  });
+  //   // test two levels of additional dictionary nesting and one level of array nesting, then WITHIN that, 2 levels of array nesting
+  //   describeAndExecuteTest({
+  //     example: [ { xtra: { xtra2: [[test.example]] } } ],
+  //     actual: [ { xtra: { xtra2: [[test.actual]] } } ],
+  //     result: [ { xtra:{ xtra2: [[test.result]] } } ],
+  //     _meta: '+1 array depth, +2 dictionary depth, +2 nested array depth'
+  //   });
+  // });
 
 });
 
