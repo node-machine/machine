@@ -297,12 +297,15 @@ describe('input validation/coercion', function (){
   ];
 
   // Initially run all tests as-is.
-  _.each(INPUT_TEST_SUITE, function runTest(test){
+  _.each(INPUT_TEST_SUITE, function runInitialTest(test){
+    describeAndExecuteTest(test);
+  });
 
-
+  // Then run applicable tests again, but using `typeclass`
+  _.each(INPUT_TEST_SUITE, function (test){
     // Inject extra test to try `example:{}` as `typeclass: 'dictionary'`
     if (_.isEqual(test.example, {})) {
-      runTest({
+      describeAndExecuteTest({
         typeclass: 'dictionary',
         actual: test.actual,
         result: test.result,
@@ -311,24 +314,22 @@ describe('input validation/coercion', function (){
     }
     // Inject extra test to try `example:[]` as `typeclass: 'array'`
     else if (_.isEqual(test.example, [])) {
-      runTest({
+      describeAndExecuteTest({
         typeclass: 'array',
         actual: test.actual,
         result: test.result,
         error: test.error
       });
     }
-
-    describeAndExecuteTest(test);
   });
 
 
 
   // Now loop through the entire suite again to inject extra tests
   // to ensure correct behavior when recursive examples/values are provided.
-  _.each(INPUT_TEST_SUITE, function runTest(test){
+  _.each(INPUT_TEST_SUITE, function (test){
 
-    // if (!_.isUndefined(test.example)){
+    // if (!_.isUndefined(test.example) && !test.error){
     //   // test one level of additional dictionary nesting
     //   runTest({
     //     example: { xtra: test.example },
