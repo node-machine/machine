@@ -93,8 +93,6 @@ describe('exit output coercion', function (){
     ////////////////////////////////////////////
     { example: true, actual: 'bar', result: false },
     { example: true, actual: '', result: false },
-    { example: true, actual: '0', result: false },
-    { example: true, actual: '1', result: false },
     { example: true, actual: '-1.1', result: false },
     { example: true, actual: 'NaN', result: false },
     { example: true, actual: 'undefined', result: false },
@@ -103,6 +101,8 @@ describe('exit output coercion', function (){
     { example: true, actual: 'Infinity', result: false },
     { example: true, actual: 'true', result: true },
     { example: true, actual: 'false', result: false },
+    { example: true, actual: '0', result: false },
+    { example: true, actual: '1', result: true },
 
     { example: true, actual: 0, result: false },
     { example: true, actual: 1, result: true },
