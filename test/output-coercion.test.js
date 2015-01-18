@@ -135,12 +135,58 @@ describe('exit output coercion', function (){
     // DICTIONARIES
     ////////////////////////////////////////////
 
+    { example: {}, actual: 'bar', result: {} },
+    { example: {}, actual: 123, result: {} },
+    { example: {}, actual: true, result: {} },
+
+    { example: {}, actual: {}, result: {} },
+    { example: {}, actual: {foo:'bar'}, result: {foo:'bar'} },
+    { example: {}, actual: {foo:{bar:{baz:{}}}}, result: {foo:{bar:{baz:{}}}} },
+    { example: {}, actual: {foo:['bar']}, result: {foo:['bar']} },
+    { example: {}, actual: {foo:{bar:{baz:[{}]}}}, result: {foo:{bar:{baz:[{}]}}} },
+
+    { example: {}, actual: [], result: {} },
+    { example: {}, actual: ['asdf'], result: {} },
+    { example: {}, actual: [''], result: {} },
+    { example: {}, actual: [235], result: {} },
+    { example: {}, actual: [false], result: {} },
+    { example: {}, actual: [{}], result: {} },
+    { example: {}, actual: [{foo:'bar'}], result: {} },
+
+    { example: {}, actual: undefined, result: {} },
+    { example: {}, actual: NaN, result: {} },
+    { example: {}, actual: Infinity, result: {} },
+    { example: {}, actual: -Infinity, result: {} },
+    { example: {}, actual: null, result: {} },
 
 
     ////////////////////////////////////////////
     // ARRAYS
     ////////////////////////////////////////////
 
+    { example: [], actual: 'bar', result: [] },
+    { example: [], actual: 123, result: [] },
+    { example: [], actual: true, result: [] },
+
+    { example: [], actual: {}, result: [] },
+    { example: [], actual: {foo:'bar'}, result: [] },
+    { example: [], actual: {foo:{bar:{baz:{}}}}, result: [] },
+    { example: [], actual: {foo:['bar']}, result: [] },
+    { example: [], actual: {foo:{bar:{baz:[{}]}}}, result: [] },
+
+    { example: [], actual: [], result: [] },
+    { example: [], actual: ['asdf'], result: ['asdf'] },
+    { example: [], actual: [''], result: [''] },
+    { example: [], actual: [235], result: [235] },
+    { example: [], actual: [false], result: [false] },
+    { example: [], actual: [{}], result: [{}] },
+    { example: [], actual: [{foo:'bar'}], result: [{foo: 'bar'}] },
+
+    { example: [], actual: undefined, result: [] },
+    { example: [], actual: NaN, result: [] },
+    { example: [], actual: Infinity, result: [] },
+    { example: [], actual: -Infinity, result: [] },
+    { example: [], actual: null, result: [] },
 
     ////////////////////////////////////////////
     // MISC
