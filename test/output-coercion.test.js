@@ -183,7 +183,7 @@ describe('exit output coercion', function (){
     { example: {}, actual: /some regexp/, result: {} },
     { example: {}, actual: function(){}, result: {} },
     { example: {}, actual: new Date('November 5, 1605'), result: {} },
-    { example: {}, actual: new Readable(), result: {} },
+    { example: {}, actual: new Readable(), result: { _readableState: { highWaterMark: 16384, buffer: [], length: 0, pipes: null, pipesCount: 0, flowing: false, ended: false, endEmitted: false, reading: false, calledRead: false, sync: true, needReadable: false, emittedReadable: false, readableListening: false, objectMode: false, defaultEncoding: 'utf8', ranOut: false, awaitDrain: 0, readingMore: false, decoder: null, encoding: null }, readable: true, domain: null, _events: {}, _maxListeners: 10 } },
     { example: {}, actual: new Buffer('asdf'), result: {} },
     { example: {}, actual: new Error('asdf'), result: {} },  // TODO: consider enhancing this behavior to guarantee e.g. `.message` (string), `.stack` (string), `.code` (string), and `.status` (number).  Needs community discussion
 
@@ -278,84 +278,84 @@ describe('exit output coercion', function (){
 
   // Now loop through the entire suite again to inject extra tests
   // to ensure correct behavior when recursive examples/values are provided.
-  // _.each(EXIT_TEST_SUITE, function (test){
-  //   // Skip tests without examples
-  //   if (_.isUndefined(test.example)) return;
+  _.each(EXIT_TEST_SUITE, function (test){
+    // Skip tests without examples
+    if (_.isUndefined(test.example)) return;
 
-  //   // Skip tests that expect errors
-  //   if (test.error) return;
+    // Skip tests that expect errors
+    if (test.error) return;
 
-  //   // Skip tests that expect a void output
-  //   if (test.void) return;
+    // Skip tests that expect a void output
+    if (test.void) return;
 
-  //   // Skip tests that expect `undefined`
-  //   // (nested behavior is different in this case)
-  //   if (test.result === undefined) return;
+    // Skip tests that expect `undefined`
+    // (nested behavior is different in this case)
+    if (test.result === undefined) return;
 
-  //   // test one level of additional array nesting
-  //   describeAndExecuteTest({
-  //     example: [ test.example ],
-  //     actual: [ test.actual ],
-  //     result: [ test.result ],
-  //     _meta: '+1 array depth'
-  //   });
+    // test one level of additional array nesting
+    describeAndExecuteTest({
+      example: [ test.example ],
+      actual: [ test.actual ],
+      result: [ test.result ],
+      _meta: '+1 array depth'
+    });
 
-  //   // test one level of additional dictionary nesting
-  //   describeAndExecuteTest({
-  //     example: { xtra: test.example },
-  //     actual: { xtra: test.actual },
-  //     result: { xtra: test.result },
-  //     _meta: '+1 dictionary depth'
-  //   });
+    // test one level of additional dictionary nesting
+    describeAndExecuteTest({
+      example: { xtra: test.example },
+      actual: { xtra: test.actual },
+      result: { xtra: test.result },
+      _meta: '+1 dictionary depth'
+    });
 
-  //   // test one level of additional dictionary nesting AND 1 level of additional array nesting
-  //   describeAndExecuteTest({
-  //     example: [ { xtra: test.example } ],
-  //     actual: [ { xtra: test.actual } ],
-  //     result: [ { xtra: test.result } ],
-  //     _meta: '+1 array depth, +1 dictionary depth'
-  //   });
+    // test one level of additional dictionary nesting AND 1 level of additional array nesting
+    describeAndExecuteTest({
+      example: [ { xtra: test.example } ],
+      actual: [ { xtra: test.actual } ],
+      result: [ { xtra: test.result } ],
+      _meta: '+1 array depth, +1 dictionary depth'
+    });
 
-  //   // test two levels of additional dictionary nesting
-  //   describeAndExecuteTest({
-  //     example: { xtra: { xtra2: test.example } },
-  //     actual: { xtra: { xtra2: test.actual } },
-  //     result: { xtra:{ xtra2: test.result } },
-  //     _meta: '+2 dictionary depth'
-  //   });
+    // test two levels of additional dictionary nesting
+    describeAndExecuteTest({
+      example: { xtra: { xtra2: test.example } },
+      actual: { xtra: { xtra2: test.actual } },
+      result: { xtra:{ xtra2: test.result } },
+      _meta: '+2 dictionary depth'
+    });
 
-  //   // test two levels of additional array nesting
-  //   describeAndExecuteTest({
-  //     example: [ [ test.example ] ],
-  //     actual:  [ [ test.actual ] ],
-  //     result:  [ [ test.result ] ],
-  //     _meta: '+2 array depth'
-  //   });
+    // test two levels of additional array nesting
+    describeAndExecuteTest({
+      example: [ [ test.example ] ],
+      actual:  [ [ test.actual ] ],
+      result:  [ [ test.result ] ],
+      _meta: '+2 array depth'
+    });
 
-  //   // test two levels of additional dictionary nesting AND 1 level of array nesting
-  //   describeAndExecuteTest({
-  //     example: [ { xtra: { xtra2: test.example } } ],
-  //     actual: [ { xtra: { xtra2: test.actual } } ],
-  //     result: [ { xtra:{ xtra2: test.result } } ],
-  //     _meta: '+1 array depth, +2 dictionary depth'
-  //   });
+    // test two levels of additional dictionary nesting AND 1 level of array nesting
+    describeAndExecuteTest({
+      example: [ { xtra: { xtra2: test.example } } ],
+      actual: [ { xtra: { xtra2: test.actual } } ],
+      result: [ { xtra:{ xtra2: test.result } } ],
+      _meta: '+1 array depth, +2 dictionary depth'
+    });
 
-  //   // test two levels of additional dictionary nesting and one level of array nesting, then WITHIN that, 1 level of array nesting
-  //   describeAndExecuteTest({
-  //     example: [ { xtra: { xtra2: [test.example] } } ],
-  //     actual: [ { xtra: { xtra2: [test.actual] } } ],
-  //     result: [ { xtra:{ xtra2: [test.result] } } ],
-  //     _meta: '+1 array depth, +2 dictionary depth, +1 nested array depth'
-  //   });
+    // test two levels of additional dictionary nesting and one level of array nesting, then WITHIN that, 1 level of array nesting
+    describeAndExecuteTest({
+      example: [ { xtra: { xtra2: [test.example] } } ],
+      actual: [ { xtra: { xtra2: [test.actual] } } ],
+      result: [ { xtra:{ xtra2: [test.result] } } ],
+      _meta: '+1 array depth, +2 dictionary depth, +1 nested array depth'
+    });
 
-  //   // test two levels of additional dictionary nesting and one level of array nesting, then WITHIN that, 2 levels of array nesting
-  //   describeAndExecuteTest({
-  //     example: [ { xtra: { xtra2: [[test.example]] } } ],
-  //     actual: [ { xtra: { xtra2: [[test.actual]] } } ],
-  //     result: [ { xtra:{ xtra2: [[test.result]] } } ],
-  //     _meta: '+1 array depth, +2 dictionary depth, +2 nested array depth'
-  //   });
-  // });
+    // test two levels of additional dictionary nesting and one level of array nesting, then WITHIN that, 2 levels of array nesting
+    describeAndExecuteTest({
+      example: [ { xtra: { xtra2: [[test.example]] } } ],
+      actual: [ { xtra: { xtra2: [[test.actual]] } } ],
+      result: [ { xtra:{ xtra2: [[test.result]] } } ],
+      _meta: '+1 array depth, +2 dictionary depth, +2 nested array depth'
+    });
+  });
 
 });
 

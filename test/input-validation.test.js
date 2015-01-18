@@ -189,7 +189,7 @@ describe('input validation/coercion', function (){
     { example: {}, actual: /some regexp/, result: {} },
     { example: {}, actual: function(){}, error: true },
     { example: {}, actual: new Date('November 5, 1605'), error: true },
-    { example: {}, actual: new Readable(), error: true },
+    { example: {}, actual: new Readable(), result: { _readableState: { highWaterMark: 16384, buffer: [], length: 0, pipes: null, pipesCount: 0, flowing: false, ended: false, endEmitted: false, reading: false, calledRead: false, sync: true, needReadable: false, emittedReadable: false, readableListening: false, objectMode: false, defaultEncoding: 'utf8', ranOut: false, awaitDrain: 0, readingMore: false, decoder: null, encoding: null }, readable: true, domain: null, _events: {}, _maxListeners: 10 } },
     { example: {}, actual: new Buffer('asdf'), error: true },
     { example: {}, actual: new Error('asdf'), result: {} },  // TODO: consider enhancing this behavior to guarantee e.g. `.message` (string), `.stack` (string), `.code` (string), and `.status` (number).  Needs community discussion
 
