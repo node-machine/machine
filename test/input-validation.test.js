@@ -187,10 +187,10 @@ describe('input validation/coercion', function (){
     { example: {}, actual: null, error: true },
 
     { example: {}, actual: /some regexp/, result: {} },
-    { example: {}, actual: function(){}, result: {} },
+    { example: {}, actual: function(){}, error: true },
     { example: {}, actual: new Date('November 5, 1605'), error: true },
-    { example: {}, actual: new Readable(), error: true },
-    { example: {}, actual: new Buffer('asdf'), result: {} },
+    { example: {}, actual: new Readable(), result: {} },
+    { example: {}, actual: new Buffer('asdf'), error: true },
     { example: {}, actual: new Error('asdf'), result: {} },  // TODO: consider enhancing this behavior to guarantee e.g. `.message` (string), `.stack` (string), `.code` (string), and `.status` (number).  Needs community discussion
 
 
@@ -291,14 +291,14 @@ describe('input validation/coercion', function (){
     // Inject extra test to try `example:{}` as `typeclass: 'dictionary'`
     var test2;
     if (_.isEqual(test.example, {})) {
-      test2 = _.cloneDeep(test);
+      test2 = test;
       delete test2.example;
       test2.typeclass = 'dictionary';
       runTest(test2);
     }
     // Inject extra test to try `example:[]` as `typeclass: 'array'`
     if (_.isEqual(test.example, [])) {
-      test2 = _.cloneDeep(test);
+      test2 = test;
       delete test2.example;
       test2.typeclass = 'array';
       runTest(test2);
