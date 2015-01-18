@@ -275,12 +275,24 @@ describe('input validation/coercion', function (){
     { typeclass: '*', actual: -Infinity, result: -Infinity,  },
     { typeclass: '*', actual: null, result: null,  },
 
-    { typeclass: '*', actual: /some regexp/, result: /some regexp/,  },
-    { typeclass: '*', actual: function(){}, result: function(){},  },
+    (function (){
+      var regexp = /some regexp/;
+      return { typeclass: '*', actual: regexp, result: regexp,  };
+    })(),
+    (function (){
+      var fn = function (){};
+      return { typeclass: '*', actual: fn, result: fn,  };
+    })(),
     { typeclass: '*', actual: new Date('November 5, 1605'), result: new Date('November 5, 1605'),  },
     { typeclass: '*', actual: new Readable(), result: new Readable(),  },
-    { typeclass: '*', actual: new Buffer('asdf'), result: new Buffer('asdf'),  },
-    { typeclass: '*', actual: new Error('asdf'), result: new Error('asdf'),  },
+    (function (){
+      var buffer = new Buffer('asdf');
+      return { typeclass: '*', actual: buffer, result: buffer  };
+    })(),
+    (function (){
+      var err = new Error('asdf');
+      return { typeclass: '*', actual: err, result: err,  };
+    })()
 
   ];
 

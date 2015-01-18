@@ -62,17 +62,7 @@ module.exports = function testInputValidation(options, cb){
       }
 
       var isEqual = (function (){
-        if (_.isFunction(_inputsInFn.x) && _.isFunction(options.result)) {
-          return _inputsInFn.x.toString() === options.result.toString();
-        }
-        if (_.isObject(_inputsInFn.x) && _.isObject(options.result)){
-          if (_inputsInFn.x instanceof Buffer && options.result instanceof Buffer) {
-            return _inputsInFn.x.toString() === options.result.toString();
-          }
-          if (_inputsInFn.x instanceof Error && options.result instanceof Error) {
-            return _inputsInFn.x.toString() === options.result.toString();
-          }
-        }
+
         return _.isEqual(_inputsInFn.x, options.result);
       })();
 
