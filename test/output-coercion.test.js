@@ -5,7 +5,7 @@
 var util = require('util');
 var _ = require('lodash');
 var testExitCoercion = require('./helpers/test-exit-coercion.helper');
-var Writable = require('stream').Writable;
+var Readable = require('stream').Readable;
 
 
 describe('exit output coercion', function (){
@@ -49,7 +49,7 @@ describe('exit output coercion', function (){
     { example: 'foo', actual: /some regexp/, result: '' },
     { example: 'foo', actual: function(){}, result: '' },
     { example: 'foo', actual: new Date('November 5, 1605'), result: '1605-11-05T07:00:00.000Z' },
-    { example: 'foo', actual: new Writable(), result: '' }, // TODO: consider buffering into a string..?  needs community discussion
+    { example: 'foo', actual: new Readable(), result: '' }, // TODO: consider buffering into a string..?  needs community discussion
     { example: 'foo', actual: new Buffer('asdf'), result: '' }, // TODO: consider converting to string
     { example: 'foo', actual: new Error('asdf'), result: '' }, // TODO: consider converting to error stack trace
 
@@ -98,7 +98,7 @@ describe('exit output coercion', function (){
     { example: 123, actual: /some regexp/, result: 0 },
     { example: 123, actual: function(){}, result: 0 },
     { example: 123, actual: new Date('November 5, 1605'), result: 0 }, // TODO: consider enhancing this to return an epoch timestamp (number of miliseconds since Jan 1, 1970). In this case, would be: -11491606800000
-    { example: 123, actual: new Writable(), result: 0 }, // TODO: ??? maybe num bytes read so far?
+    { example: 123, actual: new Readable(), result: 0 }, // TODO: ??? maybe num bytes read so far?
     { example: 123, actual: new Buffer('asdf'), result: 0 },  // TODO: ??? maybe size of the buffer in bytes?
     { example: 123, actual: new Error('asdf'), result: 0 }, // TODO: ??? maybe `.status`?
 
@@ -148,7 +148,7 @@ describe('exit output coercion', function (){
     { example: true, actual: /some regexp/, result: false },
     { example: true, actual: function(){}, result: false },
     { example: true, actual: new Date('November 5, 1605'), result: false },
-    { example: true, actual: new Writable(), result: false },
+    { example: true, actual: new Readable(), result: false },
     { example: true, actual: new Buffer('asdf'), result: false },
     { example: true, actual: new Error('asdf'), result: false },
 
@@ -183,7 +183,7 @@ describe('exit output coercion', function (){
     { example: {}, actual: /some regexp/, result: {} },
     { example: {}, actual: function(){}, result: {} },
     { example: {}, actual: new Date('November 5, 1605'), result: {} },
-    { example: {}, actual: new Writable(), result: {} },
+    { example: {}, actual: new Readable(), result: {} },
     { example: {}, actual: new Buffer('asdf'), result: {} },
     { example: {}, actual: new Error('asdf'), result: {} },  // TODO: consider enhancing this behavior to guarantee e.g. `.message` (string), `.stack` (string), `.code` (string), and `.status` (number).  Needs community discussion
 
@@ -219,7 +219,7 @@ describe('exit output coercion', function (){
     { example: [], actual: /some regexp/, result: [] },
     { example: [], actual: function(){}, result: [] },
     { example: [], actual: new Date('November 5, 1605'), result: [] },
-    { example: [], actual: new Writable(), result: [] }, // TODO: consider enhancing this behavior to concat the stream contents? Needs community discussion.
+    { example: [], actual: new Readable(), result: [] }, // TODO: consider enhancing this behavior to concat the stream contents? Needs community discussion.
     { example: [], actual: new Buffer('asdf'), result: [] },
     { example: [], actual: new Error('asdf'), result: [] },
 
