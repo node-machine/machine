@@ -51,7 +51,7 @@ describe('exit output coercion', function (){
     { example: 'foo', actual: new Date('November 5, 1605'), result: '' }, // TODO: '1605-11-05T07:00:00.000Z'
     { example: 'foo', actual: new Writable(), result: '' }, // TODO: consider buffering into a string..?  needs community discussion
     { example: 'foo', actual: new Buffer('asdf'), result: '' }, // TODO: consider converting to string
-    { example: 'foo', actual: new Error('asdf'), result: '' }, // TODO: show `.toString()`
+    { example: 'foo', actual: new Error('asdf'), result: '' }, // TODO: consider converting to error stack trace
 
     ////////////////////////////////////////////
     // NUMBERS
