@@ -224,6 +224,13 @@ describe('exit output coercion', function (){
     { example: [], actual: new Error('asdf'), result: [] },
 
     ////////////////////////////////////////////
+    // RECURSIVE OBJECTS
+    ////////////////////////////////////////////
+
+    { example: {a:1, b:'hi', c: false}, actual: {a: 23}, result: {a: 23, b: '', c: false}  },
+    { example: {a:1, b:'hi', c: false}, actual: {a: 23, d: true}, result: {a: 23, b: '', c: false}  },
+
+    ////////////////////////////////////////////
     // MISC
     ////////////////////////////////////////////
 

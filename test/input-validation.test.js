@@ -231,6 +231,13 @@ describe('input validation/coercion', function (){
     { example: [], actual: new Error('asdf'), error: true },
 
     ////////////////////////////////////////////
+    // RECURSIVE OBJECTS
+    ////////////////////////////////////////////
+
+    { example: {a:1, b:'hi', c: false}, actual: {a: 1}, error: true  },
+    { example: {a:1, b:'hi'}, actual: {a: 23, b: 'stuff', d: true}, result: {a: 23, b: 'stuff'}  },
+
+    ////////////////////////////////////////////
     // MISC
     ////////////////////////////////////////////
 
