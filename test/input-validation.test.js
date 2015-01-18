@@ -161,9 +161,9 @@ describe('input validation/coercion', function (){
     // DICTIONARIES
     ////////////////////////////////////////////
 
-    { example: {}, actual: 'bar', result: {} },
-    { example: {}, actual: 123, result: {} },
-    { example: {}, actual: true, result: {} },
+    // { example: {}, actual: 'bar', error: true },
+    // { example: {}, actual: 123, error: true },
+    // { example: {}, actual: true, error: true },
 
     { example: {}, actual: {}, result: {} },
     { example: {}, actual: {foo:'bar'}, result: {foo:'bar'} },
@@ -171,20 +171,20 @@ describe('input validation/coercion', function (){
     { example: {}, actual: {foo:['bar']}, result: {foo:['bar']} },
     { example: {}, actual: {foo:{bar:{baz:[{}]}}}, result: {foo:{bar:{baz:[{}]}}} },
 
-    { example: {}, actual: [], result: {} },
-    { example: {}, actual: ['asdf'], result: {} },
-    { example: {}, actual: [''], result: {} },
-    { example: {}, actual: [235], result: {} },
-    { example: {}, actual: [false], result: {} },
-    { example: {}, actual: [{}], result: {} },
-    { example: {}, actual: [{foo:'bar'}], result: {} },
+    // { example: {}, actual: [], error: true },
+    // { example: {}, actual: ['asdf'], error: true },
+    // { example: {}, actual: [''], error: true },
+    // { example: {}, actual: [235], error: true },
+    // { example: {}, actual: [false], error: true },
+    // { example: {}, actual: [{}], error: true },
+    // { example: {}, actual: [{foo:'bar'}], error: true },
 
     { example: {}, actual: undefined, result: undefined },
 
-    { example: {}, actual: NaN, result: {} },
-    { example: {}, actual: Infinity, result: {} },
-    { example: {}, actual: -Infinity, result: {} },
-    { example: {}, actual: null, result: {} },
+    // { example: {}, actual: NaN, error: true },
+    // { example: {}, actual: Infinity, error: true },
+    // { example: {}, actual: -Infinity, error: true },
+    // { example: {}, actual: null, error: true },
 
     { example: {}, actual: /some regexp/, result: {} },
     { example: {}, actual: function(){}, result: {} },
@@ -198,15 +198,15 @@ describe('input validation/coercion', function (){
     // ARRAYS
     ////////////////////////////////////////////
 
-    { example: [], actual: 'bar', result: [] },
-    { example: [], actual: 123, result: [] },
-    { example: [], actual: true, result: [] },
+    // { example: [], actual: 'bar', error: true },
+    // { example: [], actual: 123, error: true },
+    // { example: [], actual: true, error: true },
 
-    { example: [], actual: {}, result: [] },
-    { example: [], actual: {foo:'bar'}, result: [] },
-    { example: [], actual: {foo:{bar:{baz:{}}}}, result: [] },
-    { example: [], actual: {foo:['bar']}, result: [] },
-    { example: [], actual: {foo:{bar:{baz:[{}]}}}, result: [] },
+    // { example: [], actual: {}, error: true },
+    // { example: [], actual: {foo:'bar'}, error: true },
+    // { example: [], actual: {foo:{bar:{baz:{}}}}, error: true },
+    // { example: [], actual: {foo:['bar']}, error: true },
+    // { example: [], actual: {foo:{bar:{baz:[{}]}}}, error: true },
 
     { example: [], actual: [], result: [] },
     { example: [], actual: ['asdf'], result: ['asdf'] },
@@ -216,19 +216,19 @@ describe('input validation/coercion', function (){
     { example: [], actual: [{}], result: [{}] },
     { example: [], actual: [{foo:'bar'}], result: [{foo: 'bar'}] },
 
-    { example: [], actual: undefined, result: [] },
+    { example: [], actual: undefined, result: undefined },
 
-    { example: [], actual: NaN, result: [] },
-    { example: [], actual: Infinity, result: [] },
-    { example: [], actual: -Infinity, result: [] },
-    { example: [], actual: null, result: [] },
+    // { example: [], actual: NaN, error: true },
+    // { example: [], actual: Infinity, error: true },
+    // { example: [], actual: -Infinity, error: true },
+    // { example: [], actual: null, error: true },
 
-    { example: [], actual: /some regexp/, result: [] },
-    { example: [], actual: function(){}, result: [] },
-    { example: [], actual: new Date('November 5, 1605'), result: [] },
-    { example: [], actual: new Readable(), result: [] }, // TODO: consider enhancing this behavior to concat the stream contents? Needs community discussion.
-    { example: [], actual: new Buffer('asdf'), result: [] },
-    { example: [], actual: new Error('asdf'), result: [] },
+    // { example: [], actual: /some regexp/, error: true },
+    // { example: [], actual: function(){}, error: true },
+    // { example: [], actual: new Date('November 5, 1605'), error: true },
+    // { example: [], actual: new Readable(), error: true }, // TODO: consider enhancing this behavior to concat the stream contents? Needs community discussion.
+    // { example: [], actual: new Buffer('asdf'), error: true },
+    // { example: [], actual: new Error('asdf'), error: true },
 
     ////////////////////////////////////////////
     // MISC

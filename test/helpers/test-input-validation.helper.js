@@ -53,7 +53,7 @@ module.exports = function testInputValidation(options, cb){
       return cb(new Error('did not expect machine to call `error`, but it did:\n' + err));
     }
     else if (options.error) {
-      return cb(new Error('expected machine to call `error` exit due to input validation error, but it did not.'));
+      return cb(new Error('expected machine to call `error` exit due to input validation error, but it did not. ' + ('Instead got '+util.inspect(_inputsInFn.x, false, null))+'.' ));
     }
 
     if (!_.isUndefined(options.result)) {
@@ -62,7 +62,7 @@ module.exports = function testInputValidation(options, cb){
       }
       // validate `_inputsInFn` against expected result
       if (!_.isEqual(_inputsInFn.x, options.result)){
-        return cb(new Error('incorrect input value passed to machine, got: '+util.inspect(_inputsInFn.x)));
+        return cb(new Error('incorrect input value passed to machine, got: '+util.inspect(_inputsInFn.x, false, null)));
       }
     }
 
