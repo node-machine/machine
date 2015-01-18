@@ -226,41 +226,128 @@ describe('exit output coercion', function (){
 
   ];
 
+
+  // Initially run all tests as-is.
   _.each(EXIT_TEST_SUITE, function (test){
+    describeAndExecuteTest(test);
+  });
 
-    describe((function _determineDescribeMsg(){
-      var msg = '';
-      if (test.void){
-        msg += 'void exit ';
-      }
-      else {
-        msg += 'exit ';
-      }
+  // Now loop through the entire suite again to inject extra tests
+  // to ensure correct behavior when recursive examples/values are provided.
+  _.each(EXIT_TEST_SUITE, function (test){
+    // Skip tests without examples
+    if (_.isUndefined(test.example)) return;
 
-      if (!_.isUndefined(test.example)) {
-        msg += 'with a '+getDisplayType(test.example)+' example ('+util.inspect(test.example,false, null)+')';
-      }
-      else {
-        msg +='with no example';
-      }
+    // Skip tests that expect errors
+    if (test.error) return;
 
-      return msg;
-    })(), function suite (){
-      if (test.error) {
-        it('should error', function (done){
-          testInputValidation(test, done);
-        });
-        return;
-      }
-      else {
-        it(util.format('should coerce %s', (_.isObject(test.actual)&&test.actual.constructor && test.actual.constructor.name !== 'Object' && test.actual.constructor.name !== 'Array')?test.actual.constructor.name:util.inspect(test.actual, false, null), 'into '+util.inspect(test.result, false, null)+''), function (done){
-          testExitCoercion(test, done);
-        });
-      }
+    // Skip tests that expect `undefined`
+    // (nested behavior is different in this case)
+    if (test.result === undefined) return;
+
+    // test one level of additional array nesting
+    describeAndExecuteTest({
+      example: [ test.example ],
+      actual: [ test.actual ],
+      result: [ test.result ],
+      _meta: '+1 array depth'
+    });
+
+    // test one level of additional dictionary nesting
+    describeAndExecuteTest({
+      example: { xtra: test.example },
+      actual: { xtra: test.actual },
+      result: { xtra: test.result },
+      _meta: '+1 dictionary depth'
+    });
+
+    // test one level of additional dictionary nesting AND 1 level of additional array nesting
+    describeAndExecuteTest({
+      example: [ { xtra: test.example } ],
+      actual: [ { xtra: test.actual } ],
+      result: [ { xtra: test.result } ],
+      _meta: '+1 array depth, +1 dictionary depth'
+    });
+
+    // test two levels of additional dictionary nesting
+    describeAndExecuteTest({
+      example: { xtra: { xtra2: test.example } },
+      actual: { xtra: { xtra2: test.actual } },
+      result: { xtra:{ xtra2: test.result } },
+      _meta: '+2 dictionary depth'
+    });
+
+    // test two levels of additional array nesting
+    describeAndExecuteTest({
+      example: [ [ test.example ] ],
+      actual:  [ [ test.actual ] ],
+      result:  [ [ test.result ] ],
+      _meta: '+2 array depth'
+    });
+
+    // test two levels of additional dictionary nesting AND 1 level of array nesting
+    describeAndExecuteTest({
+      example: [ { xtra: { xtra2: test.example } } ],
+      actual: [ { xtra: { xtra2: test.actual } } ],
+      result: [ { xtra:{ xtra2: test.result } } ],
+      _meta: '+1 array depth, +2 dictionary depth'
+    });
+
+    // test two levels of additional dictionary nesting and one level of array nesting, then WITHIN that, 1 level of array nesting
+    describeAndExecuteTest({
+      example: [ { xtra: { xtra2: [test.example] } } ],
+      actual: [ { xtra: { xtra2: [test.actual] } } ],
+      result: [ { xtra:{ xtra2: [test.result] } } ],
+      _meta: '+1 array depth, +2 dictionary depth, +1 nested array depth'
+    });
+
+    // test two levels of additional dictionary nesting and one level of array nesting, then WITHIN that, 2 levels of array nesting
+    describeAndExecuteTest({
+      example: [ { xtra: { xtra2: [[test.example]] } } ],
+      actual: [ { xtra: { xtra2: [[test.actual]] } } ],
+      result: [ { xtra:{ xtra2: [[test.result]] } } ],
+      _meta: '+1 array depth, +2 dictionary depth, +2 nested array depth'
     });
   });
 
 });
+
+
+// Set up mocha test:
+function describeAndExecuteTest(test){
+  var actualDisplayName = (_.isObject(test.actual)&&test.actual.constructor && test.actual.constructor.name !== 'Object' && test.actual.constructor.name !== 'Array')?test.actual.constructor.name:util.inspect(test.actual, false, null);
+
+  describe((function _determineDescribeMsg(){
+    var msg = '';
+    if (test.void){
+      msg += 'void exit ';
+    }
+    else {
+      msg += 'exit ';
+    }
+
+    if (!_.isUndefined(test.example)) {
+      msg += 'with a '+getDisplayType(test.example)+' example ('+util.inspect(test.example,false, null)+')';
+    }
+    else {
+      msg +='with no example';
+    }
+
+    return msg;
+  })(), function suite (){
+    if (test.error) {
+      it('should error', function (done){
+        testInputValidation(test, done);
+      });
+      return;
+    }
+    else {
+      it(util.format('should coerce %s', actualDisplayName, 'into '+util.inspect(test.result, false, null)+''), function (done){
+        testExitCoercion(test, done);
+      });
+    }
+  });
+}
 
 /**
  * private helper fn
