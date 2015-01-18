@@ -298,7 +298,6 @@ describe('input validation/coercion', function (){
 
   _.each(INPUT_TEST_SUITE, function runTest(test){
 
-    var actualDisplayName = (_.isObject(test.actual)&&test.actual.constructor && test.actual.constructor.name !== 'Object' && test.actual.constructor.name !== 'Array')?test.actual.constructor.name:util.inspect(test.actual, false, null);
 
     // Inject extra test to try `example:{}` as `typeclass: 'dictionary'`
     if (_.isEqual(test.example, {})) {
@@ -319,44 +318,59 @@ describe('input validation/coercion', function (){
       });
     }
 
-    // Inject extra test in order to test one level of dictionary nesting
-    // TODO:
+    // // Inject extra tests if an example is specified....
+    // if (!_.isUndefined(test.example)){
+    //   // test one level of additional dictionary nesting
+    //   runTest({
+    //     example: { xtra: test.example },
+    //     actual: { xtra: test.actual },
+    //     result: { xtra: test.result }
+    //   });
+    // }
 
-    describe((function _determineDescribeMsg(){
-      var msg = '';
-      if (test.required){
-        msg += 'required input ';
-      }
-      else {
-        msg += 'optional input ';
-      }
-      if (!_.isUndefined(test.example)) {
-        msg += 'with a '+getDisplayType(test.example)+' example ('+util.inspect(test.example,false, null)+')';
-      }
-      else if (!_.isUndefined(test.typeclass)) {
-        msg +='with typeclass: '+test.typeclass;
-      }
-      else {
-        msg +='with neither an example nor typeclass';
-      }
-
-      return msg;
-    })(), function suite (){
-      if (test.error) {
-        it(util.format('should error when %s is passed in', actualDisplayName), function (done){
-          testInputValidation(test, done);
-        });
-        return;
-      }
-      else {
-        it(util.format('should coerce %s', actualDisplayName, 'into '+util.inspect(test.result, false, null)+''), function (done){
-          testInputValidation(test, done);
-        });
-      }
-    });
+    describeAndExecuteTest(test);
   });
-
 });
+
+
+
+// Set up mocha test:
+function describeAndExecuteTest(test){
+  var actualDisplayName = (_.isObject(test.actual)&&test.actual.constructor && test.actual.constructor.name !== 'Object' && test.actual.constructor.name !== 'Array')?test.actual.constructor.name:util.inspect(test.actual, false, null);
+
+  describe((function _determineDescribeMsg(){
+    var msg = '';
+    if (test.required){
+      msg += 'required input ';
+    }
+    else {
+      msg += 'optional input ';
+    }
+    if (!_.isUndefined(test.example)) {
+      msg += 'with a '+getDisplayType(test.example)+' example ('+util.inspect(test.example,false, null)+')';
+    }
+    else if (!_.isUndefined(test.typeclass)) {
+      msg +='with typeclass: '+test.typeclass;
+    }
+    else {
+      msg +='with neither an example nor typeclass';
+    }
+
+    return msg;
+  })(), function suite (){
+    if (test.error) {
+      it(util.format('should error when %s is passed in', actualDisplayName), function (done){
+        testInputValidation(test, done);
+      });
+      return;
+    }
+    else {
+      it(util.format('should coerce %s', actualDisplayName, 'into '+util.inspect(test.result, false, null)+''), function (done){
+        testInputValidation(test, done);
+      });
+    }
+  });
+}
 
 
 /**
