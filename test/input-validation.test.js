@@ -325,29 +325,29 @@ describe('input validation/coercion', function (){
   });
 
 
+  // Now loop through the entire suite again to inject extra tests
+  // to ensure correct behavior when recursive examples/values are provided.
+  _.each(INPUT_TEST_SUITE, function (test){
+
+    // Skip tests without examples
+    if (_.isUndefined(test.example)) return;
+
+    // Skip tests that expect errors
+    if (test.error) return;
+
+    // Skip tests that expect `undefined`
+    // (nested behavior is different in this case)
+    if (test.result === undefined) return;
+
+    // test one level of additional dictionary nesting
+    describeAndExecuteTest({
+      example: { xtra: test.example },
+      actual: { xtra: test.actual },
+      result: { xtra: test.result }
+    });
+  });
+
   // setTimeout(function (){
-
-  //   // Now loop through the entire suite again to inject extra tests
-  //   // to ensure correct behavior when recursive examples/values are provided.
-  //   _.each(INPUT_TEST_SUITE, function (test){
-
-  //     // Skip tests without examples
-  //     if (_.isUndefined(test.example)) return;
-
-  //     // Skip tests that expect errors
-  //     if (test.error) return;
-
-  //     // Skip tests that expect `undefined`
-  //     // (nested behavior is different in this case)
-  //     if (test.result === undefined) return;
-
-  //     // test one level of additional dictionary nesting
-  //     describeAndExecuteTest({
-  //       example: { xtra: test.example },
-  //       actual: { xtra: test.actual },
-  //       result: { xtra: test.result }
-  //     });
-  //   });
   // }, 50);
 
 });
