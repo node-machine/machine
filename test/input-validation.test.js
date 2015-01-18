@@ -116,7 +116,7 @@ describe('input validation/coercion', function (){
         return;
       }
       else {
-        it(util.format('should coerce %s', (_.isObject(test.actual)&&test.actual.constructor && test.actual.constructor.name)||util.inspect(test.actual, false, null), 'into '+util.inspect(test.result, false, null)+''), function (done){
+        it(util.format('should coerce %s', (_.isObject(test.actual)&&test.actual.constructor && test.actual.constructor.name !== 'Object')?test.actual.constructor.name:util.inspect(test.actual, false, null), 'into '+util.inspect(test.result, false, null)+''), function (done){
           testInputValidation(test, done);
         });
       }
