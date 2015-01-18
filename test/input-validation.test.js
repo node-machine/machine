@@ -9,7 +9,7 @@ var Readable = require('stream').Readable;
 
 
 
-xdescribe('input validation/coercion', function (){
+describe('input validation/coercion', function (){
 
   var INPUT_TEST_SUITE = [
 
@@ -43,6 +43,7 @@ xdescribe('input validation/coercion', function (){
     { example: 'foo', actual: [{foo:'bar'}], error: true },
 
     { example: 'foo', actual: undefined, result: undefined },
+
     { example: 'foo', actual: NaN, error: true },
     { example: 'foo', actual: Infinity, error: true },
     { example: 'foo', actual: -Infinity, error: true },
@@ -51,24 +52,24 @@ xdescribe('input validation/coercion', function (){
     { example: 'foo', actual: /some regexp/, error: true },
     { example: 'foo', actual: function(){}, error: true },
     { example: 'foo', actual: new Date('November 5, 1605'), result: '1605-11-05T07:00:00.000Z' },
-    { example: 'foo', actual: new Readable(), result: '' }, // TODO: consider buffering into a string..?  needs community discussion
-    { example: 'foo', actual: new Buffer('asdf'), result: '' }, // TODO: consider converting to string
-    { example: 'foo', actual: new Error('asdf'), result: '' }, // TODO: consider converting to error stack trace
+    { example: 'foo', actual: new Readable(), error: true },
+    { example: 'foo', actual: new Buffer('asdf'), error: true },
+    { example: 'foo', actual: new Error('asdf'), error: true },
 
     ////////////////////////////////////////////
     // NUMBERS
     ////////////////////////////////////////////
 
     { example: 123, actual: 'bar', error: true },
-    { example: 123, actual: '', result: 0 },
+    { example: 123, actual: '', error: true },
     { example: 123, actual: '0', result: 0 },
     { example: 123, actual: '1', result: 1 },
     { example: 123, actual: '-1.1', result: -1.1 },
-    { example: 123, actual: 'NaN', result: 0 },
-    { example: 123, actual: 'undefined', result: 0 },
-    { example: 123, actual: 'null', result: 0 },
-    { example: 123, actual: '-Infinity', result: 0 },
-    { example: 123, actual: 'Infinity', result: 0 },
+    { example: 123, actual: 'NaN', error: true },
+    { example: 123, actual: 'undefined', error: true },
+    { example: 123, actual: 'null', error: true },
+    { example: 123, actual: '-Infinity', error: true },
+    { example: 123, actual: 'Infinity', error: true },
 
     { example: 123, actual: 0, result: 0 },
     { example: 123, actual: 1, result: 1 },
@@ -77,44 +78,45 @@ xdescribe('input validation/coercion', function (){
     { example: 123, actual: true, result: 1 },
     { example: 123, actual: false, result: 0 },
 
-    { example: 123, actual: {}, result: 0 },
-    { example: 123, actual: {foo:'bar'}, result: 0 },
-    { example: 123, actual: {foo:{bar:{baz:{}}}}, result: 0 },
-    { example: 123, actual: {foo:['bar']}, result: 0 },
-    { example: 123, actual: {foo:{bar:{baz:[{}]}}}, result: 0 },
+    { example: 123, actual: {}, error: true },
+    { example: 123, actual: {foo:'bar'}, error: true },
+    { example: 123, actual: {foo:{bar:{baz:{}}}}, error: true },
+    { example: 123, actual: {foo:['bar']}, error: true },
+    { example: 123, actual: {foo:{bar:{baz:[{}]}}}, error: true },
 
-    { example: 123, actual: [], result: 0 },
-    { example: 123, actual: ['asdf'], result: 0 },
-    { example: 123, actual: [''], result: 0 },
-    { example: 123, actual: [235], result: 0 },
-    { example: 123, actual: [false], result: 0 },
-    { example: 123, actual: [{}], result: 0 },
-    { example: 123, actual: [{foo:'bar'}], result: 0 },
+    { example: 123, actual: [], error: true },
+    { example: 123, actual: ['asdf'], error: true },
+    { example: 123, actual: [''], error: true },
+    { example: 123, actual: [235], error: true },
+    { example: 123, actual: [false], error: true },
+    { example: 123, actual: [{}], error: true },
+    { example: 123, actual: [{foo:'bar'}], error: true },
 
-    { example: 123, actual: undefined, result: 0 },
-    { example: 123, actual: NaN, result: 0 },
-    { example: 123, actual: Infinity, result: 0 },
-    { example: 123, actual: -Infinity, result: 0 },
-    { example: 123, actual: null, result: 0 },
+    { example: 123, actual: undefined, result: undefined },
 
-    { example: 123, actual: /some regexp/, result: 0 },
-    { example: 123, actual: function(){}, result: 0 },
-    { example: 123, actual: new Date('November 5, 1605'), result: 0 }, // TODO: consider enhancing this to return an epoch timestamp (number of miliseconds since Jan 1, 1970). In this case, would be: -11491606800000
-    { example: 123, actual: new Readable(), result: 0 }, // TODO: ??? maybe num bytes read so far?
-    { example: 123, actual: new Buffer('asdf'), result: 0 },  // TODO: ??? maybe size of the buffer in bytes?
-    { example: 123, actual: new Error('asdf'), result: 0 }, // TODO: ??? maybe `.status`?
+    { example: 123, actual: NaN, error: true },
+    { example: 123, actual: Infinity, error: true },
+    { example: 123, actual: -Infinity, error: true },
+    { example: 123, actual: null, error: true },
+
+    { example: 123, actual: /some regexp/, error: true },
+    { example: 123, actual: function(){}, error: true },
+    { example: 123, actual: new Date('November 5, 1605'), error: true },
+    { example: 123, actual: new Readable(), error: true },
+    { example: 123, actual: new Buffer('asdf'), error: true },
+    { example: 123, actual: new Error('asdf'), error: true },
 
     ////////////////////////////////////////////
     // BOOLEANS
     ////////////////////////////////////////////
-    { example: true, actual: 'bar', result: false },
-    { example: true, actual: '', result: false },
-    { example: true, actual: '-1.1', result: false },
-    { example: true, actual: 'NaN', result: false },
-    { example: true, actual: 'undefined', result: false },
-    { example: true, actual: 'null', result: false },
-    { example: true, actual: '-Infinity', result: false },
-    { example: true, actual: 'Infinity', result: false },
+    { example: true, actual: 'bar', error: true },
+    { example: true, actual: '', error: true },
+    { example: true, actual: '-1.1', error: true },
+    { example: true, actual: 'NaN', error: true },
+    { example: true, actual: 'undefined', error: true },
+    { example: true, actual: 'null', error: true },
+    { example: true, actual: '-Infinity', error: true },
+    { example: true, actual: 'Infinity', error: true },
     { example: true, actual: 'true', result: true },
     { example: true, actual: 'false', result: false },
     { example: true, actual: '0', result: false },
@@ -122,37 +124,38 @@ xdescribe('input validation/coercion', function (){
 
     { example: true, actual: 0, result: false },
     { example: true, actual: 1, result: true },
-    { example: true, actual: -1.1, result: false },
+    { example: true, actual: -1.1, error: true },
 
     { example: true, actual: true, result: true },
     { example: true, actual: false, result: false },
 
-    { example: true, actual: {}, result: false },
-    { example: true, actual: {foo:'bar'}, result: false },
-    { example: true, actual: {foo:{bar:{baz:{}}}}, result: false },
-    { example: true, actual: {foo:['bar']}, result: false },
-    { example: true, actual: {foo:{bar:{baz:[{}]}}}, result: false },
+    { example: true, actual: {}, error: true },
+    { example: true, actual: {foo:'bar'}, error: true },
+    { example: true, actual: {foo:{bar:{baz:{}}}}, error: true },
+    { example: true, actual: {foo:['bar']}, error: true },
+    { example: true, actual: {foo:{bar:{baz:[{}]}}}, error: true },
 
-    { example: true, actual: [], result: false },
-    { example: true, actual: ['asdf'], result: false },
-    { example: true, actual: [''], result: false },
-    { example: true, actual: [235], result: false },
-    { example: true, actual: [false], result: false },
-    { example: true, actual: [{}], result: false },
-    { example: true, actual: [{foo:'bar'}], result: false },
+    { example: true, actual: [], error: true },
+    { example: true, actual: ['asdf'], error: true },
+    { example: true, actual: [''], error: true },
+    { example: true, actual: [235], error: true },
+    { example: true, actual: [false], error: true },
+    { example: true, actual: [{}], error: true },
+    { example: true, actual: [{foo:'bar'}], error: true },
 
-    { example: true, actual: undefined, result: false },
-    { example: true, actual: NaN, result: false },
-    { example: true, actual: Infinity, result: false },
-    { example: true, actual: -Infinity, result: false },
-    { example: true, actual: null, result: false },
+    { example: true, actual: undefined, result: undefined },
 
-    { example: true, actual: /some regexp/, result: false },
-    { example: true, actual: function(){}, result: false },
-    { example: true, actual: new Date('November 5, 1605'), result: false },
-    { example: true, actual: new Readable(), result: false },
-    { example: true, actual: new Buffer('asdf'), result: false },
-    { example: true, actual: new Error('asdf'), result: false },
+    { example: true, actual: NaN, error: true },
+    { example: true, actual: Infinity, error: true },
+    { example: true, actual: -Infinity, error: true },
+    { example: true, actual: null, error: true },
+
+    { example: true, actual: /some regexp/, error: true },
+    { example: true, actual: function(){}, error: true },
+    { example: true, actual: new Date('November 5, 1605'), error: true },
+    { example: true, actual: new Readable(), error: true },
+    { example: true, actual: new Buffer('asdf'), error: true },
+    { example: true, actual: new Error('asdf'), error: true },
 
     ////////////////////////////////////////////
     // DICTIONARIES
@@ -176,7 +179,8 @@ xdescribe('input validation/coercion', function (){
     { example: {}, actual: [{}], result: {} },
     { example: {}, actual: [{foo:'bar'}], result: {} },
 
-    { example: {}, actual: undefined, result: {} },
+    { example: {}, actual: undefined, result: undefined },
+
     { example: {}, actual: NaN, result: {} },
     { example: {}, actual: Infinity, result: {} },
     { example: {}, actual: -Infinity, result: {} },
@@ -213,6 +217,7 @@ xdescribe('input validation/coercion', function (){
     { example: [], actual: [{foo:'bar'}], result: [{foo: 'bar'}] },
 
     { example: [], actual: undefined, result: [] },
+
     { example: [], actual: NaN, result: [] },
     { example: [], actual: Infinity, result: [] },
     { example: [], actual: -Infinity, result: [] },
@@ -238,6 +243,8 @@ xdescribe('input validation/coercion', function (){
 
   _.each(INPUT_TEST_SUITE, function (test){
 
+    var actualDisplayName = (_.isObject(test.actual)&&test.actual.constructor && test.actual.constructor.name !== 'Object' && test.actual.constructor.name !== 'Array')?test.actual.constructor.name:util.inspect(test.actual, false, null);
+
     describe((function _determineDescribeMsg(){
       var msg = '';
       if (test.required){
@@ -259,13 +266,13 @@ xdescribe('input validation/coercion', function (){
       return msg;
     })(), function suite (){
       if (test.error) {
-        it('should error', function (done){
+        it(util.format('should error when %s is passed in', actualDisplayName), function (done){
           testInputValidation(test, done);
         });
         return;
       }
       else {
-        it(util.format('should coerce %s', (_.isObject(test.actual)&&test.actual.constructor && test.actual.constructor.name !== 'Object' && test.actual.constructor.name !== 'Array')?test.actual.constructor.name:util.inspect(test.actual, false, null), 'into '+util.inspect(test.result, false, null)+''), function (done){
+        it(util.format('should coerce %s', actualDisplayName, 'into '+util.inspect(test.result, false, null)+''), function (done){
           testInputValidation(test, done);
         });
       }
