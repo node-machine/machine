@@ -227,7 +227,7 @@ describe('input validation/coercion', function (){
     { example: [], actual: function(){}, error: true },
     { example: [], actual: new Date('November 5, 1605'), error: true },
     { example: [], actual: new Readable(), error: true }, // TODO: consider enhancing this behavior to concat the stream contents? Needs community discussion.
-    { example: [], actual: new Buffer('asdf'), error: true },
+    { example: [], actual: new Buffer('asdf'), result: [ 97, 115, 100, 102 ] },
     { example: [], actual: new Error('asdf'), error: true },
 
     ////////////////////////////////////////////
