@@ -234,11 +234,54 @@ describe('input validation/coercion', function (){
     // MISC
     ////////////////////////////////////////////
 
-    { typeclass: '*', actual: NaN, result: NaN },
-    { typeclass: '*', actual: Infinity, result: Infinity },
-    { typeclass: '*', actual: -Infinity, result: -Infinity },
-    { typeclass: '*', actual: null, result: null },
-    { typeclass: '*', actual: undefined, result: undefined },
+    { typeclass: '*', actual: 'bar', result: 'bar',  },
+    { typeclass: '*', actual: '', result: '',  },
+    { typeclass: '*', actual: '-1.1', result: '-1.1',  },
+    { typeclass: '*', actual: 'NaN', result: 'NaN',  },
+    { typeclass: '*', actual: 'undefined', result: 'undefined',  },
+    { typeclass: '*', actual: 'null', result: 'null',  },
+    { typeclass: '*', actual: '-Infinity', result: '-Infinity',  },
+    { typeclass: '*', actual: 'Infinity', result: 'Infinity',  },
+    { typeclass: '*', actual: 'true', result: 'true',  },
+    { typeclass: '*', actual: 'false', result: 'false',  },
+    { typeclass: '*', actual: '0', result: '0',  },
+    { typeclass: '*', actual: '1', result: '1',  },
+
+    { typeclass: '*', actual: 0, result: 0,  },
+    { typeclass: '*', actual: 1, result: 1,  },
+    { typeclass: '*', actual: -1.1, result: -1.1,  },
+
+    { typeclass: '*', actual: true, result: true,  },
+    { typeclass: '*', actual: false, result: false,  },
+
+    { typeclass: '*', actual: {}, result: {},  },
+    { typeclass: '*', actual: {foo:'bar'}, result: {foo:'bar'},  },
+    { typeclass: '*', actual: {foo:{bar:{baz:{}}}}, result: {foo:{bar:{baz:{}}}},  },
+    { typeclass: '*', actual: {foo:['bar']}, result: {foo:['bar']},  },
+    { typeclass: '*', actual: {foo:{bar:{baz:[{}]}}}, result: {foo:{bar:{baz:[{}]}}},  },
+
+    { typeclass: '*', actual: [], result: [],  },
+    { typeclass: '*', actual: ['asdf'], result: ['asdf'],  },
+    { typeclass: '*', actual: [''], result: [''],  },
+    { typeclass: '*', actual: [235], result: [235],  },
+    { typeclass: '*', actual: [false], result: [false],  },
+    { typeclass: '*', actual: [{}], result: [{}],  },
+    { typeclass: '*', actual: [{foo:'bar'}], result: [{foo:'bar'}],  },
+
+    { typeclass: '*', actual: undefined, result: undefined,  },
+
+    { typeclass: '*', actual: NaN, result: NaN,  },
+    { typeclass: '*', actual: Infinity, result: Infinity,  },
+    { typeclass: '*', actual: -Infinity, result: -Infinity,  },
+    { typeclass: '*', actual: null, result: null,  },
+
+    { typeclass: '*', actual: /some regexp/, result: /some regexp/,  },
+    { typeclass: '*', actual: function(){}, result: function(){},  },
+    { typeclass: '*', actual: new Date('November 5, 1605'), result: new Date('November 5, 1605'),  },
+    { typeclass: '*', actual: new Readable(), result: new Readable(),  },
+    { typeclass: '*', actual: new Buffer('asdf'), result: new Buffer('asdf'),  },
+    { typeclass: '*', actual: new Error('asdf'), result: new Error('asdf'),  },
+
   ];
 
   _.each(INPUT_TEST_SUITE, function runTest(test){

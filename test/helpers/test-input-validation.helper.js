@@ -60,8 +60,24 @@ module.exports = function testInputValidation(options, cb){
       if (!_.isObject(_inputsInFn)) {
         return cb(new Error('`inputs` argument in machine fn was corrupted!'));
       }
+
+      var isEqual = (function (){
+        if (_.isFunction(_inputsInFn.x) && _.isFunction(options.result)) {
+          return _inputsInFn.x.toString() === options.result.toString();
+        }
+        if (_.isObject(_inputsInFn.x) && _.isObject(options.result)){
+          if (_inputsInFn.x instanceof Buffer && options.result instanceof Buffer) {
+            return _inputsInFn.x.toString() === options.result.toString();
+          }
+          if (_inputsInFn.x instanceof Error && options.result instanceof Error) {
+            return _inputsInFn.x.toString() === options.result.toString();
+          }
+        }
+        return _.isEqual(_inputsInFn.x, options.result);
+      })();
+
       // validate `_inputsInFn` against expected result
-      if (!_.isEqual(_inputsInFn.x, options.result)){
+      if (!isEqual) {
         return cb(new Error('incorrect input value passed to machine, got: '+util.inspect(_inputsInFn.x, false, null)));
       }
     }
