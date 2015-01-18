@@ -343,7 +343,16 @@ describe('input validation/coercion', function (){
     describeAndExecuteTest({
       example: { xtra: test.example },
       actual: { xtra: test.actual },
-      result: { xtra: test.result }
+      result: { xtra: test.result },
+      _meta: '+1 dictionary depth'
+    });
+
+    // test two levels of additional dictionary nesting
+    describeAndExecuteTest({
+      example: { xtra: { xtra2: test.example } },
+      actual: { xtra: { xtra2: test.actual } },
+      result: { xtra:{ xtra2: test.result } },
+      _meta: '+2 dictionary depth'
     });
   });
 
@@ -360,6 +369,10 @@ function describeAndExecuteTest(test){
 
   describe((function _determineDescribeMsg(){
     var msg = '';
+
+    if (test._meta) {
+      msg += '['+test._meta+']';
+    }
     if (test.required){
       msg += 'required input ';
     }
