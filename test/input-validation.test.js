@@ -9,7 +9,7 @@ var Readable = require('stream').Readable;
 
 
 
-describe('input validation/coercion', function (){
+xdescribe('input validation/coercion', function (){
 
   var INPUT_TEST_SUITE = [
 
@@ -34,22 +34,22 @@ describe('input validation/coercion', function (){
     { example: 'foo', actual: {foo:['bar']}, error: true },
     { example: 'foo', actual: {foo:{bar:{baz:[{}]}}}, error: true },
 
-    { example: 'foo', actual: [], result: '' },
-    { example: 'foo', actual: ['asdf'], result: '' },
-    { example: 'foo', actual: [''], result: '' },
-    { example: 'foo', actual: [235], result: '' },
-    { example: 'foo', actual: [false], result: '' },
-    { example: 'foo', actual: [{}], result: '' },
-    { example: 'foo', actual: [{foo:'bar'}], result: '' },
+    { example: 'foo', actual: [], error: true },
+    { example: 'foo', actual: ['asdf'], error: true },
+    { example: 'foo', actual: [''], error: true },
+    { example: 'foo', actual: [235], error: true },
+    { example: 'foo', actual: [false], error: true },
+    { example: 'foo', actual: [{}], error: true },
+    { example: 'foo', actual: [{foo:'bar'}], error: true },
 
-    { example: 'foo', actual: undefined, result: '' },
-    { example: 'foo', actual: NaN, result: '' },
-    { example: 'foo', actual: Infinity, result: '' },
-    { example: 'foo', actual: -Infinity, result: '' },
-    { example: 'foo', actual: null, result: '' },
+    { example: 'foo', actual: undefined, result: undefined },
+    { example: 'foo', actual: NaN, error: true },
+    { example: 'foo', actual: Infinity, error: true },
+    { example: 'foo', actual: -Infinity, error: true },
+    { example: 'foo', actual: null, error: true },
 
-    { example: 'foo', actual: /some regexp/, result: '' },
-    { example: 'foo', actual: function(){}, result: '' },
+    { example: 'foo', actual: /some regexp/, error: true },
+    { example: 'foo', actual: function(){}, error: true },
     { example: 'foo', actual: new Date('November 5, 1605'), result: '1605-11-05T07:00:00.000Z' },
     { example: 'foo', actual: new Readable(), result: '' }, // TODO: consider buffering into a string..?  needs community discussion
     { example: 'foo', actual: new Buffer('asdf'), result: '' }, // TODO: consider converting to string

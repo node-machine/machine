@@ -62,7 +62,7 @@ module.exports = function testInputValidation(options, cb){
       }
       // validate `_inputsInFn` against expected result
       if (!_.isEqual(_inputsInFn.x, options.result)){
-        return cb(new Error('incorrect input value passed to machine, got: '+util.inspect(_inputInFn.x)));
+        return cb(new Error('incorrect input value passed to machine, got: '+util.inspect(_inputsInFn.x)));
       }
     }
 
