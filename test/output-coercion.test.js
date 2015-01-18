@@ -5,7 +5,7 @@
 var util = require('util');
 var _ = require('lodash');
 var testExitCoercion = require('./helpers/test-exit-coercion.helper');
-var Readable = require('stream').Readable;
+var Writable = require('stream').Writable;
 
 
 describe('exit output coercion', function (){
@@ -46,10 +46,10 @@ describe('exit output coercion', function (){
     { example: 'foo', actual: -Infinity, result: '' },
     { example: 'foo', actual: null, result: '' },
 
-    { example: 'foo', actual: new Date(), result: '' },
-    { example: 'foo', actual: new Readable(), result: '' },
-    { example: 'foo', actual: new Buffer('asdf'), result: '' },
-    { example: 'foo', actual: new Error('asdf'), result: '' },
+    { example: 'foo', actual: new Date(), result: '' }, // TODO: show
+    { example: 'foo', actual: new Writable(), result: '' }, // TODO: consider buffering into a string..?  needs community discussion
+    { example: 'foo', actual: new Buffer('asdf'), result: '' }, // TODO: consider converting to string
+    { example: 'foo', actual: new Error('asdf'), result: '' }, // TODO: show `.toString()`
 
     ////////////////////////////////////////////
     // NUMBERS
@@ -92,6 +92,11 @@ describe('exit output coercion', function (){
     { example: 123, actual: Infinity, result: 0 },
     { example: 123, actual: -Infinity, result: 0 },
     { example: 123, actual: null, result: 0 },
+
+    { example: 123, actual: new Date(), result: 0 }, // TODO: consider enhancing this to return an epoch timestamp (number of miliseconds since Jan 1, 1970).
+    { example: 123, actual: new Writable(), result: 0 }, // TODO: ??? maybe num bytes read so far?
+    { example: 123, actual: new Buffer('asdf'), result: 0 },  // TODO: ??? maybe size of the buffer in bytes?
+    { example: 123, actual: new Error('asdf'), result: 0 }, // TODO: ??? maybe `.status`?
 
     ////////////////////////////////////////////
     // BOOLEANS
@@ -136,6 +141,11 @@ describe('exit output coercion', function (){
     { example: true, actual: -Infinity, result: false },
     { example: true, actual: null, result: false },
 
+    { example: true, actual: new Date(), result: false },
+    { example: true, actual: new Writable(), result: false },
+    { example: true, actual: new Buffer('asdf'), result: false },
+    { example: true, actual: new Error('asdf'), result: false },
+
     ////////////////////////////////////////////
     // DICTIONARIES
     ////////////////////////////////////////////
@@ -163,6 +173,11 @@ describe('exit output coercion', function (){
     { example: {}, actual: Infinity, result: {} },
     { example: {}, actual: -Infinity, result: {} },
     { example: {}, actual: null, result: {} },
+
+    { example: {}, actual: new Date(), result: {} },
+    { example: {}, actual: new Writable(), result: {} },
+    { example: {}, actual: new Buffer('asdf'), result: {} },
+    { example: {}, actual: new Error('asdf'), result: {} },  // TODO: consider enhancing this behavior to guarantee e.g. `.message` (string), `.stack` (string), `.code` (string), and `.status` (number).  Needs community discussion
 
 
     ////////////////////////////////////////////
@@ -192,6 +207,11 @@ describe('exit output coercion', function (){
     { example: [], actual: Infinity, result: [] },
     { example: [], actual: -Infinity, result: [] },
     { example: [], actual: null, result: [] },
+
+    { example: [], actual: new Date(), result: [] },
+    { example: [], actual: new Writable(), result: [] }, // TODO: consider enhancing this behavior to concat the stream contents? Needs community discussion.
+    { example: [], actual: new Buffer('asdf'), result: [] }, // TODO: consider enhancing this behavior to convert Buffer into byte array? Needs community discussion.
+    { example: [], actual: new Error('asdf'), result: [] },
 
     ////////////////////////////////////////////
     // MISC
@@ -227,7 +247,7 @@ describe('exit output coercion', function (){
         return;
       }
       else {
-        it(util.format('should coerce %s', util.inspect(test.actual, false, null), 'into '+util.inspect(test.result, false, null)+''), function (done){
+        it(util.format('should coerce %s', (_.isObject(test.actual)&&test.actual.constructor && test.actual.constructor.name)||util.inspect(test.actual, false, null), 'into '+util.inspect(test.result, false, null)+''), function (done){
           testExitCoercion(test, done);
         });
       }
