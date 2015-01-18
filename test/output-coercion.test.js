@@ -238,7 +238,7 @@ describe('exit output coercion', function (){
       }
 
       if (!_.isUndefined(test.example)) {
-        msg += 'with a '+typeof test.example+' example ('+util.inspect(test.example,false, null)+')';
+        msg += 'with a '+getDisplayType(test.example)+' example ('+util.inspect(test.example,false, null)+')';
       }
       else {
         msg +='with no example';
@@ -261,3 +261,18 @@ describe('exit output coercion', function (){
   });
 
 });
+
+/**
+ * private helper fn
+ * @param  {[type]} x [description]
+ * @return {[type]}   [description]
+ */
+function getDisplayType(x){
+  var displayType;
+  displayType = typeof x;
+  try {
+    displayType = x.constructor.name;
+  }
+  catch (e){}
+  return displayType;
+}
