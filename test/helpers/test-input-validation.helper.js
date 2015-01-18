@@ -78,7 +78,7 @@ module.exports = function testInputValidation(options, cb){
 
       // validate `_inputsInFn` against expected result
       if (!isEqual) {
-        return cb(new Error('incorrect input value passed to machine, got: '+util.inspect(_inputsInFn.x, false, null)));
+        return cb(new Error('incorrect input value received in machine fn, got: '+util.inspect(_inputsInFn.x, false, null)));
       }
     }
 

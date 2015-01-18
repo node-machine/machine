@@ -188,8 +188,8 @@ describe('input validation/coercion', function (){
 
     { example: {}, actual: /some regexp/, result: {} },
     { example: {}, actual: function(){}, result: {} },
-    { example: {}, actual: new Date('November 5, 1605'), result: {} },
-    { example: {}, actual: new Readable(), result: {} },
+    { example: {}, actual: new Date('November 5, 1605'), error: true },
+    { example: {}, actual: new Readable(), error: true },
     { example: {}, actual: new Buffer('asdf'), result: {} },
     { example: {}, actual: new Error('asdf'), result: {} },  // TODO: consider enhancing this behavior to guarantee e.g. `.message` (string), `.stack` (string), `.code` (string), and `.status` (number).  Needs community discussion
 
