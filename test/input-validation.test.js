@@ -189,7 +189,7 @@ describe('input validation/coercion', function (){
     { example: {}, actual: /some regexp/, result: {} },
     { example: {}, actual: function(){}, error: true },
     { example: {}, actual: new Date('November 5, 1605'), error: true },
-    { example: {}, actual: new Readable(), result: {} },
+    { example: {}, actual: new Readable(), error: true },
     { example: {}, actual: new Buffer('asdf'), error: true },
     { example: {}, actual: new Error('asdf'), result: {} },  // TODO: consider enhancing this behavior to guarantee e.g. `.message` (string), `.stack` (string), `.code` (string), and `.status` (number).  Needs community discussion
 
@@ -301,6 +301,7 @@ describe('input validation/coercion', function (){
     describeAndExecuteTest(test);
   });
 
+
   // Then run applicable tests again, but using `typeclass`
   _.each(INPUT_TEST_SUITE, function (test){
     // Inject extra test to try `example:{}` as `typeclass: 'dictionary'`
@@ -324,20 +325,30 @@ describe('input validation/coercion', function (){
   });
 
 
+  // setTimeout(function (){
 
-  // Now loop through the entire suite again to inject extra tests
-  // to ensure correct behavior when recursive examples/values are provided.
-  _.each(INPUT_TEST_SUITE, function (test){
+  //   // Now loop through the entire suite again to inject extra tests
+  //   // to ensure correct behavior when recursive examples/values are provided.
+  //   _.each(INPUT_TEST_SUITE, function (test){
 
-    // if (!_.isUndefined(test.example) && !test.error){
-    //   // test one level of additional dictionary nesting
-    //   runTest({
-    //     example: { xtra: test.example },
-    //     actual: { xtra: test.actual },
-    //     result: { xtra: test.result }
-    //   });
-    // }
-  });
+  //     // Skip tests without examples
+  //     if (_.isUndefined(test.example)) return;
+
+  //     // Skip tests that expect errors
+  //     if (test.error) return;
+
+  //     // Skip tests that expect `undefined`
+  //     // (nested behavior is different in this case)
+  //     if (test.result === undefined) return;
+
+  //     // test one level of additional dictionary nesting
+  //     describeAndExecuteTest({
+  //       example: { xtra: test.example },
+  //       actual: { xtra: test.actual },
+  //       result: { xtra: test.result }
+  //     });
+  //   });
+  // }, 50);
 
 });
 
