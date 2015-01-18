@@ -301,20 +301,26 @@ describe('input validation/coercion', function (){
     var actualDisplayName = (_.isObject(test.actual)&&test.actual.constructor && test.actual.constructor.name !== 'Object' && test.actual.constructor.name !== 'Array')?test.actual.constructor.name:util.inspect(test.actual, false, null);
 
     // Inject extra test to try `example:{}` as `typeclass: 'dictionary'`
-    var test2;
     if (_.isEqual(test.example, {})) {
-      test2 = test;
-      delete test2.example;
-      test2.typeclass = 'dictionary';
-      runTest(test2);
+      runTest({
+        typeclass: 'dictionary',
+        actual: test.actual,
+        result: test.result,
+        error: test.error
+      });
     }
     // Inject extra test to try `example:[]` as `typeclass: 'array'`
-    if (_.isEqual(test.example, [])) {
-      test2 = test;
-      delete test2.example;
-      test2.typeclass = 'array';
-      runTest(test2);
+    else if (_.isEqual(test.example, [])) {
+      runTest({
+        typeclass: 'array',
+        actual: test.actual,
+        result: test.result,
+        error: test.error
+      });
     }
+
+    // Inject extra test in order to test one level of dictionary nesting
+    // TODO:
 
     describe((function _determineDescribeMsg(){
       var msg = '';
