@@ -189,8 +189,8 @@ describe('input validation/coercion', function (){
     { example: {}, actual: /some regexp/, result: {} },
     { example: {}, actual: function(){}, result: {} },
     { example: {}, actual: new Date('November 5, 1605'), result: {} },
-    { example: {}, actual: new Readable(), result: {} },
-    { example: {}, actual: new Buffer('asdf'), result: {} },
+    // { example: {}, actual: new Readable(), result: {} },
+    // { example: {}, actual: new Buffer('asdf'), result: {} },
     { example: {}, actual: new Error('asdf'), result: {} },  // TODO: consider enhancing this behavior to guarantee e.g. `.message` (string), `.stack` (string), `.code` (string), and `.status` (number).  Needs community discussion
 
 
@@ -241,9 +241,25 @@ describe('input validation/coercion', function (){
     { typeclass: '*', actual: undefined, result: undefined },
   ];
 
-  _.each(INPUT_TEST_SUITE, function (test){
+  _.each(INPUT_TEST_SUITE, function runTest(test){
 
     var actualDisplayName = (_.isObject(test.actual)&&test.actual.constructor && test.actual.constructor.name !== 'Object' && test.actual.constructor.name !== 'Array')?test.actual.constructor.name:util.inspect(test.actual, false, null);
+
+    // Inject extra test to try `example:{}` as `typeclass: 'dictionary'`
+    var test2;
+    if (_.isEqual(test.example, {})) {
+      test2 = _.cloneDeep(test);
+      delete test2.example;
+      test2.typeclass = 'dictionary';
+      runTest(test2);
+    }
+    // Inject extra test to try `example:[]` as `typeclass: 'array'`
+    if (_.isEqual(test.example, [])) {
+      test2 = _.cloneDeep(test);
+      delete test2.example;
+      test2.typeclass = 'array';
+      runTest(test2);
+    }
 
     describe((function _determineDescribeMsg(){
       var msg = '';
