@@ -5,7 +5,7 @@
 var util = require('util');
 var _ = require('lodash');
 var testExitCoercion = require('./helpers/test-exit-coercion.helper');
-
+var Readable = require('stream').Readable;
 
 
 describe('exit output coercion', function (){
@@ -45,6 +45,11 @@ describe('exit output coercion', function (){
     { example: 'foo', actual: Infinity, result: '' },
     { example: 'foo', actual: -Infinity, result: '' },
     { example: 'foo', actual: null, result: '' },
+
+    { example: 'foo', actual: new Date(), result: '' },
+    { example: 'foo', actual: new Readable(), result: '' },
+    { example: 'foo', actual: new Buffer('asdf'), result: '' },
+    { example: 'foo', actual: new Error('asdf'), result: '' },
 
     ////////////////////////////////////////////
     // NUMBERS
