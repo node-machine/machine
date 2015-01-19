@@ -206,7 +206,7 @@ describe('Machine exit coercion', function() {
       }
     }).exec(function(err, result) {
       if(err) return done(err);
-      assert.deepEqual(result,{foo:[''], bar: {}});
+      assert.deepEqual(result,{foo:[], bar: {}});
       done();
     });
   });
@@ -225,7 +225,7 @@ describe('Machine exit coercion', function() {
       }
     }).exec(function(err, result) {
       if(err) return done(err);
-      assert.deepEqual(result,{foo:[''], bar: {baz: 0}});
+      assert.deepEqual(result,{foo:[], bar: {baz: 0}});
       done();
     });
   });
@@ -244,7 +244,7 @@ describe('Machine exit coercion', function() {
       }
     }).exec(function(err, result) {
       if(err) return done(err);
-      assert.deepEqual(result,{foo:[''], someArray: []});
+      assert.deepEqual(result,{foo:[], someArray: []});
       done();
     });
   });
@@ -263,7 +263,7 @@ describe('Machine exit coercion', function() {
       }
     }).exec(function(err, result) {
       if(err) return done(err);
-      assert.deepEqual(result,{foo:[''], someArray: []});
+      assert.deepEqual(result,{foo:[], someArray: []});
       done();
     });
   });
@@ -358,7 +358,7 @@ describe('Machine exit coercion', function() {
       }
     }).exec(function(err, result) {
       if(err) return done(err);
-      assert.deepEqual(result,[0]);
+      assert.deepEqual(result,[]);
       done();
     });
   });
@@ -377,7 +377,7 @@ describe('Machine exit coercion', function() {
       }
     }).exec(function(err, result) {
       if(err) return done(err);
-      assert.deepEqual(result,['']);
+      assert.deepEqual(result,[]);
       done();
     });
   });
@@ -396,7 +396,7 @@ describe('Machine exit coercion', function() {
       }
     }).exec(function(err, result) {
       if(err) return done(err);
-      assert.deepEqual(result,[false]);
+      assert.deepEqual(result,[]);
       done();
     });
   });
