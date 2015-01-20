@@ -223,12 +223,6 @@ describe('exit output coercion', function (){
     { example: [], actual: new Buffer('asdf'), result: [ 97, 115, 100, 102 ] },
     { example: [], actual: new Error('asdf'), result: [] },
 
-    ////////////////////////////////////////////
-    // RECURSIVE OBJECTS
-    ////////////////////////////////////////////
-
-    { example: {a:1, b:'hi', c: false}, actual: {a: 23}, result: {a: 23, b: '', c: false}  },
-    { example: {a:1, b:'hi', c: false}, actual: {a: 23, d: true}, result: {a: 23, b: '', c: false}  },
 
     ////////////////////////////////////////////
     // MISC
@@ -274,6 +268,185 @@ describe('exit output coercion', function (){
     { example: undefined, actual: Infinity, result: Infinity,  },
     { example: undefined, actual: -Infinity, result: -Infinity,  },
     { example: undefined, actual: null, result: null,  },
+
+
+    ////////////////////////////////////////////
+    // RECURSIVE OBJECTS
+    ////////////////////////////////////////////
+
+    { example: {a:1, b:'hi', c: false}, actual: {a: 23}, result: {a: 23, b: '', c: false}  },
+    { example: {a:1, b:'hi', c: false}, actual: {a: 23, d: true}, result: {a: 23, b: '', c: false}  },
+    // Complex multi-item array test
+    {
+      example: [{
+        id: 123,
+        title: 'Scott',
+        body: 'Scott',
+        votes: 0,
+        resolved: true
+      }],
+
+      actual: [{
+        votes: 10,
+        title: 'first',
+        resolved: false
+      }, {
+        votes: -5,
+        title: 'second',
+        resolved: false
+      }, {
+        votes: 0,
+        title: 'third',
+        resolved: false
+      }],
+
+      result: [{
+        id: 0,
+        votes: 10,
+        title: 'first',
+        body: '',
+        resolved: false
+      }, {
+        id: 0,
+        votes: -5,
+        title: 'second',
+        body: '',
+        resolved: false
+      }, {
+        id: 0,
+        votes: 0,
+        title: 'third',
+        body: '',
+        resolved: false
+      }]
+    },
+
+
+    // Complex multi-item array test w/ edge cases
+    {
+      example: [{
+        id: 123,
+        title: 'Scott',
+        body: 'Scott',
+        votes: 0,
+        resolved: true
+      }],
+
+      actual: [{
+        votes: 10,
+        title: 'first',
+        resolved: false
+      }, {
+        votes: -5,
+        title: 'second',
+        resolved: false
+      }, {
+        votes: 0,
+        title: 'third',
+        resolved: false
+      },
+       {
+        votes: null,
+        title: 'fourth',
+        resolved: false
+      },
+       {
+        votes: undefined,
+        title: 'fifth',
+        resolved: false
+      },
+       {
+        title: 'sixth',
+        resolved: false
+      }],
+
+      result: [{
+        id: 0,
+        votes: 10,
+        title: 'first',
+        body: '',
+        resolved: false
+      }, {
+        id: 0,
+        votes: -5,
+        title: 'second',
+        body: '',
+        resolved: false
+      }, {
+        id: 0,
+        votes: 0,
+        title: 'third',
+        body: '',
+        resolved: false
+      },
+      {
+        id: 0,
+        votes: 0,
+        title: 'fourth',
+        body: '',
+        resolved: false
+      },
+      {
+        id: 0,
+        votes: 0,
+        title: 'fifth',
+        body: '',
+        resolved: false
+      },
+      {
+        id: 0,
+        votes: 0,
+        title: 'sixth',
+        body: '',
+        resolved: false
+      }]
+    },
+
+    // Tricky multi-item array javascript black magic
+    {
+      example: [{
+        id: 123,
+        title: 'Scott',
+        body: 'Scott',
+        votes: 0,
+        resolved: true
+      }],
+
+      actual: {
+        0: {
+          votes: 10,
+          title: 'first',
+          resolved: false
+        },
+        1: {
+          votes: -5,
+          title: 'second',
+          resolved: false
+        },
+        2: {
+          votes: 0,
+          title: 'third',
+          resolved: false
+        },
+        3: {
+          votes: null,
+          title: 'fourth',
+          resolved: false
+        },
+        4: {
+          votes: undefined,
+          title: 'fifth',
+          resolved: false
+        },
+        5: {
+          title: 'sixth',
+          resolved: false
+        }
+      },
+
+      result: []
+    },
+
 
   ];
 
