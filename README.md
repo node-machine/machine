@@ -1,10 +1,11 @@
-<img src="http://node-machine.org/images/machine-anthropomorph-for-white-bg.png" width="50" />
+<h1>
+  <img src="http://node-machine.org/images/machine-anthropomorph-for-white-bg.png" width="50" />
+  machine (JavaScript runner)
+</h1>
 
-# machine (JavaScript runner)
+A JavaScript runtime for [machines](http://node-machine.org); an atomic, context-free bit of code which conforms to the [machine specification](http://node-machine.org/spec/machine), an open standard for functions and subroutines.
 
-This module is the original JavaScript runtime for _machines_; i.e. any function which conforms to the [machine specification](http://node-machine.org/spec/machine), an open standard for functions.
-
-For information on using machines, an up-to-date list of all available machinepacks, and standardized documentation for each one, visit http://node-machine.org.
+For information on using machines, an up-to-date list of all available machines, and standardized documentation for each one, visit http://node-machine.org.
 
 ### What is this for?
 
@@ -65,6 +66,6 @@ Here are some tips:
 ### License
 
 MIT
-&copy; 2014- Mike McNeil
+&copy; 2014 Mike McNeil
 
 
