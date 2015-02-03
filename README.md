@@ -13,7 +13,7 @@ You can find more information about the node-machine project on http://node-mach
 
 Building a machinepack?  Here are some tips:
 + Start with [tutorial for implementors](http://node-machine.org/implementing/Getting-Started)
-+ Join the [newsgroup for the machine specification](https://groups.google.com/forum/?hl=en#!forum/node-machine)
++ Join the [newsgroup for the machine specification](https://groups.google.com/forum/?hl=en#!forum/node-machine) to get help from other machine implementors
 + Don't forget to add the `"repository"` key to your package.json file so folks can find your source code (this enables the `View Source` button in the generated documentation on node-machine.org)
 + Hit up [@mikermcneil](https://twitter.com/mikermcneil) on Twitter and let me know what you're working on!
 
@@ -50,11 +50,16 @@ If you're implementing a machinepack, you'll need to use this module to `.pack()
 
 Normally, if you want to use a machine _from inside of one of your machines_, you just install and require the other machinepack in _your_ pack and use it just like you would in app-level code.  But if you want to use another machine in the _same pack_, or you want the machine to call itself recursively, you should use this module directly.  You can read more information on this in the [FAQ for implementors](https://github.com/node-machine/docs/blob/master/creating-a-machinepack/FAQ.md).
 
-### Advanced Use
+### Can I use this module outside of a machinepack?
 
-If you're implementing a one-off machine (i.e. just to take advantage of the caching or type-checking this module provides), you may need lower-level access to the methods herein.
+You can use it anywhere you like!  For instance, you might want to implement a one-off machine in your app, perhaps to take advantage of caching or type-checking this module provides.
 
-Check out the tests for information on how to use all the lower-level features of this module.  There is also a guide for direct usage of this module in [`docs/DIRECT_USAGE.md`](./docs/DIRECT_USAGE.md).
+> If you're using Sails, check out [`sails-hook-machines`](https://github.com/node-machine/sails-hook-machines), a hook which allows you to use custom closed-source machines in your Sails app by dropping files into the `api/machines/` folder.
+
+
+### Contributing
+
+If you're interested in contributing to the machine specification, please request to join the project's [Google Group](https://groups.google.com/forum/?hl=en#!forum/node-machine) and introduce yourself to the rest of the core team.  In the mean time, you can check out the tests for information on how to use all the lower-level features of this module.  There is also a guide for direct usage of this module in [`docs/DIRECT_USAGE.md`](./docs/DIRECT_USAGE.md).  Note that you can run the tests for this module using `npm test`, and that we're using a preinstall script to generate a recursive dependency report (via the `licensing` module by 3rdEden).
 
 ### License
 
