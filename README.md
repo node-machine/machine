@@ -3,7 +3,7 @@
   machine (runner)
 </h1>
 
-### [Search machines](http://node-machine.org/machinepacks) &nbsp;  [FAQ](http://node-machine.org/implementing/FAQ)  &nbsp;  [Newsgroup](https://groups.google.com/forum/?hl=en#!forum/node-machine)  &nbsp;  [Submit Issue](https://github.com/node-machine/machine/blob/master/README.md#issue-submission)
+### [Browse machines](http://node-machine.org/machinepacks) &nbsp;  [FAQ](http://node-machine.org/implementing/FAQ)  &nbsp;  [Newsgroup](https://groups.google.com/forum/?hl=en#!forum/node-machine)  &nbsp;  [Submit Issue](https://github.com/node-machine/machine/blob/master/README.md#issue-submission)
 
 [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/node-machine/general?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
