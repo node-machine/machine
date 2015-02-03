@@ -5,7 +5,22 @@
 
 A JavaScript runtime for [machines](http://node-machine.org); an atomic, context-free bit of code which conforms to the [machine specification](http://node-machine.org/spec/machine), an open standard for functions and subroutines.
 
-For information on using machines, an up-to-date list of all available machines, and standardized documentation for each one, visit http://node-machine.org.
+> #### Before you go any further...
+>
+> Are you trying to use a machine?  Or just curious about what the machine specification is?  If so, you're probably in the wrong place.  You don't need to use this module directly unless you're **building your own machinepack** or doing advanced things with machines.  To **use** a machine, just copy and paste the generated code example from the machine's generated manpage on http://node-machine.org.  You'll also find more information about the node-machine project and a short video from the introductory talk at [dotjs.eu](http://dotjs.eu/), an up-to-date list of all available machines on NPM, and standardized documentation for each one.
+>
+> If you are interested in creating your own machinepack, or contributing to an existing pack, start with the [tutorial for implementors](http://node-machine.org/implementing/Getting-Started). 
+
+
+### Building a machinepack?
+
+Here are some tips:
++ Check out the [tutorial for implementors](http://node-machine.org/implementing/Getting-Started)
++ Join the [newsgroup for the machine specification](https://groups.google.com/forum/?hl=en#!forum/node-machine)
++ Don't forget to add the `"repository"` key to your package.json file so folks can find your source code (this enables the `View Source` button in the generated documentation on node-machine.org)
++ Hit up [@mikermcneil](https://twitter.com/mikermcneil) on Twitter and let me know what you're working on!
+
+
 
 ### What is this for?
 
@@ -24,44 +39,25 @@ var Github = require('machinepack-github');
 what's actually happening is that the `index.js` file in the machinepack module is calling `.pack()` and returning an object of ready-to-go machine instances.
 
 
-### For implementors
+### Where would I use this module directly?
 
-If you're implementing a machinepack, you'll need to use this module to `.pack()` your machines in your [`index.js` file](https://github.com/mikermcneil/machinepack-urls/blob/master/index.js#L2) (this is taken care of for you if you used the [Yeoman generator](https://github.com/node-machine/generator-machinepack) to create your machinepack).
+There are two everyday use cases where this comes up:
 
-You'll also need this module if you want to use one of your machines from the same pack in another machine within that pack.  Take for example the `sanitize` machine in `machinepack-urls`.  It uses the `validate` machine from the same pack to ensure that the sanitized URL is valid before returning it:
+##### 1. Your machinepack's boilerplate `index.js` file
 
-```js
-// The raw machine definition we're looking for is in the machines directory of this machinepack.
-// But since the current code file is in the machines folder too, we can get the raw definition for
-// the `validate` machine simply requiring it using a relative path based on its "identity".
-var validateUrl = require('machine').build(require('./validate'));
+> Note that this is taken care of for you if you used the [Yeoman generator](https://github.com/node-machine/generator-machinepack) to create your machinepack.
 
-// Then we can use the hydrated machine just like we would if we had gotten it out of a machinepack:
-validateUrl({string: }).exec({
-  error: function (err){ /* ... */},
-  invalid: function (){ /* ... */ },
-  success: function (){ /* ... */},
-});
+If you're implementing a machinepack, you'll need to use this module to `.pack()` your machines in your `index.js` file.  Here's an [example of an `index.js` file](https://github.com/mikermcneil/machinepack-urls/blob/master/index.js#L2) (this example happens to come from machinepack-urls- your pack's `index.js` file should always look the same, no matter what).
 
-```
-> To view this example in context, take a look at the [relevant lines in the source code for machinepack-url/sanitize](https://github.com/mikermcneil/machinepack-urls/blob/5153f138280b2385cc35e1bee54c50c8e155fb70/machines/sanitize.js#L29)
+##### 2. A machine which uses another machine from the same pack
 
-See http://node-machine.org/implementing for more tips.
-
+Normally, if you want to use a machine _from inside of one of your machines_, you just install and require the other machinepack in _your_ pack and use it just like you would in app-level code.  But if you want to use another machine in the _same pack_, or you want the machine to call itself recursively, you should use this module directly.  You can read more information on this in the [FAQ for implementors](https://github.com/node-machine/docs/blob/master/creating-a-machinepack/FAQ.md).
 
 ### Advanced Use
 
 If you're implementing a one-off machine (i.e. just to take advantage of the caching or type-checking this module provides), you may need lower-level access to the methods herein.
 
 Check out the tests for information on how to use all the lower-level features of this module.  There is also a guide for direct usage of this module in [`docs/DIRECT_USAGE.md`](./docs/DIRECT_USAGE.md).
-
-### Building a machinepack?
-
-Here are some tips:
-+ Check out the [tutorial for implementors](http://node-machine.org/implementing/Getting-Started)
-+ Join the [newsgroup for the machine specification](https://groups.google.com/forum/?hl=en#!forum/node-machine)
-+ Don't forget to add the `"repository"` key to your package.json file so folks can find your source code (this enables the `View Source` button in the generated documentation on node-machine.org)
-+ Hit up [@mikermcneil](https://twitter.com/mikermcneil) on Twitter and let me know what you're working on!
 
 ### License
 
