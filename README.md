@@ -3,32 +3,28 @@
   machine (runner)
 </h1>
 
-A JavaScript runtime for [machines](http://node-machine.org); an atomic, context-free bit of code which conforms to the [machine specification](http://node-machine.org/spec/machine), an open standard for functions and subroutines.
+A runner for [machines](http://node-machine.org) written in JavaScript.  Machines are atomic, context-free bits of code which conform to the [machine specification](http://node-machine.org/spec/machine): an open standard for functions and subroutines.
 
-> #### Before you go any further...
->
-> Are you trying to use a machine?  Or just curious about what the machine specification is?  If so, you're probably in the wrong place.  You don't need to use this module directly unless you're **building your own machinepack** or doing advanced things with machines.  To **use** a machine, just copy and paste the generated code example from the machine's generated manpage on http://node-machine.org.  You'll also find more information about the node-machine project and a short video from the introductory talk at [dotjs.eu](http://dotjs.eu/), an up-to-date list of all available machines on NPM, and standardized documentation for each one.
->
-> If you are interested in creating your own machinepack, or contributing to an existing pack, start with the [tutorial for implementors](http://node-machine.org/implementing/Getting-Started). 
+### Wait, stop!
 
+Before you read any further, let's stop and make sure you're in the right place.  The documentation in this README file is for low-level usage of `machine`, the JavaScript machine runner.  You don't need to use this module directly unless you're **building machines**.
 
-### Building a machinepack?
+You can find more information about the node-machine project on http://node-machine.org.  There you'll also find a short video from the introductory talk at [dotjs.eu](http://dotjs.eu/), an up-to-date list of all available machines on NPM, and standardized documentation pages with code examples you can copy and paste into your Node.js app (e.g. [Github.createRepo()](http://node-machine.org/machinepack-github/create-repo)).
 
-Here are some tips:
-+ Check out the [tutorial for implementors](http://node-machine.org/implementing/Getting-Started)
+Building a machinepack?  Here are some tips:
++ Start with [tutorial for implementors](http://node-machine.org/implementing/Getting-Started)
 + Join the [newsgroup for the machine specification](https://groups.google.com/forum/?hl=en#!forum/node-machine)
 + Don't forget to add the `"repository"` key to your package.json file so folks can find your source code (this enables the `View Source` button in the generated documentation on node-machine.org)
 + Hit up [@mikermcneil](https://twitter.com/mikermcneil) on Twitter and let me know what you're working on!
 
 
-
-### What is this for?
+### OK what is this? How does it work?
 
 This is a low-level module for building, configuring, and running machines.
 
 Normal users of machines won't interact with this module directly very often-- however it _is_ a dependency of every machinepack.  Its full list of responsibilities includes exposing the conventional machine usage, a `.exec()` helper (for familiarity with Waterline), as well as validating input expectations, coercing return values from exits, and more.
 
-The only reason to use this module directly is if you need to instantiate a one-off machine or machinepack.  The `.build()` method accepts a machine definition object and returns a new ready-to-use machine instance function.  The `.pack()` method accepts a filesystem path and returns a ready-to-use machinepack obtained by requiring the module located at the path, loading its machine definitions into live machines (calling `.build()` on each definition), and validating that everything is up to spec.
+The `.build()` method accepts a machine definition object and returns a new ready-to-use machine instance function.  The `.pack()` method accepts a filesystem path and returns a ready-to-use machinepack obtained by requiring the module located at the path, loading its machine definitions into live machines (calling `.build()` on each definition), and validating that everything is up to spec.
 
 So when you require a machinepack from NPM like so:
 
@@ -39,9 +35,10 @@ var Github = require('machinepack-github');
 what's actually happening is that the `index.js` file in the machinepack module is calling `.pack()` and returning an object of ready-to-go machine instances.
 
 
+
 ### Where would I use this module directly?
 
-There are two everyday use cases where this comes up:
+There are only two use-cases for requiring this module directly:
 
 ##### 1. Your machinepack's boilerplate `index.js` file
 
