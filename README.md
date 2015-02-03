@@ -1,6 +1,6 @@
 <h1>
   <img src="http://node-machine.org/images/machine-anthropomorph-for-white-bg.png" width="50" />
-  machine (JavaScript runner)
+  machine (runner)
 </h1>
 
 A JavaScript runtime for [machines](http://node-machine.org); an atomic, context-free bit of code which conforms to the [machine specification](http://node-machine.org/spec/machine), an open standard for functions and subroutines.
