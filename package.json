@@ -28,7 +28,7 @@
     "npm": ">= 1.4.0"
   },
   "dependencies": {
-    "switchback": "~1.1.0",
+    "switchback": "^1.1.3",
     "lodash": "~2.4.1",
     "object-hash": "~0.3.0",
     "convert-to-ecmascript-compatible-varname": "^0.1.0",
