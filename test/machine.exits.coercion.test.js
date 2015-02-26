@@ -1,3 +1,4 @@
+var _ = require('lodash');
 var assert = require('assert');
 var Machine = require('../lib/Machine.constructor');
 
@@ -403,6 +404,89 @@ describe('Machine exit coercion', function() {
 
 
 
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+  // Some edge cases:
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+
+  var edgeCaseMachineDef = {
+    "inputs": {
+      "criteria": {
+        "friendlyName": "criteria",
+        "typeclass": "dictionary",
+        "description": "Waterline search criteria to use in retrieving Job instances"
+      }
+    },
+    "exits": {
+      "then": {
+        "friendlyName": "then",
+        "example": {
+          "title": "scott",
+          "description": "scott",
+          "votes": 123,
+          "id": 123
+        }
+      },
+      "error": {
+        "example": undefined
+      },
+      "notFound": {
+        "void": true
+      }
+    },
+    "defaultExit": "then",
+    "fn": function(inputs, exits, env) {
+
+      function Thing(){}
+      var thing = new Thing();
+      thing.id=1;
+      thing.votes=null;
+      thing.description='stuff';
+      thing.title='thing';
+
+      // return exits(null, thing);
+      return exits.then(thing);
+    },
+    "identity": "findOne_job"
+  };
+
+  // Same as edgeCaseMachine but w/ a slightly different fn that uses switchback-style usage:
+  var edgeCaseMachineDef2 = _.cloneDeep(edgeCaseMachineDef);
+  edgeCaseMachineDef2.fn = function(inputs, exits, env) {
+    function Thing(){}
+    var thing = new Thing();
+    thing.id=1;
+    thing.votes=null;
+    thing.description='stuff';
+    thing.title='thing';
+    return exits(null, thing);
+  };
+
+
+  it('should coerce null to 0', function (done){
+    Machine.build(edgeCaseMachineDef).configure({criteria: {id: 1}}).exec({
+      error: function (err){
+        return done(err);
+      },
+      then: function (result){
+        assert.equal(result.votes, 0);
+
+        return done();
+      }
+    });
+  });
+
+  it('should coerce null to 0 w/ switchback usage', function (done){
+    Machine.build(edgeCaseMachineDef2).configure({criteria: {id: 1}}).exec({
+      error: function (err){
+        return done(err);
+      },
+      then: function (result){
+        assert.equal(result.votes, 0);
+
+        return done();
+      }
+    });
+  });
 
 
 });
