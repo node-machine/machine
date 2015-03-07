@@ -13,7 +13,7 @@ A runner for [machines](http://node-machine.org) written in JavaScript.  Machine
 > Chances are you don't need to use this module directly- see [About This Module](https://github.com/node-machine/machine#about-this-module) below for info.
 
 
-## Installation &nbsp;  [![NPM version](https://badge.fury.io/js/machine.svg)](http://badge.fury.io/js/machine)
+## Installation &nbsp;  [![NPM version](https://badge.fury.io/js/machine.svg)](http://badge.fury.io/js/machine)  [![Build Status](https://travis-ci.org/node-machine/machine.png?branch=master)](https://travis-ci.org/node-machine/machine)
 
 **With [node](http://nodejs.org) [installed](http://sailsjs.org/#!documentation/new-to-nodejs):**
 ```sh
