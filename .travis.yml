@@ -8,3 +8,7 @@ node_js:
 branches:
   only:
     - master
+
+notifications:
+  email:
+    - travis@treeline.io
