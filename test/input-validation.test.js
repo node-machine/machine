@@ -51,7 +51,7 @@ describe('input validation/coercion', function (){
 
     { example: 'foo', actual: /some regexp/, error: true },
     { example: 'foo', actual: function(){}, error: true },
-    { example: 'foo', actual: new Date('November 5, 1605'), result: '1605-11-05T07:00:00.000Z' },
+    { example: 'foo', actual: new Date('November 5, 1605 GMT'), result: '1605-11-05T00:00:00.000Z' },
     { example: 'foo', actual: new Readable(), error: true },
     { example: 'foo', actual: new Buffer('asdf'), error: true },
     { example: 'foo', actual: new Error('asdf'), error: true },
@@ -101,7 +101,7 @@ describe('input validation/coercion', function (){
 
     { example: 123, actual: /some regexp/, error: true },
     { example: 123, actual: function(){}, error: true },
-    { example: 123, actual: new Date('November 5, 1605'), error: true },
+    { example: 123, actual: new Date('November 5, 1605 GMT'), error: true },
     { example: 123, actual: new Readable(), error: true },
     { example: 123, actual: new Buffer('asdf'), error: true },
     { example: 123, actual: new Error('asdf'), error: true },
@@ -152,7 +152,7 @@ describe('input validation/coercion', function (){
 
     { example: true, actual: /some regexp/, error: true },
     { example: true, actual: function(){}, error: true },
-    { example: true, actual: new Date('November 5, 1605'), error: true },
+    { example: true, actual: new Date('November 5, 1605 GMT'), error: true },
     { example: true, actual: new Readable(), error: true },
     { example: true, actual: new Buffer('asdf'), error: true },
     { example: true, actual: new Error('asdf'), error: true },
@@ -188,7 +188,7 @@ describe('input validation/coercion', function (){
 
     { example: {}, actual: /some regexp/, result: {} },
     { example: {}, actual: function(){}, error: true },
-    { example: {}, actual: new Date('November 5, 1605'), error: true },
+    { example: {}, actual: new Date('November 5, 1605 GMT'), error: true },
     { example: {}, actual: new Readable(), result: { _readableState: { highWaterMark: 16384, buffer: [], length: 0, pipes: null, pipesCount: 0, flowing: false, ended: false, endEmitted: false, reading: false, calledRead: false, sync: true, needReadable: false, emittedReadable: false, readableListening: false, objectMode: false, defaultEncoding: 'utf8', ranOut: false, awaitDrain: 0, readingMore: false, decoder: null, encoding: null }, readable: true, domain: null, _events: {}, _maxListeners: 10 } },
     { example: {}, actual: new Buffer('asdf'), error: true },
     { example: {}, actual: new Error('asdf'), result: {} },  // TODO: consider enhancing this behavior to guarantee e.g. `.message` (string), `.stack` (string), `.code` (string), and `.status` (number).  Needs community discussion
@@ -225,7 +225,7 @@ describe('input validation/coercion', function (){
 
     { example: [], actual: /some regexp/, error: true },
     { example: [], actual: function(){}, error: true },
-    { example: [], actual: new Date('November 5, 1605'), error: true },
+    { example: [], actual: new Date('November 5, 1605 GMT'), error: true },
     { example: [], actual: new Readable(), error: true }, // TODO: consider enhancing this behavior to concat the stream contents? Needs community discussion.
     { example: [], actual: new Buffer('asdf'), result: [ 97, 115, 100, 102 ] },
     { example: [], actual: new Error('asdf'), error: true },
@@ -290,7 +290,7 @@ describe('input validation/coercion', function (){
       var fn = function (){};
       return { typeclass: '*', actual: fn, result: fn,  };
     })(),
-    { typeclass: '*', actual: new Date('November 5, 1605'), result: new Date('November 5, 1605'),  },
+    { typeclass: '*', actual: new Date('November 5, 1605 GMT'), result: new Date('November 5, 1605 GMT'),  },
     { typeclass: '*', actual: new Readable(), result: new Readable(),  },
     (function (){
       var buffer = new Buffer('asdf');
