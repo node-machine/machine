@@ -1,3 +1,4 @@
+var util = require('util');
 var _ = require('lodash');
 var assert = require('assert');
 var Machine = require('../lib/Machine.constructor');
@@ -481,7 +482,7 @@ describe('Machine exit coercion', function() {
         return done(err);
       },
       then: function (result){
-        assert.equal(result.votes, 0);
+        assert.equal(result.votes, 0, 'Expected `votes` property of result to equal zero, but check out the result:'+util.inspect(result));
 
         return done();
       }
