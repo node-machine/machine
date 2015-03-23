@@ -218,11 +218,11 @@ Machines know how to cache their own results.
 
 ```javascript
 var Machine = require('machine');
-var ls = Machine.build(require('machinepack-fs/ls'));
+var ls = Machine.build(require('machinepack-fs/machine/ls'));
 
 ls
 .configure({
-
+  dir: '.'
 })
 .cache({ttl: 2000}) // this is the ttl, 2000ms === 2 seconds
 .exec(console.log)
