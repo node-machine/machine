@@ -250,6 +250,14 @@ describe('input validation/coercion', function (){
     // MISC
     ////////////////////////////////////////////
 
+    // By changing these from `typeclass: '*'` => `example: '*'`
+    // we introduce the issue of true pass-through being broken by
+    // recursive JSON serializability.  We'll need to solve this problem
+    // eventually to be able to accept stuff like:
+    //  • an array of dicts, where each dict has a property called `incoming` which is a stream
+    //  • an array of dicts, where each dict has a property called `saveAs` which is a function
+    //  • etc.
+
     { example: '*', actual: 'bar', result: 'bar',  },
     { example: '*', actual: '', result: '',  },
     { example: '*', actual: '-1.1', result: '-1.1',  },
@@ -320,7 +328,7 @@ describe('input validation/coercion', function (){
 
   // Then run applicable tests again, but using `typeclass`
   _.each(INPUT_TEST_SUITE, function (test){
-    // Inject extra test to try `example:{}` as `typeclass: 'dictionary'`
+    // Inject extra test to try `example:{}` as `typeclass: 'dictionary'` (at the top-level)
     if (_.isEqual(test.example, {})) {
       describeAndExecuteTest({
         typeclass: 'dictionary',
@@ -329,7 +337,7 @@ describe('input validation/coercion', function (){
         error: test.error
       });
     }
-    // Inject extra test to try `example:[]` as `typeclass: 'array'`
+    // Inject extra test to try `example:[]` as `typeclass: 'array'` (at the top-level)
     else if (_.isEqual(test.example, [])) {
       describeAndExecuteTest({
         typeclass: 'array',
@@ -338,7 +346,7 @@ describe('input validation/coercion', function (){
         error: test.error
       });
     }
-    // Inject extra test to try `example: '*'` as `typeclass: '*'`
+    // Inject extra test to try `example: '*'` as `typeclass: '*'` (at the top-level)
     else if (_.isEqual(test.example, '*')) {
       describeAndExecuteTest({
         typeclass: '*',
