@@ -50,7 +50,8 @@ module.exports = function testInputValidation(options, cb){
     // validate that error exit was traversed, if expected
     if (err){
       if (options.error) return cb();
-      return cb(new Error('did not expect machine to call `error`, but it did:\n' + err));
+      var _finalErr = new Error('did not expect machine to call `error`, but it did:\n' + util.inspect(err));
+      return cb(_finalErr);
     }
     else if (options.error) {
       return cb(new Error('expected machine to call `error` exit due to input validation error, but it did not. ' + ('Instead got '+util.inspect(_inputsInFn.x, false, null))+'.' ));

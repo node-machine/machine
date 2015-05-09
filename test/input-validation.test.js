@@ -250,64 +250,64 @@ describe('input validation/coercion', function (){
     // MISC
     ////////////////////////////////////////////
 
-    { typeclass: '*', actual: 'bar', result: 'bar',  },
-    { typeclass: '*', actual: '', result: '',  },
-    { typeclass: '*', actual: '-1.1', result: '-1.1',  },
-    { typeclass: '*', actual: 'NaN', result: 'NaN',  },
-    { typeclass: '*', actual: 'undefined', result: 'undefined',  },
-    { typeclass: '*', actual: 'null', result: 'null',  },
-    { typeclass: '*', actual: '-Infinity', result: '-Infinity',  },
-    { typeclass: '*', actual: 'Infinity', result: 'Infinity',  },
-    { typeclass: '*', actual: 'true', result: 'true',  },
-    { typeclass: '*', actual: 'false', result: 'false',  },
-    { typeclass: '*', actual: '0', result: '0',  },
-    { typeclass: '*', actual: '1', result: '1',  },
+    { example: '*', actual: 'bar', result: 'bar',  },
+    { example: '*', actual: '', result: '',  },
+    { example: '*', actual: '-1.1', result: '-1.1',  },
+    { example: '*', actual: 'NaN', result: 'NaN',  },
+    { example: '*', actual: 'undefined', result: 'undefined',  },
+    { example: '*', actual: 'null', result: 'null',  },
+    { example: '*', actual: '-Infinity', result: '-Infinity',  },
+    { example: '*', actual: 'Infinity', result: 'Infinity',  },
+    { example: '*', actual: 'true', result: 'true',  },
+    { example: '*', actual: 'false', result: 'false',  },
+    { example: '*', actual: '0', result: '0',  },
+    { example: '*', actual: '1', result: '1',  },
 
-    { typeclass: '*', actual: 0, result: 0,  },
-    { typeclass: '*', actual: 1, result: 1,  },
-    { typeclass: '*', actual: -1.1, result: -1.1,  },
+    { example: '*', actual: 0, result: 0,  },
+    { example: '*', actual: 1, result: 1,  },
+    { example: '*', actual: -1.1, result: -1.1,  },
 
-    { typeclass: '*', actual: true, result: true,  },
-    { typeclass: '*', actual: false, result: false,  },
+    { example: '*', actual: true, result: true,  },
+    { example: '*', actual: false, result: false,  },
 
-    { typeclass: '*', actual: {}, result: {},  },
-    { typeclass: '*', actual: {foo:'bar'}, result: {foo:'bar'},  },
-    { typeclass: '*', actual: {foo:{bar:{baz:{}}}}, result: {foo:{bar:{baz:{}}}},  },
-    { typeclass: '*', actual: {foo:['bar']}, result: {foo:['bar']},  },
-    { typeclass: '*', actual: {foo:{bar:{baz:[{}]}}}, result: {foo:{bar:{baz:[{}]}}},  },
+    { example: '*', actual: {}, result: {},  },
+    { example: '*', actual: {foo:'bar'}, result: {foo:'bar'},  },
+    { example: '*', actual: {foo:{bar:{baz:{}}}}, result: {foo:{bar:{baz:{}}}},  },
+    { example: '*', actual: {foo:['bar']}, result: {foo:['bar']},  },
+    { example: '*', actual: {foo:{bar:{baz:[{}]}}}, result: {foo:{bar:{baz:[{}]}}},  },
 
-    { typeclass: '*', actual: [], result: [],  },
-    { typeclass: '*', actual: ['asdf'], result: ['asdf'],  },
-    { typeclass: '*', actual: [''], result: [''],  },
-    { typeclass: '*', actual: [235], result: [235],  },
-    { typeclass: '*', actual: [false], result: [false],  },
-    { typeclass: '*', actual: [{}], result: [{}],  },
-    { typeclass: '*', actual: [{foo:'bar'}], result: [{foo:'bar'}],  },
+    { example: '*', actual: [], result: [],  },
+    { example: '*', actual: ['asdf'], result: ['asdf'],  },
+    { example: '*', actual: [''], result: [''],  },
+    { example: '*', actual: [235], result: [235],  },
+    { example: '*', actual: [false], result: [false],  },
+    { example: '*', actual: [{}], result: [{}],  },
+    { example: '*', actual: [{foo:'bar'}], result: [{foo:'bar'}],  },
 
-    { typeclass: '*', actual: undefined, result: undefined,  },
+    { example: '*', actual: undefined, result: undefined,  },
 
-    { typeclass: '*', actual: NaN, result: NaN,  },
-    { typeclass: '*', actual: Infinity, result: Infinity,  },
-    { typeclass: '*', actual: -Infinity, result: -Infinity,  },
-    { typeclass: '*', actual: null, result: null,  },
+    { example: '*', actual: NaN, result: NaN,  },
+    { example: '*', actual: Infinity, result: Infinity,  },
+    { example: '*', actual: -Infinity, result: -Infinity,  },
+    { example: '*', actual: null, result: null,  },
 
     (function (){
       var regexp = /some regexp/;
-      return { typeclass: '*', actual: regexp, result: regexp,  };
+      return { example: '*', actual: regexp, result: regexp,  };
     })(),
     (function (){
       var fn = function (){};
-      return { typeclass: '*', actual: fn, result: fn,  };
+      return { example: '*', actual: fn, result: fn,  };
     })(),
-    { typeclass: '*', actual: new Date('November 5, 1605 GMT'), result: new Date('November 5, 1605 GMT'),  },
-    { typeclass: '*', actual: new Readable(), result: new Readable(),  },
+    { example: '*', actual: new Date('November 5, 1605 GMT'), result: new Date('November 5, 1605 GMT'),  },
+    { example: '*', actual: new Readable(), result: new Readable(),  },
     (function (){
       var buffer = new Buffer('asdf');
-      return { typeclass: '*', actual: buffer, result: buffer  };
+      return { example: '*', actual: buffer, result: buffer  };
     })(),
     (function (){
       var err = new Error('asdf');
-      return { typeclass: '*', actual: err, result: err,  };
+      return { example: '*', actual: err, result: err,  };
     })()
 
   ];
@@ -333,6 +333,15 @@ describe('input validation/coercion', function (){
     else if (_.isEqual(test.example, [])) {
       describeAndExecuteTest({
         typeclass: 'array',
+        actual: test.actual,
+        result: test.result,
+        error: test.error
+      });
+    }
+    // Inject extra test to try `example: '*'` as `typeclass: '*'`
+    else if (_.isEqual(test.example, '*')) {
+      describeAndExecuteTest({
+        typeclass: '*',
         actual: test.actual,
         result: test.result,
         error: test.error
