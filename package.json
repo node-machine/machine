@@ -1,6 +1,6 @@
 {
   "name": "machine",
-  "version": "4.1.1",
+  "version": "5.0.0-pre",
   "description": "Configure and execute machines",
   "main": "index.js",
   "scripts": {
