@@ -15,8 +15,11 @@ module.exports = function testInputValidation(options, cb){
     inputs: {
       x: (function _determineInputDefinition(){
         var def = {};
-        if (!_.isUndefined(options.required)) {
-          def.required = options.required;
+        if (_.isUndefined(options.required)) {
+          // Act like `required` is always present so we can
+          // use the existing test suite from `rttc()`.
+          def.required = true;
+          // def.required = options.required;
         }
         if (!_.isUndefined(options.example)) {
           def.example = options.example;
