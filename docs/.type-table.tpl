@@ -17,10 +17,8 @@ For instance, a user can pass in `"2"` (a string) to an input expecting a number
 ## Inputs
 
 | `example`                | actual value provided  | yields...
-| ------------------------ | ---------------------- | ----------------------
-<% _.each(validationTests, function (test) { %>
-| <%= test.example %>      | <%= test.actual %>     | <%= test.returns %>
-<% }); %>
+| ------------------------ | ---------------------- | ----------------------<% _.each(validationTests, function (test) { %>
+| <%= util.inspect(test.example, false, null) %>      | <%= util.inspect(test.actual, false, null) %>     | <%= util.inspect(test.result, false, null) %><% }); %>
 
 
 ## Special cases
@@ -31,10 +29,8 @@ For instance, a user can pass in `"2"` (a string) to an input expecting a number
 ## Exits
 
 | `example`                | actual value provided  | yields...
-| ------------------------ | ---------------------- | ----------------------
-<% _.each(coercionTests, function (test) { %>
-| <%= test.example %>      | <%= test.actual %>     | <%= test.returns %>
-<% }); %>
+| ------------------------ | ---------------------- | ----------------------<% _.each(coercionTests, function (test) { %>
+| <%= util.inspect(test.example, false, null) %>      | <%= util.inspect(test.actual, false, null) %>     | <%= util.inspect(test.result, false, null) %><% }); %>
 
 ## Special cases
 + If the `error` exit does not have an `example` or `getExample()`, it outputs an instance of Error.
