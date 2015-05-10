@@ -7,7 +7,7 @@ var runSuite = require('../node_modules/rttc/test/helpers/run-suite');
 var TEST_SUITE = require('../node_modules/rttc/test/spec/validation.spec.js');
 var toRunTest = require('./helpers/test-input-validation.helper');
 
-describe('.validate()', function (){
+describe('exhaustive input validation tests', function (){
 
 
   // Modify the test suite to also test `typeclass` alongside the comparable examples.
