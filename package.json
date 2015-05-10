@@ -33,7 +33,7 @@
     "lodash": "~2.4.1",
     "object-hash": "~0.3.0",
     "convert-to-ecmascript-compatible-varname": "^0.1.0",
-    "rttc": "^2.0.0",
+    "rttc": "^2.0.4",
     "debug": "^2.1.1"
   },
   "devDependencies": {
