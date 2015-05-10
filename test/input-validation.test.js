@@ -3,8 +3,8 @@
  */
 
 var _ = require('lodash');
-var TEST_SUITE = require('./node_modules/rttc/test/spec/validation.spec');
-var runSuite = require('./node_modules/rttc/test/helpers/run-suite');
+var TEST_SUITE = require('../node_modules/rttc/test/spec/validation.spec');
+var runSuite = require('../node_modules/rttc/test/helpers/run-suite');
 var toRunTest = require('./helpers/test-input-validation.helper');
 
 describe('.validate()', function (){
