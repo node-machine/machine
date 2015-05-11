@@ -5,10 +5,14 @@
 var _ = require('lodash');
 var runSuite = require('../node_modules/rttc/spec/helpers/run-suite');
 var TEST_SUITE = require('../node_modules/rttc/spec/validation.spec.js');
+var expandSuite = require('../node_modules/rttc/spec/helpers/expand-suite');
 var toRunTest = require('./helpers/test-input-validation.helper');
 
 describe('exhaustive input validation tests', function (){
 
+  // Take the array of tests and extend them with some derivative
+  // tests automatically.
+  TEST_SUITE = expandSuite(TEST_SUITE);
 
   // Modify the test suite to also test `typeclass` alongside the comparable examples.
   var extraTypeclassTests = [];
@@ -51,8 +55,6 @@ describe('exhaustive input validation tests', function (){
     }
   });
   TEST_SUITE = TEST_SUITE.concat(extraTypeclassTests);
-
-
 
   // Now run all of the tests
   runSuite(TEST_SUITE, toRunTest );
