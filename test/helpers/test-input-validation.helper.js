@@ -19,21 +19,6 @@ module.exports = function testInputValidation(options, cb){
           // Act like `required` is always present so we can
           // use the existing test suite from `rttc()`.
           def.required = true;
-
-          // The one exception is when we have `example: '*'`
-          // with `undefined` as our actual value passed in
-          // at the top-level.  This will prevent the machine
-          // from running because the definition of "required"
-          // is "not undefined".  However since `rttc` doesn't
-          // have a notion of required vs. not, we need to enforce
-          // a special exception for this edge case.
-          //
-          // TODO: eventually we should be able to remove the `required`
-          // check from the machine runner, and just rttc defaults.  When
-          // that happens, everything should just work.
-          if (options.example === '*' && options.actual === undefined && options.result === undefined) {
-            def.required = false;
-          }
         }
         if (!_.isUndefined(options.example)) {
           def.example = options.example;

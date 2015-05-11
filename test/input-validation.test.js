@@ -42,15 +42,6 @@ describe('exhaustive input validation tests', function (){
         actual: test.actual,
         result: test.result,
         error: test.error,
-        // We have to mark this as `required: false` because the definition
-        // of "required" is "not undefined".  However since `rttc` doesn't
-        // have a notion of required vs. not, we need to enforce
-        // a special exception for this edge case.
-        //
-        // TODO: eventually we should be able to remove the `required`
-        // check from the machine runner, and just rttc defaults.  When
-        // that happens, everything should just work.
-        required: false
       });
     }
   });
