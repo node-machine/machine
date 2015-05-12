@@ -9,28 +9,28 @@ var Machine = require('../../');
 
 
 
-module.exports = function testInputValidation(options, cb){
+module.exports = function testInputValidation(expectations, cb){
   var _inputsInFn;
   var machine = Machine.build({
     inputs: {
       x: (function _determineInputDefinition(){
         var def = {};
-        if (_.isUndefined(options.required)) {
+        if (_.isUndefined(expectations.required)) {
           // Act like `required` is always present so we can
           // use the existing test suite from `rttc()`.
           def.required = true;
         }
-        if (!_.isUndefined(options.example)) {
-          def.example = options.example;
+        if (!_.isUndefined(expectations.example)) {
+          def.example = expectations.example;
         }
-        if (!_.isUndefined(options.typeclass)) {
-          def.typeclass = options.typeclass;
+        if (!_.isUndefined(expectations.typeclass)) {
+          def.typeclass = expectations.typeclass;
         }
-        if (!_.isUndefined(options.getExample)) {
-          def.getExample = options.getExample;
+        if (!_.isUndefined(expectations.getExample)) {
+          def.getExample = expectations.getExample;
         }
-        if (!_.isUndefined(options.validate)) {
-          def.validate = options.validate;
+        if (!_.isUndefined(expectations.validate)) {
+          def.validate = expectations.validate;
         }
         return def;
       })()
@@ -45,35 +45,54 @@ module.exports = function testInputValidation(options, cb){
     }
   })
   .configure({
-    x: options.actual
+    x: expectations.actual
   })
   .exec(function (err){
 
     // validate that error exit was traversed, if expected
     if (err){
-      if (options.error) return cb();
+      if (expectations.error) return cb();
       return cb(new Error('did not expect machine to call `error`, but it did:\n' + util.inspect(err)));
     }
-    else if (options.error) {
+    else if (expectations.error) {
       return cb(new Error('expected machine to call `error` exit due to input validation error, but it did not. ' + ('Instead got '+util.inspect(_inputsInFn.x, false, null))+'.' ));
     }
 
-    if (!_.isUndefined(options.result)) {
-      if (!_.isObject(_inputsInFn)) {
-        return cb(new Error('`inputs` argument in machine fn was corrupted!'));
-      }
+    if (!_.isObject(_inputsInFn)) {
+      return cb(new Error('`inputs` argument in machine fn was corrupted!'));
+    }
 
-      var isEqual = (function (){
+    // If an expected `result` is provided, compare the actual result against that.
+    // Otherwise compare it against the original value (`actual`)
+    var compareTo = expectations.hasOwnProperty('result') ? expectations.result : expectations.actual;
 
-        return _.isEqual(_inputsInFn.x, options.result);
-      })();
+    // Provide direct access to actual result for clarity in comparisons below.
+    var actualResult = _inputsInFn.x;
 
-      // validate `_inputsInFn` against expected result
-      if (!isEqual) {
-        return cb(new Error('incorrect input value received in machine fn, got: '+util.inspect(_inputsInFn.x, false, null)));
+    // if `result` is set, use a lodash equality check
+    if (!_.isEqual(actualResult, compareTo)) {
+      return cb(new Error('returned incorrect value: '+util.inspect(actualResult, false, null)));
+    }
+
+    // Test using strict equality (===) if explicitly requested
+    if (expectations.strictEq) {
+      if (actualResult !== compareTo) {
+        return cb(new Error('returned value is equivalent (but not ===)'));
       }
     }
 
+    // Test AGAINST strict equality using `isNew` if requested
+    // (i.e. guarantees this is a new value and is !== what was passed in)
+    if (expectations.isNew) {
+
+      // Check both the expected result and the actual value, just to be safe.
+      // (should never even be possible for it to be a direct reference to the expected result)
+      if (actualResult === compareTo || actualResult === expectations.actual) {
+        return cb(new Error('returned value === value that was passed in -- but should have been a new value!'));
+      }
+    }
+
+    // If we made it here, everything's good!
     return cb();
   });
 };
