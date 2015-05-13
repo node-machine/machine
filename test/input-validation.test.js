@@ -19,30 +19,30 @@ describe('exhaustive input validation tests', function (){
   _.each(TEST_SUITE, function (test){
     // Inject extra test to try `example:{}` as `typeclass: 'dictionary'` (at the top-level)
     if (_.isEqual(test.example, {})) {
-      extraTypeclassTests.push({
-        typeclass: 'dictionary',
-        actual: test.actual,
-        result: test.result,
-        error: test.error
-      });
+      extraTypeclassTests.push((function(newTest){
+        _.extend(newTest, _.cloneDeep(test));
+        delete newTest.example;
+        newTest.typeclass = 'dictionary';
+        return newTest;
+      })({}));
     }
     // Inject extra test to try `example:[]` as `typeclass: 'array'` (at the top-level)
     else if (_.isEqual(test.example, [])) {
-      extraTypeclassTests.push({
-        typeclass: 'array',
-        actual: test.actual,
-        result: test.result,
-        error: test.error
-      });
+      extraTypeclassTests.push((function(newTest){
+        _.extend(newTest, _.cloneDeep(test));
+        delete newTest.example;
+        newTest.typeclass = 'array';
+        return newTest;
+      })({}));
     }
     // Inject extra test to try `example: '*'` as `typeclass: '*'` (at the top-level)
     else if (_.isEqual(test.example, '*')) {
-      extraTypeclassTests.push({
-        typeclass: '*',
-        actual: test.actual,
-        result: test.result,
-        error: test.error,
-      });
+      extraTypeclassTests.push((function(newTest){
+        _.extend(newTest, _.cloneDeep(test));
+        delete newTest.example;
+        newTest.typeclass = '*';
+        return newTest;
+      })({}));
     }
   });
   TEST_SUITE = TEST_SUITE.concat(extraTypeclassTests);
