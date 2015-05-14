@@ -30,6 +30,28 @@ describe('Machine fn calling `exits()` (w/ different usages)', function() {
 
 
 
+  describe('with success exit defined, but no error exit', function() {
+
+    testDifferentUsages({
+      exits: {
+        success: {}
+      }
+    });
+
+  }); // </with success exit defined, but no error exit>
+
+
+
+  describe('with some other exit defined, but no success or error exit', function() {
+
+    testDifferentUsages({
+      exits: {
+        somethingElse: {}
+      }
+    });
+
+  }); // </with somethingElse exit defined, but no error exit>
+
 
   describe('with neither error nor success exit defined', function() {
 
