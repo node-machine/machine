@@ -1,7 +1,7 @@
 var assert = require('assert');
 var M = require('../lib/Machine.constructor');
 
-describe('Machine test', function() {
+describe('Sanity test', function() {
 
   var machine = {
     inputs: {
