@@ -54,6 +54,11 @@ describe('with no exits object defined in the machine def at all', function() {
 
 
 
+
+
+
+
+
 /**
  * This helper tests different usages of the specified machine def.
  * NOTE: The provided machine def SHOULD NOT specify a `fn` or `inputs`!
