@@ -1,7 +1,7 @@
 var assert = require('assert');
 var M = require('../lib/Machine.constructor');
 
-describe('Machine fn calling `exits()` (switchback usage)', function() {
+describe('Machine fn calling `exits()` (w/ different usages)', function() {
 
 
   describe('with success exit and error exit defined', function() {
@@ -106,6 +106,42 @@ function testDifferentUsages (machine) {
     .exec();
   });
 
+  it('should call the error exit when `fn` calls `exits()` and ONLY an `error` callback is bound using second argument to `configure()`', function(done) {
+    M.build(machine)
+    .configure({
+      foo: 'hello'
+    }, {
+      error: function(err) {done();}
+    })
+    .exec();
+  });
+
+  it('should call the error exit when `fn` calls `exits("ERROR!")` and ONLY an `error` callback is bound using second argument to `configure()`', function(done) {
+    M.build(machine)
+    .configure({
+      foo: 'error'
+    }, {
+      error: function(err) {done();}
+    })
+    .exec();
+  });
+
+  it('should throw an error when no `error` callback is bound using second argument to `configure()`', function(done) {
+    assert.throws(function (){
+      M.build(machine)
+      .configure({
+        foo: 'hello'
+      }, {
+        "success": function() {
+          return done(new Error('Should have thrown, and not called any exit!'));
+        }
+      })
+      .exec();
+    });
+    done();
+  });
+
+
   ////////////////////////////////////////////////////////////////////
   // Binding Node callback with second argument to .configure()
   ////////////////////////////////////////////////////////////////////
@@ -156,6 +192,38 @@ function testDifferentUsages (machine) {
       "success": function() {done(new Error('Should NOT have called the success exit!'));},
       "error": function(err) {assert(err, 'expected `'+err+'` to be truthy');done();}
     });
+  });
+
+  it('should call the error exit when `fn` calls `exits()` and ONLY an `error` callback is bound using .exec()', function(done) {
+    M.build(machine)
+    .configure({
+      foo: 'hello'
+    }).exec({
+      error: function(err) {done();}
+    });
+  });
+
+  it('should call the error exit when `fn` calls `exits("ERROR!")` and ONLY an `error` callback is bound using .exec()', function(done) {
+    M.build(machine)
+    .configure({
+      foo: 'error'
+    }).exec({
+      error: function(err) {done();}
+    });
+  });
+
+  it('should throw an error when no `error` callback is bound using .exec()', function(done) {
+    assert.throws(function (){
+      M.build(machine)
+      .configure({
+        foo: 'hello'
+      }).exec({
+        "success": function() {
+          return done(new Error('Should have thrown, and not called any exit!'));
+        }
+      });
+    });
+    done();
   });
 
   ////////////////////////////////////////////////////////////////////
@@ -209,6 +277,41 @@ function testDifferentUsages (machine) {
       "error": function(err) {assert(err, 'expected `'+err+'` to be truthy');done();}
     })
     .exec();
+  });
+
+  it('should call the error exit when `fn` calls `exits()` and ONLY an `error` callback is bound using .setExits()', function(done) {
+    M.build(machine)
+    .configure({
+      foo: 'hello'
+    }).setExits({
+      error: function(err) {done();}
+    })
+    .exec();
+  });
+
+  it('should call the error exit when `fn` calls `exits("ERROR!")` and ONLY an `error` callback is bound using .setExits()', function(done) {
+    M.build(machine)
+    .configure({
+      foo: 'error'
+    }).setExits({
+      error: function(err) {done();}
+    })
+    .exec();
+  });
+
+  it('should throw an error when no `error` callback is bound using .setExits()', function(done) {
+    assert.throws(function (){
+      M.build(machine)
+      .configure({
+        foo: 'hello'
+      }).setExits({
+        success: function() {
+          return done(new Error('Should have thrown, and not called any exit!'));
+        }
+      })
+      .exec();
+    });
+    done();
   });
 
   ////////////////////////////////////////////////////////////////////
