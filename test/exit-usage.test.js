@@ -86,6 +86,34 @@ function testDifferentUsages (machine) {
     }
   };
 
+
+  ////////////////////////////////////////////////////////////////////
+  // Trying to `.exec()` a machine with no callbacks
+  ////////////////////////////////////////////////////////////////////
+  it('should throw an error when when `fn` calls `exits()` and no callbacks are bound', function(done) {
+    assert.throws(function (){
+      M.build(machine)
+      .configure({
+        foo: 'hello'
+      })
+      .exec();
+    });
+    done();
+  });
+
+  it('should throw an error when when `fn` calls `exits("ERROR!")` and no callbacks are bound', function(done) {
+    assert.throws(function (){
+      M.build(machine)
+      .configure({
+        foo: 'error'
+      })
+      .exec();
+    });
+    done();
+  });
+
+
+
   ////////////////////////////////////////////////////////////////////
   // Binding exit callbacks with second argument to .configure()
   ////////////////////////////////////////////////////////////////////
