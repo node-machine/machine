@@ -3,6 +3,7 @@ var M = require('../lib/Machine.constructor');
 
 describe('Default exits test', function() {
 
+
   describe('with defaultExit and catchallExit defined as custom exits', function() {
 
     var machine;
