@@ -1,9 +1,29 @@
+/**
+ * Module dependencies
+ */
+
+var runSuite = require('../node_modules/rttc/spec/helpers/run-suite');
+var TEST_SUITE = require('../node_modules/rttc/spec/coercion.spec.js');
+var toRunTest = require('./helpers/test-exit-coercion.helper');
+var expandSuite = require('../node_modules/rttc/spec/helpers/expand-suite');
+
+describe('exhaustive exit coercion tests', function (){
+
+  // Take the array of tests and extend them with some derivative
+  // tests automatically.  Then run them.
+  runSuite(expandSuite(TEST_SUITE), toRunTest );
+
+});
+
+
+
+
 var util = require('util');
 var _ = require('lodash');
 var assert = require('assert');
 var Machine = require('../lib/Machine.constructor');
 
-describe('Machine exit coercion', function() {
+describe('Specific machine exit coercion use cases', function() {
 
   it('should pass through expected data', function(done) {
 
@@ -410,32 +430,31 @@ describe('Machine exit coercion', function() {
   ///////////////////////////////////////////////////////////////////////////////////////////////
 
   var edgeCaseMachineDef = {
-    "inputs": {
-      "criteria": {
-        "friendlyName": "criteria",
-        "typeclass": "dictionary",
-        "description": "Waterline search criteria to use in retrieving Job instances"
+    inputs: {
+      criteria: {
+        friendlyName: "criteria",
+        typeclass: "dictionary",
+        description: "Waterline search criteria to use in retrieving Job instances"
       }
     },
-    "exits": {
-      "success": {
-        "friendlyName": "then",
-        "example": {
-          "title": "scott",
-          "description": "scott",
-          "votes": 123,
-          "id": 123
+    exits: {
+      success: {
+        friendlyName: "then",
+        example: {
+          title: "scott",
+          description: "scott",
+          votes: 123,
+          id: 123
         }
       },
-      "error": {
-        "example": undefined
+      error: {
+        example: undefined
       },
-      "notFound": {
-        "void": true
+      notFound: {
+        void: true
       }
     },
-    "defaultExit": "success",
-    "fn": function(inputs, exits, env) {
+    fn: function(inputs, exits, env) {
 
       function Thing(){}
       var thing = new Thing();
@@ -447,7 +466,7 @@ describe('Machine exit coercion', function() {
       // return exits(null, thing);
       return exits.success(thing);
     },
-    "identity": "findOne_job"
+    identity: "findOne_job"
   };
 
   // Same as edgeCaseMachine but w/ a slightly different fn that uses switchback-style usage:

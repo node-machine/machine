@@ -2,7 +2,7 @@ var assert = require('assert');
 var M = require('../lib/Machine.constructor');
 
 // TODO: deprecate `void`-- `example: undefined` works just as well.
-describe('Machine exit coercion', function() {
+describe('void exit', function() {
 
   it('should not return data from a voided exit', function(done) {
     var machine = {
