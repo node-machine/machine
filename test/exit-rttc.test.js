@@ -509,4 +509,61 @@ describe('Specific machine exit coercion use cases', function() {
   });
 
 
+
+
+  it('should reject `null` exit example', function (done){
+    Machine.build({
+      inputs: {},
+      exits: {
+        success: {
+          friendlyName: 'then',
+          example: {
+            title: 'scott',
+            description: 'scott',
+            votes: null,
+            id: 123
+          }
+        }
+      },
+      fn: function (inputs, exits) {
+        exits.success();
+      }
+    }).exec({
+      error: function (err){
+        return done();
+      },
+      success: function (result){
+        return done(new Error('Expected error exit to be traversed because exit example contains a null value.'));
+      }
+    });
+  });
+
+
+  it('should reject `null` exit example', function (done){
+    Machine.build({
+      inputs: {},
+      exits: {
+        error: {
+          example: {
+            title: 'scott',
+            description: 'scott',
+            votes: null,
+            id: 123
+          }
+        }
+      },
+      fn: function (inputs, exits) {
+        exits.error();
+      }
+    }).exec({
+      error: function (err){
+        return done();
+      },
+      success: function (result){
+        return done(new Error('Expected error exit to be traversed because exit example contains a null value.'));
+      }
+    });
+  });
+
+
 });
