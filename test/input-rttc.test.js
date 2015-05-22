@@ -7,6 +7,7 @@ var runSuite = require('../node_modules/rttc/spec/helpers/run-suite');
 var TEST_SUITE = require('../node_modules/rttc/spec/validation.spec.js');
 var expandSuite = require('../node_modules/rttc/spec/helpers/expand-suite');
 var toRunTest = require('./helpers/test-input-validation.helper');
+var Stream = require('stream');
 
 describe('exhaustive input validation tests', function (){
 
@@ -14,13 +15,36 @@ describe('exhaustive input validation tests', function (){
   // tests automatically.
   TEST_SUITE = expandSuite(TEST_SUITE);
 
+  // Lodash 3.0 deprecated prototypal cloning of things like Errors
+  // (so we shim a quick version for our purposes)
+  var customCloneDeep = function (val){
+    return _.cloneDeep(val, function(_val) {
+      // Don't worry about cloning most things that _.cloneDeep would
+      // normally reject; instead just pass them straight through.
+      if (_.isError(_val)) {
+        return _val;
+      }
+      else if (_.isFunction(_val)) {
+        return _val;
+      }
+      else if (_.isObject(_val) && _val instanceof Buffer) {
+        return _val;
+      }
+      else if (_.isObject(_val) && _val instanceof Stream) {
+        return _val;
+      }
+      // Otherwise allow vanilla _.cloneDeep() behavior:
+      else return undefined;
+    });
+  };
+
   // Modify the test suite to also test `typeclass` alongside the comparable examples.
   var extraTypeclassTests = [];
   _.each(TEST_SUITE, function (test){
     // Inject extra test to try `example:{}` as `typeclass: 'dictionary'` (at the top-level)
     if (_.isEqual(test.example, {})) {
       extraTypeclassTests.push((function(newTest){
-        _.extend(newTest, _.cloneDeep(test));
+        _.extend(newTest, customCloneDeep(test));
         delete newTest.example;
         newTest.typeclass = 'dictionary';
         return newTest;
@@ -29,7 +53,7 @@ describe('exhaustive input validation tests', function (){
     // Inject extra test to try `example:[]` as `typeclass: 'array'` (at the top-level)
     else if (_.isEqual(test.example, [])) {
       extraTypeclassTests.push((function(newTest){
-        _.extend(newTest, _.cloneDeep(test));
+        _.extend(newTest, customCloneDeep(test));
         delete newTest.example;
         newTest.typeclass = 'array';
         return newTest;
@@ -38,7 +62,7 @@ describe('exhaustive input validation tests', function (){
     // Inject extra test to try `example: '*'` as `typeclass: '*'` (at the top-level)
     else if (_.isEqual(test.example, '*')) {
       extraTypeclassTests.push((function(newTest){
-        _.extend(newTest, _.cloneDeep(test));
+        _.extend(newTest, customCloneDeep(test));
         delete newTest.example;
         newTest.typeclass = '*';
         return newTest;

@@ -16,7 +16,15 @@ module.exports = function testInputValidation(expectations, cb){
   // (using inference to pull it from the `example`, if provided)
   var typeSchema;
   if (!_.isUndefined(expectations.typeclass)) {
-    typeSchema = expectations.typeclass;
+    if (expectations.typeclass==='dictionary') {
+      typeSchema = {};
+    }
+    else if (expectations.typeclass==='array') {
+      typeSchema = [];
+    }
+    else {
+      typeSchema = 'ref';
+    }
   }
   else {
     typeSchema = rttc.infer(expectations.example);
@@ -68,6 +76,11 @@ module.exports = function testInputValidation(expectations, cb){
       return cb(new Error('did not expect machine to call `error`, but it did:\n' + util.inspect(err)));
     }
     else if (expectations.error) {
+      // console.log('\nTEST:',expectations);
+      // if (_.isObject(expectations.actual)) {
+      //   console.log('\nactual constructor name:',expectations.actual.constructor.name);
+      // }
+      // console.log('\nTYPESCHEMA:',typeSchema);
       return cb(new Error('expected machine to call `error` exit due to input validation error, but it did not. ' + ('Instead got '+util.inspect(_inputsInFn.x, false, null))+'.' ));
     }
 
