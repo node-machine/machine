@@ -4,12 +4,25 @@
 
 var util = require('util');
 var _ = require('lodash');
+var rttc = require('rttc');
 var Machine = require('../../');
-
+var isEquivalent = require('../../node_modules/rttc/spec/helpers/is-equivalent');
 
 
 
 module.exports = function testInputValidation(expectations, cb){
+
+  // Determine type schema of the value.
+  // (using inference to pull it from the `example`, if provided)
+  var typeSchema;
+  if (!_.isUndefined(expectations.typeclass)) {
+    typeSchema = expectations.typeclass;
+  }
+  else {
+    typeSchema = rttc.infer(expectations.example);
+  }
+
+
   var _inputsInFn;
   var machine = Machine.build({
     inputs: {
@@ -69,8 +82,8 @@ module.exports = function testInputValidation(expectations, cb){
     // Provide direct access to actual result for clarity in comparisons below.
     var actualResult = _inputsInFn.x;
 
-    // if `result` is set, use a lodash equality check
-    if (!_.isEqual(actualResult, compareTo)) {
+    // use `isEquivalent` from `rttc`
+    if (!isEquivalent(actualResult, compareTo, typeSchema)) {
       return cb(new Error('returned incorrect value: '+util.inspect(actualResult, false, null)));
     }
 
