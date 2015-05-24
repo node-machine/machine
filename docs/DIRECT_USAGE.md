@@ -85,11 +85,10 @@ require('machine')
   inputs: {
     foo: {example: 'bar'}
   },
-  exits: {
-    success: {void: true}
-  },
-  catchallExit: 'success',
-  fn: function (inputs, exits){ /* ... */ }
+  exits: {},
+  fn: function (inputs, exits){
+    return exits.success();
+  }
 })
 .configure({
   user: 'balderdashy',
