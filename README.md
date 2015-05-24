@@ -83,9 +83,12 @@ You can use it anywhere you like!  For instance, you might want to implement a o
 
 > If you're using Sails, check out [`sails-hook-machines`](https://github.com/node-machine/sails-hook-machines), a hook which allows you to use custom closed-source machines in your Sails app by dropping files into the `api/machines/` folder.
 
+
+
 ## License
 
 MIT
-&copy; 2014 Mike McNeil
+
+&copy; 2014 Mike McNeil; &copy; 2015 The Treeline Company
 
 
