@@ -59,8 +59,8 @@ describe('exhaustive input validation tests', function (){
         return newTest;
       })({}));
     }
-    // Inject extra test to try `example: '*'` as `typeclass: '*'` (at the top-level)
-    else if (_.isEqual(test.example, '*')) {
+    // Inject extra test to try `example: '==='` as `typeclass: '*'` (at the top-level)
+    else if (_.isEqual(test.example, '===')) {
       extraTypeclassTests.push((function(newTest){
         _.extend(newTest, customCloneDeep(test));
         delete newTest.example;
