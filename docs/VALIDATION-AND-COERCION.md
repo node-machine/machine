@@ -432,40 +432,9 @@ The value sent back from an exit callback in a machine's `fn` is run through `rt
 | { a: 1, b: 'hi', c: false }      | { a: 23, d: true }     | { a: 23, b: '', c: false }
 | {}      | { a: 23, d: true }     | { a: 23, d: true }
 | []      | [ { a: 23, d: true } ]     | [ { a: 23, d: true } ]
-| [ { id: 123,
-    title: 'Scott',
-    body: 'Scott',
-    votes: 0,
-    resolved: true } ]      | [ { votes: 10, title: 'first', resolved: false },
-  { votes: -5, title: 'second', resolved: false },
-  { votes: 0, title: 'third', resolved: false } ]     | [ { id: 0, votes: 10, title: 'first', body: '', resolved: false },
-  { id: 0, votes: -5, title: 'second', body: '', resolved: false },
-  { id: 0, votes: 0, title: 'third', body: '', resolved: false } ]
-| [ { id: 123,
-    title: 'Scott',
-    body: 'Scott',
-    votes: 0,
-    resolved: true } ]      | [ { votes: 10, title: 'first', resolved: false },
-  { votes: -5, title: 'second', resolved: false },
-  { votes: 0, title: 'third', resolved: false },
-  { votes: null, title: 'fourth', resolved: false },
-  { title: 'fifth', resolved: false },
-  { title: 'sixth', resolved: false } ]     | [ { id: 0, votes: 10, title: 'first', body: '', resolved: false },
-  { id: 0, votes: -5, title: 'second', body: '', resolved: false },
-  { id: 0, votes: 0, title: 'third', body: '', resolved: false },
-  { id: 0, votes: 0, title: 'fourth', body: '', resolved: false },
-  { id: 0, votes: 0, title: 'fifth', body: '', resolved: false },
-  { id: 0, votes: 0, title: 'sixth', body: '', resolved: false } ]
-| [ { id: 123,
-    title: 'Scott',
-    body: 'Scott',
-    votes: 0,
-    resolved: true } ]      | { '0': { votes: 10, title: 'first', resolved: false },
-  '1': { votes: -5, title: 'second', resolved: false },
-  '2': { votes: 0, title: 'third', resolved: false },
-  '3': { votes: null, title: 'fourth', resolved: false },
-  '4': { title: 'fifth', resolved: false },
-  '5': { title: 'sixth', resolved: false } }     | []
+| [ { id: 123, title: 'Scott', body: 'Scott', votes: 0, resolved: true } ]      | [ { votes: 10, title: 'first', resolved: false }, { votes: -5, title: 'second', resolved: false }, { votes: 0, title: 'third', resolved: false } ]     | [ { id: 0, votes: 10, title: 'first', body: '', resolved: false }, { id: 0, votes: -5, title: 'second', body: '', resolved: false }, { id: 0, votes: 0, title: 'third', body: '', resolved: false } ]
+| [ { id: 123, title: 'Scott', body: 'Scott', votes: 0, resolved: true } ]      | [ { votes: 10, title: 'first', resolved: false }, { votes: -5, title: 'second', resolved: false }, { votes: 0, title: 'third', resolved: false }, { votes: null, title: 'fourth', resolved: false }, { title: 'fifth', resolved: false }, { title: 'sixth', resolved: false } ]     | [ { id: 0, votes: 10, title: 'first', body: '', resolved: false }, { id: 0, votes: -5, title: 'second', body: '', resolved: false }, { id: 0, votes: 0, title: 'third', body: '', resolved: false }, { id: 0, votes: 0, title: 'fourth', body: '', resolved: false }, { id: 0, votes: 0, title: 'fifth', body: '', resolved: false }, { id: 0, votes: 0, title: 'sixth', body: '', resolved: false } ]
+| [ { id: 123, title: 'Scott', body: 'Scott', votes: 0, resolved: true } ]      | { '0': { votes: 10, title: 'first', resolved: false }, '1': { votes: -5, title: 'second', resolved: false }, '2': { votes: 0, title: 'third', resolved: false }, '3': { votes: null, title: 'fourth', resolved: false }, '4': { title: 'fifth', resolved: false }, '5': { title: 'sixth', resolved: false } }     | []
 | '*'      | 'bar'     | 'bar'
 | '*'      | ''     | ''
 | '*'      | '-1.1'     | '-1.1'
