@@ -3,6 +3,12 @@ var util = require('util');
 var _ = require('lodash');
 var Machine = require('../');
 
+/**
+ * NOTE: `typesafe` is experimental and not ready for production use.
+ * It is generally not a good idea to use this, and there is a high likelihood the feature
+ * will be removed altogether or its API will change significantly and without notice in
+ * an upcoming release.
+ */
 describe('typesafe: true', function() {
 
   it('should not coerce input data into proper types', function(done) {
