@@ -13,7 +13,7 @@ debug@^2.1.1                                     : MIT
 lodash@^3.8.0                                    : MIT
 object-hash@~0.3.0                               : MIT
 rttc@^7.2.1                                      : MIT
-switchback@^1.1.3                                : MIT
+switchback@^2.0.0                                : MIT
 ms@0.7.1                                         : MIT
 lodash@~2.4.1                                    : MIT
 
