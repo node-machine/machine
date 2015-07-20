@@ -2,6 +2,7 @@
  * Module dependencies
  */
 
+var assert = require('assert');
 var _ = require('lodash');
 var Machine = require('../');
 var testMachineWithMocha = require('test-machinepack-mocha').testMachineWithMocha;
@@ -21,6 +22,30 @@ describe('`like` and `itemOf`', function (){
       outcome: 'success',
       output: '123'
     });
+
+    it('should not .build() the machine if an input refers to another input w/ a `like` or `itemOf` instead of an example', function (){
+      assert.throws(function (){
+        Machine.build({
+          inputs: {
+            fullName: { example: 'Roger Rabbit' },
+            firstName: { like: 'fullName' },
+          },
+          exits: { success: { like: 'firstName' } },
+          fn: function (inputs, exits) { return exits.error(); }
+        });
+      });
+
+      assert.throws(function (){
+        Machine.build({
+          inputs: {
+            nameParts: { example: ['Roger'] },
+            firstName: { itemOf: 'fullName' },
+          },
+          exits: { success: { like: 'firstName' } },
+          fn: function (inputs, exits) { return exits.error(); }
+        });
+      });
+    });
   });
 
   describe('using `like` in one of its inputs', function (){
@@ -37,6 +62,47 @@ describe('`like` and `itemOf`', function (){
       outcome: 'success',
       output: '123'
     });
+
+
+    it('should not .build() the machine if an input refers to itself', function (){
+      assert.throws(function (){
+        Machine.build({
+          inputs: {
+            fullName: { example: 'Roger Rabbit' },
+            firstName: { like: 'firstName' }
+          },
+          exits: { success: { example: '===' } },
+          fn: function (inputs, exits) { return exits.error(); }
+        });
+      });
+    });
+
+    it('should not .build() the machine if an input refers to another input w/ a `like` or `itemOf` instead of an example', function (){
+      assert.throws(function (){
+        Machine.build({
+          inputs: {
+            fullName: { example: 'Roger Rabbit' },
+            lastName: { like: 'firstName' },
+            firstName: { like: 'fullName' }
+          },
+          exits: { success: { example: '===' } },
+          fn: function (inputs, exits) { return exits.error(); }
+        });
+      });
+
+      assert.throws(function (){
+        Machine.build({
+          inputs: {
+            namePieces: { example: ['Roger'] },
+            lastName: { itemOf: 'namePieces' },
+            firstName: { like: 'lastName' }
+          },
+          exits: { success: { example: '===' } },
+          fn: function (inputs, exits) { return exits.error(); }
+        });
+      });
+    });
+
   });
 
   describe('using `itemOf` in one of its exits', function (){
