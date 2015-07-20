@@ -23,6 +23,18 @@ describe('`like` and `itemOf`', function (){
       output: '123'
     });
 
+    describe('and referenced input is configured with an invalid (and incompatible) input value', function (){
+      testMachineWithMocha().machine(Machine.build({
+        inputs: { fullName: { example: 'Roger Rabbit' } },
+        exits: { success: { like: 'fullName' } },
+        fn: function (inputs, exits) { return exits.success(123); }
+      }))
+      .use({ fullName: [] })
+      .expect({
+        outcome: 'error'
+      });
+    });
+
     it('should not .build() the machine if an input refers to another input w/ a `like` or `itemOf` instead of an example', function (){
       assert.throws(function (){
         Machine.build({
@@ -61,6 +73,21 @@ describe('`like` and `itemOf`', function (){
     .expect({
       outcome: 'success',
       output: '123'
+    });
+
+    describe('and referenced input is configured with an invalid (and incompatible) input value', function (){
+      testMachineWithMocha().machine(Machine.build({
+        inputs: {
+          fullName: { example: 'Roger Rabbit' },
+          firstName: { like: 'fullName' }
+        },
+        exits: { success: { example: '===' } },
+        fn: function (inputs, exits) { return exits.success(inputs.firstName); }
+      }))
+      .use({ firstName: 123, fullName: [] })
+      .expect({
+        outcome: 'error'
+      });
     });
 
 
