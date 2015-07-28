@@ -74,6 +74,12 @@ describe('Machine.prototype.demuxSync()', function (){
       var result = Machine.build(machineFixtures[1]).demuxSync('someOtherExit');
       assert.equal(result,false);
     });
+
+    it('should throw if the exit name passed to `.demuxSync()` does not match a known exit', function (){
+      assert.throws(function (){
+        Machine.build(machineFixtures[1]).demuxSync('someFakeExitThatDoesntActuallyExist');
+      });
+    });
   });
 
 
