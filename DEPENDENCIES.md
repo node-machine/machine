@@ -12,7 +12,7 @@ convert-to-ecmascript-compatible-varname@^0.1.0  : MIT
 debug@^2.1.1                                     : MIT
 lodash@^3.8.0                                    : MIT
 object-hash@~0.3.0                               : MIT
-rttc@^8.1.5                                      : MIT
+rttc@^9.3.0                                      : MIT
 switchback@^2.0.0                                : MIT
 ms@0.7.1                                         : MIT
 lodash@~2.4.1                                    : MIT
