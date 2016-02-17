@@ -39,6 +39,13 @@ module.exports = function testExitCoercion(expectations, cb){
   .exec(function (err, actualResult){
     if (err) return cb(new Error('Unexpected error:'+require('util').inspect(err, false, null)));
 
+    // If `example` is undefined, automatically pass the test (because `undefined` exit example
+    //  is a special case that is slightly different than ref: ie. it skips base value coercion)
+    if (_.isUndefined(expectations.example)) {
+      // TODO: consider doing a strictEq check here instead
+      return cb();
+    }
+
     // If an expected `result` is provided, compare the actual result against that.
     // Otherwise compare it against the original value (`actual`)
     var compareTo = expectations.hasOwnProperty('result') ? expectations.result : expectations.actual;
