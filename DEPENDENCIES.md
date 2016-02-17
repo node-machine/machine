@@ -8,13 +8,14 @@ Resolving dependencies, this might take a while
 
 Licenses information:
 
-convert-to-ecmascript-compatible-varname@^0.1.0  : MIT
-debug@^2.1.1                                     : MIT
-lodash@^3.8.0                                    : MIT
-object-hash@~0.3.0                               : MIT
-rttc@^9.3.0                                      : MIT
-switchback@^2.0.0                                : MIT
+convert-to-ecmascript-compatible-varname@0.1.4   : MIT
+debug@2.2.0                                      : MIT
+lodash@3.10.1                                    : MIT
+object-hash@0.3.0                                : MIT
+rttc@~9.3.0                                      : MIT
+switchback@2.0.0                                 : MIT
 ms@0.7.1                                         : MIT
+lodash@^3.8.0                                    : MIT
 lodash@~2.4.1                                    : MIT
 
 Found a module that is incorrectly or not detected at all but does
