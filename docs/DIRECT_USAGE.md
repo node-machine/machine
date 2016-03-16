@@ -1,5 +1,9 @@
 # Using this module directly
 
+> This markdown document is a bit old, but still up to date.
+>
+> Be sure and also check out http://node-machine.org.
+
 
 ## Install
 
