@@ -15,7 +15,7 @@ object-hash@0.3.0                                : MIT
 rttc@~9.3.0                                      : MIT
 switchback@2.0.0                                 : MIT
 ms@0.7.1                                         : MIT
-lodash@^3.8.0                                    : MIT
+lodash@3.8.0                                     : MIT
 lodash@~2.4.1                                    : MIT
 
 Found a module that is incorrectly or not detected at all but does
