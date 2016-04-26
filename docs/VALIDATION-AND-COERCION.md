@@ -1,7 +1,7 @@
 # Validation and Coercion
 
 > This markdown document is a bit old, _and a bit out of date._
-> However, it has some good content that you might find helpful- just be sure and also check out http://node-machine.org and the rttc repo for the latest information.
+> However, it has some good content that you might find helpful- just be sure and also check out http://node-machine.org **as well as the [rttc repo](https://github.com/node-machine.org/rttc)** for the latest information.
 
 
 This is a quick reference sheet for seeing how validation and coercion work for inputs and exits.
