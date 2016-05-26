@@ -10,7 +10,7 @@ var Machine = require('../../');
 //  ╔╗ ╔═╗╔╗╔╔═╗╦ ╦╔╦╗╔═╗╦═╗╦╔═╔═╗
 //  ╠╩╗║╣ ║║║║  ╠═╣║║║╠═╣╠╦╝╠╩╗╚═╗
 //  ╚═╝╚═╝╝╚╝╚═╝╩ ╩╩ ╩╩ ╩╩╚═╩ ╩╚═╝
-describe('benchmark :: Machine.build()', function (){
+describe('benchmark :: Machine.build() + Machine.prototype.exec()', function (){
   // Set "timeout" and "slow" thresholds incredibly high
   // to avoid running into issues.
   this.slow(240000);
@@ -57,45 +57,22 @@ describe('benchmark :: Machine.build()', function (){
 
   it('should be performant enough', function (done){
 
-    console.log(
-    '                                   \n'+
-    '   o                               \n'+
-    '                                    \n'+
-    '       •                            \n'+
-    '      o                  .          \n'+
-    '       •                •            \n'+
-    '        •                •           \n'+
-    '                •       o            \n'+
-    '                            •        o\n'+
-    ' o   •              •          o   •\n'+
-    '      o              o         •    \n'+
-    '  •  •      •       •      •    •    \n'+
-    '           •      •              o  \n'+
-    '  •    b e n c h m a r k s      •    \n'+
-    '   •        •                        \n'+
-    ' •                        ___  •    \n'+
-    '    • o •    •      •    /o/•\\_   • \n'+
-    '       •   •  o    •    /_/\\ o \\_ • \n'+
-    '       o    O   •   o • •   \\ o .\\_    \n'+
-    '          •       o  •       \\. O  \\   \n'+
-    '');
-
-    runBenchmarks('Machine.build()', [
+    runBenchmarks('Machine.prototype.exec()', [
 
       function sanity_check(next){
         // Do nothing.
         return next();
       },
 
-      function build_very_simple_machine(next){
+      function exec_very_simple_machine(next){
         var m = Machine.build({
           friendlyName: 'Do something very simple',
           fn: function (inputs, exits) { return exits.success(); }
         });
-        return next();
+        m({}).exec(next);
       },
 
-      function build_machine_with_inputs_and_exits_but_nothing_crazy(next){
+      function exec_machine_with_inputs_and_exits_but_nothing_crazy(next){
         var m = Machine.build({
           friendlyName: 'Do something normal',
           inputs: {
@@ -112,12 +89,17 @@ describe('benchmark :: Machine.build()', function (){
               example: ['things']
             }
           },
-          fn: function (inputs, exits) { return exits.success(); }
+          fn: function (inputs, exits) { return exits.success('hi!'); }
         });
-        return next();
+        m({
+          flavor: 'Sadness',
+          qty: 1000,
+          foo: 'wha',
+          bar: 'huh?'
+        }).exec(next);
       },
 
-      function build_machine_with_inputs_and_exits_that_have_big_ole_exemplars(next){
+      function exec_machine_with_inputs_and_exits_that_have_big_ole_exemplars(next){
         var m = Machine.build({
           friendlyName: 'Do something that demands these exemplars',
           inputs: {
@@ -132,13 +114,26 @@ describe('benchmark :: Machine.build()', function (){
             bar: { example: USERS_EXEMPLAR },
             uhOh: { example: [{ x: 32, y: 49, z: -238, t: 1464292613806 }] }
           },
-          fn: function (inputs, exits) { return exits.success(); }
+          fn: function (inputs, exits) {
+            // Note:
+            // > We just abritarily use the exemplar as the result value
+            // > so this benchmark is easier to read.
+            return exits.success(USERS_EXEMPLAR);
+          }
         });
-        return next();
+        m({
+          // Note:
+          // > We just abritarily use the exemplars as argmts so this
+          // > benchmark is easier to read.
+          users: USERS_EXEMPLAR,
+          availableSpecies: SPECIES_EXEMPLAR,
+          foo: USERS_EXEMPLAR,
+          bar: USERS_EXEMPLAR
+        }).exec(next);
       },
 
 
-      function build_machine_with_crazy_numbers_of_inputs_and_exits(next){
+      function exec_machine_with_crazy_numbers_of_inputs_and_exits(next){
         var m = Machine.build({
           description: 'Do something that demands a crap ton of inputs and exits',
           inputs: {
@@ -186,11 +181,32 @@ describe('benchmark :: Machine.build()', function (){
           },
           fn: function (inputs, exits) { return exits.success(); }
         });
-        return next();
+        m({
+          one: 'testing stuff',
+          two: 'testing stuff',
+          three: 'testing stuff',
+          four: 'testing stuff',
+          five: 'testing stuff',
+          six: 'testing stuff',
+          seven: 'testing stuff',
+          eight: 'testing stuff',
+          nine: 'testing stuff',
+          ten: 'testing stuff',
+          eleven: 'testing stuff',
+          twelve: 'testing stuff',
+          thirteen: 'testing stuff',
+          fourteen: 'testing stuff',
+          fifteen: 'testing stuff',
+          sixteen: 'testing stuff',
+          seventeen: 'testing stuff',
+          eighteen: 'testing stuff',
+          nineteen: 'testing stuff',
+          twenty: 'testing stuff',
+        }).exec(next);
       },
 
 
-      function build_machine_with_crazy_numbers_of_inputs_and_exits_and_is_cacheable(next){
+      function exec_machine_with_crazy_numbers_of_inputs_and_exits_and_is_cacheable(next){
         var m = Machine.build({
           description: 'Do something that demands a crap ton of inputs and exits and is cacheable',
           cacheable: true,
@@ -239,11 +255,32 @@ describe('benchmark :: Machine.build()', function (){
           },
           fn: function (inputs, exits) { return exits.success(); }
         });
-        return next();
+        m({
+          one: 'testing stuff',
+          two: 'testing stuff',
+          three: 'testing stuff',
+          four: 'testing stuff',
+          five: 'testing stuff',
+          six: 'testing stuff',
+          seven: 'testing stuff',
+          eight: 'testing stuff',
+          nine: 'testing stuff',
+          ten: 'testing stuff',
+          eleven: 'testing stuff',
+          twelve: 'testing stuff',
+          thirteen: 'testing stuff',
+          fourteen: 'testing stuff',
+          fifteen: 'testing stuff',
+          sixteen: 'testing stuff',
+          seventeen: 'testing stuff',
+          eighteen: 'testing stuff',
+          nineteen: 'testing stuff',
+          twenty: 'testing stuff',
+        }).exec(next);
       },
 
 
-      function build_machine_with_crazy_numbers_of_inputs_and_exits_with_huge_exemplars(next){
+      function exec_machine_with_crazy_numbers_of_inputs_and_exits_with_huge_exemplars(next){
         var m = Machine.build({
           description: 'Do something that demands a crap ton of inputs and exits where all of them have ref exemplars',
           cacheable: true,
@@ -290,13 +327,42 @@ describe('benchmark :: Machine.build()', function (){
             seventeen: { example: USERS_EXEMPLAR },
             eighteen: { example: USERS_EXEMPLAR },
           },
-          fn: function (inputs, exits) { return exits.success(); }
+          fn: function (inputs, exits) {
+            // Note:
+            // > We just abritarily use the exemplar as the result value
+            // > so this benchmark is easier to read.
+            return exits.success(USERS_EXEMPLAR);
+          }
         });
-        return next();
+        m({
+          // Note:
+          // > We just abritarily use the exemplars as argmts so this
+          // > benchmark is easier to read.
+          one: USERS_EXEMPLAR,
+          two: USERS_EXEMPLAR,
+          three: USERS_EXEMPLAR,
+          four: USERS_EXEMPLAR,
+          five: USERS_EXEMPLAR,
+          six: USERS_EXEMPLAR,
+          seven: USERS_EXEMPLAR,
+          eight: USERS_EXEMPLAR,
+          nine: USERS_EXEMPLAR,
+          ten: USERS_EXEMPLAR,
+          eleven: USERS_EXEMPLAR,
+          twelve: USERS_EXEMPLAR,
+          thirteen: USERS_EXEMPLAR,
+          fourteen: USERS_EXEMPLAR,
+          fifteen: USERS_EXEMPLAR,
+          sixteen: USERS_EXEMPLAR,
+          seventeen: USERS_EXEMPLAR,
+          eighteen: USERS_EXEMPLAR,
+          nineteen: USERS_EXEMPLAR,
+          twenty: USERS_EXEMPLAR,
+        }).exec(next);
       },
 
 
-      function build_machine_with_crazy_numbers_of_inputs_and_exits_with_ref_exemplars(next){
+      function exec_machine_with_crazy_numbers_of_inputs_and_exits_with_ref_exemplars(next){
         var m = Machine.build({
           description: 'Do something that demands a crap ton of inputs and exits where all of them have ref exemplars',
           cacheable: true,
@@ -343,9 +409,38 @@ describe('benchmark :: Machine.build()', function (){
             seventeen: { example: '===' },
             eighteen: { example: '===' },
           },
-          fn: function (inputs, exits) { return exits.success(); }
+          fn: function (inputs, exits) {
+            // Note:
+            // > We just abritarily use the exemplar as the result value
+            // > so this benchmark is easier to read.
+            return exits.success(USERS_EXEMPLAR);
+          }
         });
-        return next();
+        m({
+          // Note:
+          // > We just abritarily use the exemplars as argmts so this
+          // > benchmark is easier to read.
+          one: USERS_EXEMPLAR,
+          two: USERS_EXEMPLAR,
+          three: USERS_EXEMPLAR,
+          four: USERS_EXEMPLAR,
+          five: USERS_EXEMPLAR,
+          six: USERS_EXEMPLAR,
+          seven: USERS_EXEMPLAR,
+          eight: USERS_EXEMPLAR,
+          nine: USERS_EXEMPLAR,
+          ten: USERS_EXEMPLAR,
+          eleven: USERS_EXEMPLAR,
+          twelve: USERS_EXEMPLAR,
+          thirteen: USERS_EXEMPLAR,
+          fourteen: USERS_EXEMPLAR,
+          fifteen: USERS_EXEMPLAR,
+          sixteen: USERS_EXEMPLAR,
+          seventeen: USERS_EXEMPLAR,
+          eighteen: USERS_EXEMPLAR,
+          nineteen: USERS_EXEMPLAR,
+          twenty: USERS_EXEMPLAR,
+        }).exec(next);
       },
 
     ], done);
