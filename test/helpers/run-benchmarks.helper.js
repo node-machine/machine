@@ -23,7 +23,7 @@ module.exports = function runBenchmarks (name, testFns, done) {
       defer: true,
       fn: function (deferred) {
         testFn(function _afterRunningTestFn(err){
-          process.nextTick(function _afterEnsuringAsynchronous(){
+          setImmediate(function _afterEnsuringAsynchronous(){
             if (err) {
               console.error('An error occured when attempting to benchmark this code:\n',err);
               // Resolve the deferred either way.
