@@ -6,6 +6,7 @@ var util = require('util');
 var runBenchmarks = require('../helpers/run-benchmarks.helper');
 var Machine = require('../../');
 
+if (process.env.NO_BENCH) {return;}
 
 //  ╔╗ ╔═╗╔╗╔╔═╗╦ ╦╔╦╗╔═╗╦═╗╦╔═╔═╗
 //  ╠╩╗║╣ ║║║║  ╠═╣║║║╠═╣╠╦╝╠╩╗╚═╗
