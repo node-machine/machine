@@ -113,15 +113,35 @@ describe('Machine fn calling `exits()` (w/ different usages)', function() {
     // The following constants are used below:
     // =======================================
     //
+    // To test regular expressions:
+    var SOME_REGEXP = /^Sandwich/gi;
+    //
     // To test functions:
     var SOME_ARBITRARY_FUNCTION = function foo (a, b, c){ console.log('stuff'); };
     //
     // To test circular references:
     var ERSTWHILE_PARTICLE = { x: 32, y: 49, z: -101, rgba: {r:255,g:255,b:255,a:100} };
     var DIFFUSE_PARTICLE = { x: -500, y: 871.5, z: 4.4, rgba: {r:0,g:0,b:0,a:255} };
-    DIFFUSE_PARTICLE.entangling = [ {}, {}, ERSTWHILE_PARTICLE, {}, {} ];
+    // DIFFUSE_PARTICLE.entangling = [ {}, {}, ERSTWHILE_PARTICLE, {}, {} ];
+    DIFFUSE_PARTICLE.entangling = [ ERSTWHILE_PARTICLE ];
     ERSTWHILE_PARTICLE.entangledBy = { particleRef: DIFFUSE_PARTICLE };
-    var ITERATOR_SAFE_VERSION_OF_ERSTWHILE_PARTICLE = { x: 32, y: 49, z: -101, rgba: {r:255,g:255,b:255,a:100} };
+    var ITERATOR_SAFE_VERSION_OF_ERSTWHILE_PARTICLE = {
+      x: 32,
+      y: 49,
+      z: -101,
+      rgba: { r:255, g:255, b:255, a:100 },
+      entangledBy: {
+        particleRef: {
+          x: -500,
+          y: 871.5,
+          z: 4.4,
+          rgba: { r:0, g:0, b:0, a:255 },
+          // entangling: [ {}, {}, '[Circular ~.0]', {}, {} ]
+          entangling: [ '[Circular ~.0]' ]
+        }//</.entangledBy.particleRef>
+      }//</.entangledBy>
+    };
+
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
@@ -191,7 +211,7 @@ describe('Machine fn calling `exits()` (w/ different usages)', function() {
     // coercion is working properly and respecting the `outputExample` as the exemplar
     // that gets passed in to `rttc.coerce()`:
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    describe.skip('when there is runtime output', function() {
+    describe('when there is runtime output', function() {
       testDifferentUsages(
         { exits: { success: { outputExample: 'foo' } } },
         // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
@@ -241,6 +261,15 @@ describe('Machine fn calling `exits()` (w/ different usages)', function() {
       );
 
       testDifferentUsages(
+        { exits: { success: { outputExample: '===' } } },
+        // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+        SOME_REGEXP,
+        // ...then the following runtime value should be received on the OUTSIDE:
+        SOME_REGEXP,
+        true
+      );
+
+      testDifferentUsages(
         { exits: { success: { outputExample: ['==='] } } },
         // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
         undefined,
@@ -275,7 +304,7 @@ describe('Machine fn calling `exits()` (w/ different usages)', function() {
       testDifferentUsages(
         { exits: { success: { outputExample: ['*'] } } },
         // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
-        /^Sandwich/gi,
+        SOME_REGEXP,
         // ...then the following runtime value should be received on the OUTSIDE:
         []
       );
@@ -283,17 +312,52 @@ describe('Machine fn calling `exits()` (w/ different usages)', function() {
       testDifferentUsages(
         { exits: { success: { outputExample: ['*'] } } },
         // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
-        [ /^Sandwich/gi ],
+        [ SOME_REGEXP ],
         // ...then the following runtime value should be received on the OUTSIDE:
         [ '/^Sandwich/gi' ] // << testing JSON stringification
       );
+
+      testDifferentUsages(
+        { exits: { success: { outputExample: [] } } },
+        // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+        [ SOME_REGEXP ],
+        // ...then the following runtime value should be received on the OUTSIDE:
+        [ '/^Sandwich/gi' ] // << testing JSON stringification
+      );
+
+      // testDifferentUsages(
+      //   { exits: { success: { outputExample: [] } } },
+      //   // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+      //   [ ERSTWHILE_PARTICLE ],
+      //   // ...then the following runtime value should be received on the OUTSIDE:
+      //   [ ITERATOR_SAFE_VERSION_OF_ERSTWHILE_PARTICLE ] // << testing JSON stringification
+      // );
+
+      // testDifferentUsages(
+      //   { exits: { success: { outputExample: ['==='] } } },
+      //   // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+      //   [ SOME_REGEXP ],
+      //   // ...then the following runtime value should be received on the OUTSIDE:
+      //   [ SOME_REGEXP ],
+      //   true // .... welll, sort of-- need to do a strict equality check only on the array items...
+      // );
+
+      // testDifferentUsages(
+      //   { exits: { success: { outputExample: ['==='] } } },
+      //   // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+      //   [ ERSTWHILE_PARTICLE ],
+      //   // ...then the following runtime value should be received on the OUTSIDE:
+      //   [ ERSTWHILE_PARTICLE ],
+      //   true // .... welll, sort of-- need to do a strict equality check only on the array items...
+      // );
 
       testDifferentUsages(
         { exits: { success: { outputExample: '===' } } },
         // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
         SOME_ARBITRARY_FUNCTION,
         // ...then the following runtime value should be received on the OUTSIDE:
-        SOME_ARBITRARY_FUNCTION
+        SOME_ARBITRARY_FUNCTION,
+        true
       );
 
       testDifferentUsages(
@@ -301,8 +365,17 @@ describe('Machine fn calling `exits()` (w/ different usages)', function() {
         // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
         ERSTWHILE_PARTICLE,
         // ...then the following runtime value should be received on the OUTSIDE:
-        ITERATOR_SAFE_VERSION_OF_ERSTWHILE_PARTICLE
+        ERSTWHILE_PARTICLE,
+        true
       );
+
+      // testDifferentUsages(
+      //   { exits: { success: { outputExample: '*' } } },
+      //   // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+      //   ERSTWHILE_PARTICLE,
+      //   // ...then the following runtime value should be received on the OUTSIDE:
+      //   ITERATOR_SAFE_VERSION_OF_ERSTWHILE_PARTICLE
+      // );
 
       testDifferentUsages(
         { exits: { success: { outputExample: [{meta: '==='}] } } },
@@ -464,8 +537,9 @@ describe('Machine fn calling `exits()` (w/ different usages)', function() {
  * @param  {===} machine - the machine def
  * @param  {===?} runtimeValueToReturn - the runtime value that the machine's `fn` will return through the success exit.
  * @param  {===?} expectedOutputIfSuccessExitIsCalled - the expected output if the success exit is called.  Will be compared using Node's native `assert.deepEqual()`.
+ * @param  {Boolean} useStrictEq - if set to true, then a strict equality check (`assert.strictEqual()`) will be used instead of `assert.deepEqual()`
  */
-function testDifferentUsages (machine, runtimeValueToReturn, expectedOutputIfSuccessExitIsCalled) {
+function testDifferentUsages (machine, runtimeValueToReturn, expectedOutputIfSuccessExitIsCalled, useStrictEq) {
 
   if (machine.fn || machine.inputs) {
     throw new Error('Test is invalid-- please do not provide a `fn` or `inputs` to this test helper.');
@@ -528,8 +602,14 @@ function testDifferentUsages (machine, runtimeValueToReturn, expectedOutputIfSuc
       success: function(resultMaybe) {
         // Verify the output, if expected output was provided to this test helper.
         if (!_.isUndefined(expectedOutputIfSuccessExitIsCalled)) {
-          try { assert.deepEqual(resultMaybe, expectedOutputIfSuccessExitIsCalled); }
-          catch (e) { return done(e); }
+          if (useStrictEq) {
+            try { assert.strictEqual(resultMaybe, expectedOutputIfSuccessExitIsCalled); }
+            catch (e) { return done(e); }
+          }
+          else {
+            try { assert.deepEqual(resultMaybe, expectedOutputIfSuccessExitIsCalled); }
+            catch (e) { return done(e); }
+          }
         }
         return done();
       },
@@ -606,8 +686,18 @@ function testDifferentUsages (machine, runtimeValueToReturn, expectedOutputIfSuc
 
       // Verify the output, if expected output was provided to this test helper.
       if (!_.isUndefined(expectedOutputIfSuccessExitIsCalled)) {
-        try { assert.deepEqual(resultMaybe, expectedOutputIfSuccessExitIsCalled); }
-        catch (e) { return done(e); }
+        // If the expected output cannot be stringified, then use a strict equality check.
+        var useStrictEq;
+        try { JSON.stringify(expectedOutputIfSuccessExitIsCalled); }
+        catch (ignored) { useStrictEq = true; }
+        if (useStrictEq) {
+          try { assert.strictEqual(resultMaybe, expectedOutputIfSuccessExitIsCalled); }
+          catch (e) { return done(e); }
+        }
+        else {
+          try { assert.deepEqual(resultMaybe, expectedOutputIfSuccessExitIsCalled); }
+          catch (e) { return done(e); }
+        }
       }
 
       return done();
@@ -639,8 +729,14 @@ function testDifferentUsages (machine, runtimeValueToReturn, expectedOutputIfSuc
       success: function(resultMaybe) {
         // Verify the output, if expected output was provided to this test helper.
         if (!_.isUndefined(expectedOutputIfSuccessExitIsCalled)) {
-          try { assert.deepEqual(resultMaybe, expectedOutputIfSuccessExitIsCalled); }
-          catch (e) { return done(e); }
+          if (useStrictEq) {
+            try { assert.strictEqual(resultMaybe, expectedOutputIfSuccessExitIsCalled); }
+            catch (e) { return done(e); }
+          }
+          else {
+            try { assert.deepEqual(resultMaybe, expectedOutputIfSuccessExitIsCalled); }
+            catch (e) { return done(e); }
+          }
         }
 
         return done();
@@ -709,8 +805,18 @@ function testDifferentUsages (machine, runtimeValueToReturn, expectedOutputIfSuc
 
       // Verify the output, if expected output was provided to this test helper.
       if (!_.isUndefined(expectedOutputIfSuccessExitIsCalled)) {
-        try { assert.deepEqual(resultMaybe, expectedOutputIfSuccessExitIsCalled); }
-        catch (e) { return done(e); }
+        // If the expected output cannot be stringified, then use a strict equality check.
+        var useStrictEq;
+        try { JSON.stringify(expectedOutputIfSuccessExitIsCalled); }
+        catch (ignored) { useStrictEq = true; }
+        if (useStrictEq) {
+          try { assert.strictEqual(resultMaybe, expectedOutputIfSuccessExitIsCalled); }
+          catch (e) { return done(e); }
+        }
+        else {
+          try { assert.deepEqual(resultMaybe, expectedOutputIfSuccessExitIsCalled); }
+          catch (e) { return done(e); }
+        }
       }
 
       return done();
@@ -740,8 +846,14 @@ function testDifferentUsages (machine, runtimeValueToReturn, expectedOutputIfSuc
       success: function(resultMaybe) {
         // Verify the output, if expected output was provided to this test helper.
         if (!_.isUndefined(expectedOutputIfSuccessExitIsCalled)) {
-          try { assert.deepEqual(resultMaybe, expectedOutputIfSuccessExitIsCalled); }
-          catch (e) { return done(e); }
+          if (useStrictEq) {
+            try { assert.strictEqual(resultMaybe, expectedOutputIfSuccessExitIsCalled); }
+            catch (e) { return done(e); }
+          }
+          else {
+            try { assert.deepEqual(resultMaybe, expectedOutputIfSuccessExitIsCalled); }
+            catch (e) { return done(e); }
+          }
         }
 
         return done();
@@ -816,8 +928,18 @@ function testDifferentUsages (machine, runtimeValueToReturn, expectedOutputIfSuc
 
       // Verify the output, if expected output was provided to this test helper.
       if (!_.isUndefined(expectedOutputIfSuccessExitIsCalled)) {
-        try { assert.deepEqual(resultMaybe, expectedOutputIfSuccessExitIsCalled); }
-        catch (e) { return done(e); }
+        // If the expected output cannot be stringified, then use a strict equality check.
+        var useStrictEq;
+        try { JSON.stringify(expectedOutputIfSuccessExitIsCalled); }
+        catch (ignored) { useStrictEq = true; }
+        if (useStrictEq) {
+          try { assert.strictEqual(resultMaybe, expectedOutputIfSuccessExitIsCalled); }
+          catch (e) { return done(e); }
+        }
+        else {
+          try { assert.deepEqual(resultMaybe, expectedOutputIfSuccessExitIsCalled); }
+          catch (e) { return done(e); }
+        }
       }
 
       return done();
