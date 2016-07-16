@@ -1,4 +1,5 @@
 var assert = require('assert');
+var _ = require('lodash');
 var M = require('../lib/Machine.constructor');
 
 describe('Machine fn calling `exits()` (w/ different usages)', function() {
@@ -70,19 +71,6 @@ describe('Machine fn calling `exits()` (w/ different usages)', function() {
   }); // </with no exits object defined in the machine def at all>
 
 
-  describe('with an exit defined with an `outputExample`', function() {
-
-    testDifferentUsages({
-      exits: {
-        success: {
-          outputExample: 'foo'
-        }
-      }
-    });
-
-  }); // </with success exit defined, with an `outputExample`>
-
-
   describe('with success exit defined such that it has both an `example` and an `outputExample`', function() {
 
     it('should fail to build', function (){
@@ -102,7 +90,343 @@ describe('Machine fn calling `exits()` (w/ different usages)', function() {
 
   }); // </with success exit defined such that it has both an `example` and an `outputExample`>
 
+
+  describe('with an exit defined with an `outputExample`', function() {
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // The following constants are used below:
+    // =======================================
+    //
+    // To test functions:
+    var SOME_ARBITRARY_FUNCTION = function foo (a, b, c){ console.log('stuff'); };
+    //
+    // To test circular references:
+    var ERSTWHILE_PARTICLE = { x: 32, y: 49, z: -101, rgba: {r:255,g:255,b:255,a:100} };
+    var DIFFUSE_PARTICLE = { x: -500, y: 871.5, z: 4.4, rgba: {r:0,g:0,b:0,a:255} };
+    DIFFUSE_PARTICLE.entangling = [ {}, {}, ERSTWHILE_PARTICLE, {}, {} ];
+    ERSTWHILE_PARTICLE.entangledBy = { particleRef: DIFFUSE_PARTICLE };
+    var ITERATOR_SAFE_VERSION_OF_ERSTWHILE_PARTICLE = { x: 32, y: 49, z: -101, rgba: {r:255,g:255,b:255,a:100} };
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // Start with a few basic sanity checks to be sure that it builds properly:
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    testDifferentUsages({
+      exits: {
+        success: {
+          outputExample: 'foo'
+        }
+      }
+    });
+
+    testDifferentUsages({
+      exits: {
+        success: { outputExample: 'foo' },
+        somethingElse: { outputExample: true },
+        somethingElse2: { outputExample: false },
+        somethingElse3: { outputExample: -329.3 },
+        somethingElse4: { outputExample: {} },
+        somethingElse5: { outputExample: '*' },
+        somethingElse6: { outputExample: '->' },
+        somethingElse7: { outputExample: '===' },
+        somethingElse8: { outputExample: [{opts: '*'}] },
+        somethingElse9: { outputExample: [{fn: '->'}] },
+        somethingElse10: { outputExample: [{meta: '==='}] },
+        somethingElse11: { outputExample: [] },
+        somethingElse12: { example: false },
+        somethingElse13: { example: -329.3 },
+        somethingElse14: { example: {} },
+        somethingElse15: { example: '*' },
+        somethingElse16: { example: '->' },
+        somethingElse17: { example: '===' },
+        somethingElse18: { example: [{opts: '*'}] },
+        somethingElse19: { example: [{fn: '->'}] },
+        somethingElse20: { example: [{meta: '==='}] },
+        somethingElse21: { example: [] },
+        error: {}
+      }
+    });
+
+    testDifferentUsages({
+      exits: {
+        success: { outputExample: 'foo' },
+        error: { outputExample: '===' }
+      }
+    });
+
+    testDifferentUsages({
+      exits: {
+        success: { outputExample: 'foo' },
+        error: { example: '===' }
+      }
+    });
+
+    testDifferentUsages({
+      exits: {
+        success: { example: 'foo' },
+        error: { outputExample: '===' }
+      }
+    });
+
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // Then finish up with a few more tests to ensure the underlying runtime type
+    // coercion is working properly and respecting the `outputExample` as the exemplar
+    // that gets passed in to `rttc.coerce()`:
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    testDifferentUsages(
+      { exits: { success: { outputExample: 'foo' } } },
+      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+      'Butter sandwich',
+      // ...then the following runtime value should be received on the OUTSIDE:
+      'Butter sandwich'
+    );
+
+    testDifferentUsages(
+      { exits: { success: { outputExample: 123 } } },
+      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+      'Butter sandwich',
+      // ...then the following runtime value should be received on the OUTSIDE:
+      0
+    );
+
+    testDifferentUsages(
+      { exits: { success: { outputExample: 123 } } },
+      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+      undefined,
+      // ...then the following runtime value should be received on the OUTSIDE:
+      0
+    );
+
+    testDifferentUsages(
+      { exits: { success: { outputExample: 'foo' } } },
+      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+      undefined,
+      // ...then the following runtime value should be received on the OUTSIDE:
+      ''
+    );
+
+    testDifferentUsages(
+      { exits: { success: { outputExample: '*' } } },
+      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+      undefined,
+      // ...then the following runtime value should be received on the OUTSIDE:
+      null
+    );
+
+    testDifferentUsages(
+      { exits: { success: { outputExample: '===' } } },
+      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+      undefined,
+      // ...then the following runtime value should be received on the OUTSIDE:
+      null
+    );
+
+    testDifferentUsages(
+      { exits: { success: { outputExample: ['==='] } } },
+      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+      undefined,
+      // ...then the following runtime value should be received on the OUTSIDE:
+      []
+    );
+
+    testDifferentUsages(
+      { exits: { success: { outputExample: ['*'] } } },
+      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+      [null],
+      // ...then the following runtime value should be received on the OUTSIDE:
+      [null]
+    );
+
+    testDifferentUsages(
+      { exits: { success: { outputExample: [] } } },
+      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+      [null],
+      // ...then the following runtime value should be received on the OUTSIDE:
+      [null]
+    );
+
+    testDifferentUsages(
+      { exits: { success: { outputExample: [] } } },
+      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+      undefined,
+      // ...then the following runtime value should be received on the OUTSIDE:
+      []
+    );
+
+    testDifferentUsages(
+      { exits: { success: { outputExample: ['*'] } } },
+      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+      /^Sandwich/gi,
+      // ...then the following runtime value should be received on the OUTSIDE:
+      []
+    );
+
+    testDifferentUsages(
+      { exits: { success: { outputExample: ['*'] } } },
+      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+      [ /^Sandwich/gi ],
+      // ...then the following runtime value should be received on the OUTSIDE:
+      [ '/^Sandwich/gi' ] // << testing JSON stringification
+    );
+
+    testDifferentUsages(
+      { exits: { success: { outputExample: '===' } } },
+      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+      SOME_ARBITRARY_FUNCTION,
+      // ...then the following runtime value should be received on the OUTSIDE:
+      SOME_ARBITRARY_FUNCTION
+    );
+
+    testDifferentUsages(
+      { exits: { success: { outputExample: '===' } } },
+      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+      ERSTWHILE_PARTICLE,
+      // ...then the following runtime value should be received on the OUTSIDE:
+      ITERATOR_SAFE_VERSION_OF_ERSTWHILE_PARTICLE
+    );
+
+    testDifferentUsages(
+      { exits: { success: { outputExample: [{meta: '==='}] } } },
+      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+      SOME_ARBITRARY_FUNCTION,
+      // ...then the following runtime value should be received on the OUTSIDE:
+      []
+    );
+
+    testDifferentUsages(
+      { exits: { success: { outputExample: [{meta: '==='}] } } },
+      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+      [{meta: SOME_ARBITRARY_FUNCTION, foo: 12412, bar: 35132}],
+      // ...then the following runtime value should be received on the OUTSIDE:
+      [{meta: SOME_ARBITRARY_FUNCTION}]
+    );
+
+    testDifferentUsages(
+      {
+        exits: {
+          success: { outputExample: 'foo' },
+          somethingElse: { outputExample: true },
+          somethingElse2: { outputExample: false },
+          somethingElse3: { outputExample: -329.3 },
+          somethingElse4: { outputExample: {} },
+          somethingElse5: { outputExample: '*' },
+          somethingElse6: { outputExample: '->' },
+          somethingElse7: { outputExample: '===' },
+          somethingElse8: { outputExample: [{opts: '*'}] },
+          somethingElse9: { outputExample: [{fn: '->'}] },
+          somethingElse10: { outputExample: [{meta: '==='}] },
+          somethingElse11: { outputExample: [] },
+          somethingElse12: { example: false },
+          somethingElse13: { example: -329.3 },
+          somethingElse14: { example: {} },
+          somethingElse15: { example: '*' },
+          somethingElse16: { example: '->' },
+          somethingElse17: { example: '===' },
+          somethingElse18: { example: [{opts: '*'}] },
+          somethingElse19: { example: [{fn: '->'}] },
+          somethingElse20: { example: [{meta: '==='}] },
+          somethingElse21: { example: [] },
+          error: {}
+        }
+      },
+      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+      'Butter sandwich',
+      // ...then the following runtime value should be received on the OUTSIDE:
+      'Butter sandwich'
+    );
+
+    testDifferentUsages(
+      {
+        exits: {
+          success: { outputExample: 'foo' },
+          somethingElse: { outputExample: true },
+          somethingElse2: { outputExample: false },
+          somethingElse3: { outputExample: -329.3 },
+          somethingElse4: { outputExample: {} },
+          somethingElse5: { outputExample: '*' },
+          somethingElse6: { outputExample: '->' },
+          somethingElse7: { outputExample: '===' },
+          somethingElse8: { outputExample: [{opts: '*'}] },
+          somethingElse9: { outputExample: [{fn: '->'}] },
+          somethingElse10: { outputExample: [{meta: '==='}] },
+          somethingElse11: { outputExample: [] },
+          somethingElse12: { example: false },
+          somethingElse13: { example: -329.3 },
+          somethingElse14: { example: {} },
+          somethingElse15: { example: '*' },
+          somethingElse16: { example: '->' },
+          somethingElse17: { example: '===' },
+          somethingElse18: { example: [{opts: '*'}] },
+          somethingElse19: { example: [{fn: '->'}] },
+          somethingElse20: { example: [{meta: '==='}] },
+          somethingElse21: { example: [] },
+          error: {}
+        }
+      },
+      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+      undefined,
+      // ...then the following runtime value should be received on the OUTSIDE:
+      ''
+    );
+
+    testDifferentUsages(
+      {
+        exits: {
+          success: { outputExample: 123 },
+          error: { outputExample: '===' }
+        }
+      },
+      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+      undefined,
+      // ...then the following runtime value should be received on the OUTSIDE:
+      0
+    );
+
+    testDifferentUsages(
+      {
+        exits: {
+          success: { outputExample: 123 },
+          error: { example: 'foo' }
+        }
+      },
+      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+      999,
+      // ...then the following runtime value should be received on the OUTSIDE:
+      999
+    );
+
+    testDifferentUsages(
+      {
+        exits: {
+          success: { example: 123 },
+          error: { outputExample: 'foo' }
+        }
+      },
+      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+      999,
+      // ...then the following runtime value should be received on the OUTSIDE:
+      999
+    );
+
+  }); // </with success exit defined, with an `outputExample`>
+
+
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -120,9 +444,11 @@ describe('Machine fn calling `exits()` (w/ different usages)', function() {
  * Machine def should call its error exit when the `foo` input is set to
  * the string: "error"
  *
- * @param  {[type]} machine - the machine def
+ * @param  {===} machine - the machine def
+ * @param  {===?} runtimeValueToReturn - the runtime value that the machine's `fn` will return through the success exit.
+ * @param  {===?} expectedOutputIfSuccessExitIsCalled - the expected output if the success exit is called.  Will be compared using Node's native `assert.deepEqual()`.
  */
-function testDifferentUsages (machine) {
+function testDifferentUsages (machine, runtimeValueToReturn, expectedOutputIfSuccessExitIsCalled) {
 
   if (machine.fn || machine.inputs) {
     throw new Error('Test is invalid-- please do not provide a `fn` or `inputs` to this test helper.');
@@ -135,8 +461,14 @@ function testDifferentUsages (machine) {
   machine.fn = function (inputs, exits, deps) {
     if (inputs.foo === 'error') {
       exits('ERROR!');
-    } else {
-      exits();
+    }
+    else {
+      if (!_.isUndefined(runtimeValueToReturn)) {
+        exits(undefined, runtimeValueToReturn);
+      }
+      else {
+        exits();
+      }
     }
   };
 
@@ -176,7 +508,14 @@ function testDifferentUsages (machine) {
     .configure({
       foo: 'hello'
     }, {
-      success: function() { return done(); },
+      success: function(resultMaybe) {
+        // Verify the output, if expected output was provided to this test helper.
+        if (!_.isUndefined(expectedOutputIfSuccessExitIsCalled)) {
+          try { assert.deepEqual(resultMaybe, expectedOutputIfSuccessExitIsCalled); }
+          catch (e) { return done(e); }
+        }
+        return done();
+      },
       error: function(err) {
         return done(new Error('Should NOT have called the error exit!'));
       }
@@ -243,10 +582,17 @@ function testDifferentUsages (machine) {
     M.build(machine)
     .configure({
       foo: 'hello'
-    }, function (err){
+    }, function (err, resultMaybe){
       if (err) {
         return done(new Error('`err` should NOT have been set!'));
       }
+
+      // Verify the output, if expected output was provided to this test helper.
+      if (!_.isUndefined(expectedOutputIfSuccessExitIsCalled)) {
+        try { assert.deepEqual(resultMaybe, expectedOutputIfSuccessExitIsCalled); }
+        catch (e) { return done(e); }
+      }
+
       return done();
     })
     .exec();
@@ -273,7 +619,15 @@ function testDifferentUsages (machine) {
     .configure({
       foo: 'hello'
     }).exec({
-      success: function() { return done(); },
+      success: function(resultMaybe) {
+        // Verify the output, if expected output was provided to this test helper.
+        if (!_.isUndefined(expectedOutputIfSuccessExitIsCalled)) {
+          try { assert.deepEqual(resultMaybe, expectedOutputIfSuccessExitIsCalled); }
+          catch (e) { return done(e); }
+        }
+
+        return done();
+      },
       error: function(err) { return done(new Error('Should NOT have called the error exit!'));}
     });
   });
@@ -331,10 +685,17 @@ function testDifferentUsages (machine) {
     .configure({
       foo: 'hello'
     })
-    .exec(function (err){
+    .exec(function (err, resultMaybe){
       if (err) {
         return done(new Error('`err` should NOT have been set!'));
       }
+
+      // Verify the output, if expected output was provided to this test helper.
+      if (!_.isUndefined(expectedOutputIfSuccessExitIsCalled)) {
+        try { assert.deepEqual(resultMaybe, expectedOutputIfSuccessExitIsCalled); }
+        catch (e) { return done(e); }
+      }
+
       return done();
     });
   });
@@ -359,7 +720,15 @@ function testDifferentUsages (machine) {
     .configure({
       foo: 'hello'
     }).setExits({
-      success: function() { return done(); },
+      success: function(resultMaybe) {
+        // Verify the output, if expected output was provided to this test helper.
+        if (!_.isUndefined(expectedOutputIfSuccessExitIsCalled)) {
+          try { assert.deepEqual(resultMaybe, expectedOutputIfSuccessExitIsCalled); }
+          catch (e) { return done(e); }
+        }
+
+        return done();
+      },
       error: function(err) { return done(new Error('Should NOT have called the error exit!')); }
     })
     .exec();
@@ -423,10 +792,17 @@ function testDifferentUsages (machine) {
     .configure({
       foo: 'hello'
     })
-    .setExits(function (err){
+    .setExits(function (err, resultMaybe){
       if (err) {
         return done(new Error('`err` should NOT have been set!'));
       }
+
+      // Verify the output, if expected output was provided to this test helper.
+      if (!_.isUndefined(expectedOutputIfSuccessExitIsCalled)) {
+        try { assert.deepEqual(resultMaybe, expectedOutputIfSuccessExitIsCalled); }
+        catch (e) { return done(e); }
+      }
+
       return done();
     })
     .exec();
