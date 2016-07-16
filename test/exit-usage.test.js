@@ -63,12 +63,44 @@ describe('Machine fn calling `exits()` (w/ different usages)', function() {
   }); // </with neither error nor success exit defined>
 
 
-describe('with no exits object defined in the machine def at all', function() {
+  describe('with no exits object defined in the machine def at all', function() {
 
     testDifferentUsages({});
 
   }); // </with no exits object defined in the machine def at all>
 
+
+  describe('with an exit defined with an `outputExample`', function() {
+
+    testDifferentUsages({
+      exits: {
+        success: {
+          outputExample: 'foo'
+        }
+      }
+    });
+
+  }); // </with success exit defined, with an `outputExample`>
+
+
+  describe('with success exit defined such that it has both an `example` and an `outputExample`', function() {
+
+    it('should fail to build', function (){
+      assert.throws(function (){
+        M.build({
+          inputs: {},
+          exits: {
+            success: {
+              example: 'foo',
+              outputExample: 'bar'
+            }
+          },
+          fn: function (inputs, exits) { return exits.success(151); }
+        });
+      });
+    }); // </it should fail to build>
+
+  }); // </with success exit defined such that it has both an `example` and an `outputExample`>
 
 });
 
@@ -120,7 +152,7 @@ function testDifferentUsages (machine) {
       })
       .exec();
     });
-    done();
+    return done();
   });
 
   it('should throw an error when when `fn` calls `exits("ERROR!")` and no callbacks are bound', function(done) {
@@ -131,7 +163,7 @@ function testDifferentUsages (machine) {
       })
       .exec();
     });
-    done();
+    return done();
   });
 
 
@@ -144,8 +176,10 @@ function testDifferentUsages (machine) {
     .configure({
       foo: 'hello'
     }, {
-      success: function() {done();},
-      error: function(err) {done(new Error('Should NOT have called the error exit!'));}
+      success: function() { return done(); },
+      error: function(err) {
+        return done(new Error('Should NOT have called the error exit!'));
+      }
     })
     .exec();
   });
@@ -155,8 +189,13 @@ function testDifferentUsages (machine) {
     .configure({
       foo: 'error'
     }, {
-      "success": function() {done(new Error('Should NOT have called the success exit!'));},
-      "error": function(err) {assert(err, 'expected `'+err+'` to be truthy');done();}
+      success: function() {
+        done(new Error('Should NOT have called the success exit!'));
+      },
+      error: function(err) {
+        assert(err, 'expected `'+err+'` to be truthy');
+        return done();
+      }
     })
     .exec();
   });
@@ -166,7 +205,7 @@ function testDifferentUsages (machine) {
     .configure({
       foo: 'hello'
     }, {
-      error: function(err) {done();}
+      error: function(err) { return done(); }
     })
     .exec();
   });
@@ -176,7 +215,7 @@ function testDifferentUsages (machine) {
     .configure({
       foo: 'error'
     }, {
-      error: function(err) {done();}
+      error: function(err) { return done(); }
     })
     .exec();
   });
@@ -187,7 +226,7 @@ function testDifferentUsages (machine) {
       .configure({
         foo: 'hello'
       }, {
-        "success": function() {
+        success: function() {
           return done(new Error('Should have thrown, and not called any exit!'));
         }
       })
@@ -234,8 +273,8 @@ function testDifferentUsages (machine) {
     .configure({
       foo: 'hello'
     }).exec({
-      success: function() {done();},
-      error: function(err) {done(new Error('Should NOT have called the error exit!'));}
+      success: function() { return done(); },
+      error: function(err) { return done(new Error('Should NOT have called the error exit!'));}
     });
   });
 
@@ -244,8 +283,11 @@ function testDifferentUsages (machine) {
     .configure({
       foo: 'error'
     }).exec({
-      "success": function() {done(new Error('Should NOT have called the success exit!'));},
-      "error": function(err) {assert(err, 'expected `'+err+'` to be truthy');done();}
+      success: function() { return done(new Error('Should NOT have called the success exit!'));},
+      error: function(err) {
+        assert(err, 'expected `'+err+'` to be truthy');
+        return done();
+      }
     });
   });
 
@@ -254,7 +296,7 @@ function testDifferentUsages (machine) {
     .configure({
       foo: 'hello'
     }).exec({
-      error: function(err) {done();}
+      error: function(err) { return done(); }
     });
   });
 
@@ -263,7 +305,7 @@ function testDifferentUsages (machine) {
     .configure({
       foo: 'error'
     }).exec({
-      error: function(err) {done();}
+      error: function(err) { return done(); }
     });
   });
 
@@ -273,7 +315,7 @@ function testDifferentUsages (machine) {
       .configure({
         foo: 'hello'
       }).exec({
-        "success": function() {
+        success: function() {
           return done(new Error('Should have thrown, and not called any exit!'));
         }
       });
@@ -317,8 +359,8 @@ function testDifferentUsages (machine) {
     .configure({
       foo: 'hello'
     }).setExits({
-      success: function() {done();},
-      error: function(err) {done(new Error('Should NOT have called the error exit!'));}
+      success: function() { return done(); },
+      error: function(err) { return done(new Error('Should NOT have called the error exit!')); }
     })
     .exec();
   });
@@ -328,8 +370,11 @@ function testDifferentUsages (machine) {
     .configure({
       foo: 'error'
     }).setExits({
-      "success": function() {done(new Error('Should NOT have called the success exit!'));},
-      "error": function(err) {assert(err, 'expected `'+err+'` to be truthy');done();}
+      success: function() { return done(new Error('Should NOT have called the success exit!')); },
+      error: function(err) {
+        assert(err, 'expected `'+err+'` to be truthy');
+        return done();
+      }
     })
     .exec();
   });
@@ -339,7 +384,7 @@ function testDifferentUsages (machine) {
     .configure({
       foo: 'hello'
     }).setExits({
-      error: function(err) {done();}
+      error: function(err) { return done(); }
     })
     .exec();
   });
@@ -349,7 +394,7 @@ function testDifferentUsages (machine) {
     .configure({
       foo: 'error'
     }).setExits({
-      error: function(err) {done();}
+      error: function(err) { return done(); }
     })
     .exec();
   });
@@ -366,7 +411,8 @@ function testDifferentUsages (machine) {
       })
       .exec();
     });
-    done();
+
+    return done();
   });
 
   ////////////////////////////////////////////////////////////////////
