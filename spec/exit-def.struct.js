@@ -5,5 +5,5 @@ module.exports = {
   moreInfoUrl: 'http://gummyworms.com/flavors',
   outputFriendlyName: 'Unrecognized flavors', // >> e.g. if var name would normally be `unrecognizedFlavors`
   outputDescription: 'A list of invalid gummy worm flavors.', // >> noun phrase
-  example: '===' // >> an example schema describing the output (technically, an RTTC exemplar schema).  Omit this property to indicate no output.
+  outputExample: '===' // >> an example schema describing the output (technically, an RTTC exemplar schema).  Omit this property to indicate no output.
 };

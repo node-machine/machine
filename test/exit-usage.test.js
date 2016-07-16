@@ -73,20 +73,35 @@ describe('Machine fn calling `exits()` (w/ different usages)', function() {
 
   describe('with success exit defined such that it has both an `example` and an `outputExample`', function() {
 
-    it('should fail to build', function (){
-      assert.throws(function (){
-        M.build({
-          inputs: {},
-          exits: {
-            success: {
-              example: 'foo',
-              outputExample: 'bar'
-            }
-          },
-          fn: function (inputs, exits) { return exits.success(151); }
-        });
-      });
-    }); // </it should fail to build>
+    testDifferentUsages(
+      {
+        exits: {
+          success: {
+            outputExample: 'foo',
+            example: false
+          }
+        }
+      },
+      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+      undefined,
+      // ...then the following runtime value should be received on the OUTSIDE:
+      ''
+    );
+
+    testDifferentUsages(
+      {
+        exits: {
+          success: {
+            outputExample: 'foo',
+            example: undefined
+          }
+        }
+      },
+      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+      undefined,
+      // ...then the following runtime value should be received on the OUTSIDE:
+      ''
+    );
 
   }); // </with success exit defined such that it has both an `example` and an `outputExample`>
 
