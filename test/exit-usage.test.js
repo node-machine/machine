@@ -93,6 +93,7 @@ describe('Machine fn calling `exits()` (w/ different usages)', function() {
 
   describe('with an exit defined with an `outputExample`', function() {
 
+
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // The following constants are used below:
     // =======================================
@@ -175,241 +176,242 @@ describe('Machine fn calling `exits()` (w/ different usages)', function() {
     // coercion is working properly and respecting the `outputExample` as the exemplar
     // that gets passed in to `rttc.coerce()`:
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    testDifferentUsages(
-      { exits: { success: { outputExample: 'foo' } } },
-      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
-      'Butter sandwich',
-      // ...then the following runtime value should be received on the OUTSIDE:
-      'Butter sandwich'
-    );
+    describe.skip('when there is runtime output', function() {
+      testDifferentUsages(
+        { exits: { success: { outputExample: 'foo' } } },
+        // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+        'Butter sandwich',
+        // ...then the following runtime value should be received on the OUTSIDE:
+        'Butter sandwich'
+      );
 
-    testDifferentUsages(
-      { exits: { success: { outputExample: 123 } } },
-      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
-      'Butter sandwich',
-      // ...then the following runtime value should be received on the OUTSIDE:
-      0
-    );
+      testDifferentUsages(
+        { exits: { success: { outputExample: 123 } } },
+        // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+        'Butter sandwich',
+        // ...then the following runtime value should be received on the OUTSIDE:
+        0
+      );
 
-    testDifferentUsages(
-      { exits: { success: { outputExample: 123 } } },
-      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
-      undefined,
-      // ...then the following runtime value should be received on the OUTSIDE:
-      0
-    );
+      testDifferentUsages(
+        { exits: { success: { outputExample: 123 } } },
+        // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+        undefined,
+        // ...then the following runtime value should be received on the OUTSIDE:
+        0
+      );
 
-    testDifferentUsages(
-      { exits: { success: { outputExample: 'foo' } } },
-      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
-      undefined,
-      // ...then the following runtime value should be received on the OUTSIDE:
-      ''
-    );
+      testDifferentUsages(
+        { exits: { success: { outputExample: 'foo' } } },
+        // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+        undefined,
+        // ...then the following runtime value should be received on the OUTSIDE:
+        ''
+      );
 
-    testDifferentUsages(
-      { exits: { success: { outputExample: '*' } } },
-      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
-      undefined,
-      // ...then the following runtime value should be received on the OUTSIDE:
-      null
-    );
+      testDifferentUsages(
+        { exits: { success: { outputExample: '*' } } },
+        // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+        undefined,
+        // ...then the following runtime value should be received on the OUTSIDE:
+        null
+      );
 
-    testDifferentUsages(
-      { exits: { success: { outputExample: '===' } } },
-      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
-      undefined,
-      // ...then the following runtime value should be received on the OUTSIDE:
-      null
-    );
+      testDifferentUsages(
+        { exits: { success: { outputExample: '===' } } },
+        // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+        undefined,
+        // ...then the following runtime value should be received on the OUTSIDE:
+        null
+      );
 
-    testDifferentUsages(
-      { exits: { success: { outputExample: ['==='] } } },
-      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
-      undefined,
-      // ...then the following runtime value should be received on the OUTSIDE:
-      []
-    );
+      testDifferentUsages(
+        { exits: { success: { outputExample: ['==='] } } },
+        // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+        undefined,
+        // ...then the following runtime value should be received on the OUTSIDE:
+        []
+      );
 
-    testDifferentUsages(
-      { exits: { success: { outputExample: ['*'] } } },
-      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
-      [null],
-      // ...then the following runtime value should be received on the OUTSIDE:
-      [null]
-    );
+      testDifferentUsages(
+        { exits: { success: { outputExample: ['*'] } } },
+        // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+        [null],
+        // ...then the following runtime value should be received on the OUTSIDE:
+        [null]
+      );
 
-    testDifferentUsages(
-      { exits: { success: { outputExample: [] } } },
-      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
-      [null],
-      // ...then the following runtime value should be received on the OUTSIDE:
-      [null]
-    );
+      testDifferentUsages(
+        { exits: { success: { outputExample: [] } } },
+        // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+        [null],
+        // ...then the following runtime value should be received on the OUTSIDE:
+        [null]
+      );
 
-    testDifferentUsages(
-      { exits: { success: { outputExample: [] } } },
-      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
-      undefined,
-      // ...then the following runtime value should be received on the OUTSIDE:
-      []
-    );
+      testDifferentUsages(
+        { exits: { success: { outputExample: [] } } },
+        // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+        undefined,
+        // ...then the following runtime value should be received on the OUTSIDE:
+        []
+      );
 
-    testDifferentUsages(
-      { exits: { success: { outputExample: ['*'] } } },
-      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
-      /^Sandwich/gi,
-      // ...then the following runtime value should be received on the OUTSIDE:
-      []
-    );
+      testDifferentUsages(
+        { exits: { success: { outputExample: ['*'] } } },
+        // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+        /^Sandwich/gi,
+        // ...then the following runtime value should be received on the OUTSIDE:
+        []
+      );
 
-    testDifferentUsages(
-      { exits: { success: { outputExample: ['*'] } } },
-      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
-      [ /^Sandwich/gi ],
-      // ...then the following runtime value should be received on the OUTSIDE:
-      [ '/^Sandwich/gi' ] // << testing JSON stringification
-    );
+      testDifferentUsages(
+        { exits: { success: { outputExample: ['*'] } } },
+        // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+        [ /^Sandwich/gi ],
+        // ...then the following runtime value should be received on the OUTSIDE:
+        [ '/^Sandwich/gi' ] // << testing JSON stringification
+      );
 
-    testDifferentUsages(
-      { exits: { success: { outputExample: '===' } } },
-      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
-      SOME_ARBITRARY_FUNCTION,
-      // ...then the following runtime value should be received on the OUTSIDE:
-      SOME_ARBITRARY_FUNCTION
-    );
+      testDifferentUsages(
+        { exits: { success: { outputExample: '===' } } },
+        // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+        SOME_ARBITRARY_FUNCTION,
+        // ...then the following runtime value should be received on the OUTSIDE:
+        SOME_ARBITRARY_FUNCTION
+      );
 
-    testDifferentUsages(
-      { exits: { success: { outputExample: '===' } } },
-      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
-      ERSTWHILE_PARTICLE,
-      // ...then the following runtime value should be received on the OUTSIDE:
-      ITERATOR_SAFE_VERSION_OF_ERSTWHILE_PARTICLE
-    );
+      testDifferentUsages(
+        { exits: { success: { outputExample: '===' } } },
+        // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+        ERSTWHILE_PARTICLE,
+        // ...then the following runtime value should be received on the OUTSIDE:
+        ITERATOR_SAFE_VERSION_OF_ERSTWHILE_PARTICLE
+      );
 
-    testDifferentUsages(
-      { exits: { success: { outputExample: [{meta: '==='}] } } },
-      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
-      SOME_ARBITRARY_FUNCTION,
-      // ...then the following runtime value should be received on the OUTSIDE:
-      []
-    );
+      testDifferentUsages(
+        { exits: { success: { outputExample: [{meta: '==='}] } } },
+        // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+        SOME_ARBITRARY_FUNCTION,
+        // ...then the following runtime value should be received on the OUTSIDE:
+        []
+      );
 
-    testDifferentUsages(
-      { exits: { success: { outputExample: [{meta: '==='}] } } },
-      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
-      [{meta: SOME_ARBITRARY_FUNCTION, foo: 12412, bar: 35132}],
-      // ...then the following runtime value should be received on the OUTSIDE:
-      [{meta: SOME_ARBITRARY_FUNCTION}]
-    );
+      testDifferentUsages(
+        { exits: { success: { outputExample: [{meta: '==='}] } } },
+        // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+        [{meta: SOME_ARBITRARY_FUNCTION, foo: 12412, bar: 35132}],
+        // ...then the following runtime value should be received on the OUTSIDE:
+        [{meta: SOME_ARBITRARY_FUNCTION}]
+      );
 
-    testDifferentUsages(
-      {
-        exits: {
-          success: { outputExample: 'foo' },
-          somethingElse: { outputExample: true },
-          somethingElse2: { outputExample: false },
-          somethingElse3: { outputExample: -329.3 },
-          somethingElse4: { outputExample: {} },
-          somethingElse5: { outputExample: '*' },
-          somethingElse6: { outputExample: '->' },
-          somethingElse7: { outputExample: '===' },
-          somethingElse8: { outputExample: [{opts: '*'}] },
-          somethingElse9: { outputExample: [{fn: '->'}] },
-          somethingElse10: { outputExample: [{meta: '==='}] },
-          somethingElse11: { outputExample: [] },
-          somethingElse12: { example: false },
-          somethingElse13: { example: -329.3 },
-          somethingElse14: { example: {} },
-          somethingElse15: { example: '*' },
-          somethingElse16: { example: '->' },
-          somethingElse17: { example: '===' },
-          somethingElse18: { example: [{opts: '*'}] },
-          somethingElse19: { example: [{fn: '->'}] },
-          somethingElse20: { example: [{meta: '==='}] },
-          somethingElse21: { example: [] },
-          error: {}
-        }
-      },
-      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
-      'Butter sandwich',
-      // ...then the following runtime value should be received on the OUTSIDE:
-      'Butter sandwich'
-    );
+      testDifferentUsages(
+        {
+          exits: {
+            success: { outputExample: 'foo' },
+            somethingElse: { outputExample: true },
+            somethingElse2: { outputExample: false },
+            somethingElse3: { outputExample: -329.3 },
+            somethingElse4: { outputExample: {} },
+            somethingElse5: { outputExample: '*' },
+            somethingElse6: { outputExample: '->' },
+            somethingElse7: { outputExample: '===' },
+            somethingElse8: { outputExample: [{opts: '*'}] },
+            somethingElse9: { outputExample: [{fn: '->'}] },
+            somethingElse10: { outputExample: [{meta: '==='}] },
+            somethingElse11: { outputExample: [] },
+            somethingElse12: { example: false },
+            somethingElse13: { example: -329.3 },
+            somethingElse14: { example: {} },
+            somethingElse15: { example: '*' },
+            somethingElse16: { example: '->' },
+            somethingElse17: { example: '===' },
+            somethingElse18: { example: [{opts: '*'}] },
+            somethingElse19: { example: [{fn: '->'}] },
+            somethingElse20: { example: [{meta: '==='}] },
+            somethingElse21: { example: [] },
+            error: {}
+          }
+        },
+        // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+        'Butter sandwich',
+        // ...then the following runtime value should be received on the OUTSIDE:
+        'Butter sandwich'
+      );
 
-    testDifferentUsages(
-      {
-        exits: {
-          success: { outputExample: 'foo' },
-          somethingElse: { outputExample: true },
-          somethingElse2: { outputExample: false },
-          somethingElse3: { outputExample: -329.3 },
-          somethingElse4: { outputExample: {} },
-          somethingElse5: { outputExample: '*' },
-          somethingElse6: { outputExample: '->' },
-          somethingElse7: { outputExample: '===' },
-          somethingElse8: { outputExample: [{opts: '*'}] },
-          somethingElse9: { outputExample: [{fn: '->'}] },
-          somethingElse10: { outputExample: [{meta: '==='}] },
-          somethingElse11: { outputExample: [] },
-          somethingElse12: { example: false },
-          somethingElse13: { example: -329.3 },
-          somethingElse14: { example: {} },
-          somethingElse15: { example: '*' },
-          somethingElse16: { example: '->' },
-          somethingElse17: { example: '===' },
-          somethingElse18: { example: [{opts: '*'}] },
-          somethingElse19: { example: [{fn: '->'}] },
-          somethingElse20: { example: [{meta: '==='}] },
-          somethingElse21: { example: [] },
-          error: {}
-        }
-      },
-      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
-      undefined,
-      // ...then the following runtime value should be received on the OUTSIDE:
-      ''
-    );
+      testDifferentUsages(
+        {
+          exits: {
+            success: { outputExample: 'foo' },
+            somethingElse: { outputExample: true },
+            somethingElse2: { outputExample: false },
+            somethingElse3: { outputExample: -329.3 },
+            somethingElse4: { outputExample: {} },
+            somethingElse5: { outputExample: '*' },
+            somethingElse6: { outputExample: '->' },
+            somethingElse7: { outputExample: '===' },
+            somethingElse8: { outputExample: [{opts: '*'}] },
+            somethingElse9: { outputExample: [{fn: '->'}] },
+            somethingElse10: { outputExample: [{meta: '==='}] },
+            somethingElse11: { outputExample: [] },
+            somethingElse12: { example: false },
+            somethingElse13: { example: -329.3 },
+            somethingElse14: { example: {} },
+            somethingElse15: { example: '*' },
+            somethingElse16: { example: '->' },
+            somethingElse17: { example: '===' },
+            somethingElse18: { example: [{opts: '*'}] },
+            somethingElse19: { example: [{fn: '->'}] },
+            somethingElse20: { example: [{meta: '==='}] },
+            somethingElse21: { example: [] },
+            error: {}
+          }
+        },
+        // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+        undefined,
+        // ...then the following runtime value should be received on the OUTSIDE:
+        ''
+      );
 
-    testDifferentUsages(
-      {
-        exits: {
-          success: { outputExample: 123 },
-          error: { outputExample: '===' }
-        }
-      },
-      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
-      undefined,
-      // ...then the following runtime value should be received on the OUTSIDE:
-      0
-    );
+      testDifferentUsages(
+        {
+          exits: {
+            success: { outputExample: 123 },
+            error: { outputExample: '===' }
+          }
+        },
+        // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+        undefined,
+        // ...then the following runtime value should be received on the OUTSIDE:
+        0
+      );
 
-    testDifferentUsages(
-      {
-        exits: {
-          success: { outputExample: 123 },
-          error: { example: 'foo' }
-        }
-      },
-      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
-      999,
-      // ...then the following runtime value should be received on the OUTSIDE:
-      999
-    );
+      testDifferentUsages(
+        {
+          exits: {
+            success: { outputExample: 123 },
+            error: { example: 'foo' }
+          }
+        },
+        // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+        999,
+        // ...then the following runtime value should be received on the OUTSIDE:
+        999
+      );
 
-    testDifferentUsages(
-      {
-        exits: {
-          success: { example: 123 },
-          error: { outputExample: 'foo' }
-        }
-      },
-      // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
-      999,
-      // ...then the following runtime value should be received on the OUTSIDE:
-      999
-    );
-
+      testDifferentUsages(
+        {
+          exits: {
+            success: { example: 123 },
+            error: { outputExample: 'foo' }
+          }
+        },
+        // If the following runtime value is returned through the success exit FROM INSIDE the machine `fn`:
+        999,
+        // ...then the following runtime value should be received on the OUTSIDE:
+        999
+      );
+    }); // </when there is runtime output>
   }); // </with success exit defined, with an `outputExample`>
 
 
