@@ -61,4 +61,25 @@ describe('Sanity test', function() {
     });
   });
 
+  it('should error when undeclared exits are configured', function(done) {
+    try {
+      M.build(machine)
+      .configure({
+        foo: 'hello',
+        bar: 4
+      })
+      .inputCoercion(false)
+      .exec({
+        success: function(){},
+        error: function() {},
+        baz: function() {},
+        boop: function() {}
+      });
+      return done(new Error('Expected an error regarding undeclared inputs `baz, boop`.'));
+    } catch (e) {
+      return done();
+    }
+  });
+
+
 });
