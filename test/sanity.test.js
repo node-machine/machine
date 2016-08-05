@@ -75,7 +75,7 @@ describe('Sanity test', function() {
         baz: function() {},
         boop: function() {}
       });
-      return done(new Error('Expected an error regarding undeclared inputs `baz, boop`.'));
+      return done(new Error('Expected an error regarding undeclared exits `baz, boop`.'));
     } catch (e) {
       return done();
     }
