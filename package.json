@@ -33,7 +33,6 @@
     "debug": "2.2.0",
     "include-all": "1.0.1",
     "lodash": "3.10.1",
-    "object-hash": "0.3.0",
     "rttc": "^9.8.1",
     "switchback": "2.0.0"
   },
