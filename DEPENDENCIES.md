@@ -10,7 +10,7 @@ Licenses information:
 
 convert-to-ecmascript-compatible-varname@0.1.4   : MIT
 debug@2.2.0                                      : MIT
-include-all@1.0.1                                : MIT
+include-all@1.0.2                                : MIT
 lodash@3.10.1                                    : MIT
 rttc@^9.8.1                                      : MIT
 switchback@^2.0.1                                : MIT
