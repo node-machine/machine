@@ -24,7 +24,7 @@ $ npm install machine --save
 
 ## Contributing
 
-If you're interested in contributing to the machine specification, please request to join the project's [Google Group](https://groups.google.com/forum/?hl=en#!forum/node-machine) and introduce yourself to the rest of the core team.  In the mean time, you can check out the tests for information on how to use all the lower-level features of this module.  There is also a guide for direct usage of this module in [`docs/DIRECT_USAGE.md`](./docs/DIRECT_USAGE.md).  Note that you can run the tests for this module using `npm test`, and that we're using a preinstall script to generate a recursive dependency report (via the `licensing` module by 3rdEden).
+If you're interested in contributing to the machine specification, please request to join the project's [Google Group](https://groups.google.com/forum/?hl=en#!forum/node-machine) and introduce yourself to the rest of the core team.  In the mean time, you can check out the tests for information on how to use all the lower-level features of this module.  There is also a guide for direct usage of this module in [`docs/DIRECT_USAGE.md`](./docs/DIRECT_USAGE.md).  Note that you can run the tests for this module using `npm test`.  To re-generate the recursive dependency report (via the `licensing` module by 3rdEden), run `npm run licensing`.
 
 ## Issue Submission
 Make sure you've read the [issue submission guidelines](https://github.com/balderdashy/sails/blob/master/CONTRIBUTING.md#opening-issues) from Sails before opening a new issue - the node-machine project uses the same rules.
