@@ -196,7 +196,7 @@ describe('Machine.prototype.exec()', function (){
       fn: function (inputs, exits){ return exits.success(); }
     };
 
-    describe('calling naked .exec()', function () {
+    describe.skip('calling naked .exec()', function () {
       it('should not hang forever, go into an infinite loop, or crash the process -- instead, throw a predictable error', function (){
         var m = Machine.build(NM_DEF_FIXTURE);
 
@@ -267,7 +267,7 @@ describe('Machine.prototype.exec()', function (){
         });
       });//</describe :: with an `error` callback provided>
 
-      describe('WITHOUT providing an `error` callback', function () {
+      describe.skip('WITHOUT providing an `error` callback', function () {
         it('should not hang forever, go into an infinite loop, or crash the process -- instead, throw a predictable error', function (done){
           var m = Machine.build(NM_DEF_FIXTURE);
 
