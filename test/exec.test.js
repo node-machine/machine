@@ -66,7 +66,7 @@ describe('Machine.prototype.exec()', function (){
         } catch (e) {
           // TODO: use an actual error code here instead
           // (not a huge deal or anything, and this is kind of an edge case... But it'd be a nice thing to help out folks doing higher-level tooling on top)
-          if (e.stack.match('Invalid usage- an `error` callback must be provided.  The machine was not executed.')) {
+          if (e.stack.match('Invalid usage: Cannot execute machine (`anonymous`) without providing any catchall error handling')) {
             return;
           }
           else { throw e; }
@@ -139,7 +139,7 @@ describe('Machine.prototype.exec()', function (){
           } catch (e) {
             // TODO: use an actual error code here instead
             // (not a huge deal or anything, and this is kind of an edge case... But it'd be a nice thing to help out folks doing higher-level tooling on top)
-            if (e.stack.match('Invalid usage- an `error` callback must be provided.  The machine was not executed.')) {
+            if (e.stack.match('Invalid usage: Cannot execute machine (`anonymous`) without providing any catchall error handling')) {
               return done();
             }
             else { return done(e); }
@@ -205,7 +205,7 @@ describe('Machine.prototype.exec()', function (){
         } catch (e) {
           // TODO: use an actual error code here instead
           // (not a huge deal or anything, and this is kind of an edge case... But it'd be a nice thing to help out folks doing higher-level tooling on top)
-          if (e.stack.match('Invalid usage- an `error` callback must be provided.  The machine was not executed.')) {
+          if (e.stack.match('Invalid usage: Cannot execute machine (`anonymous`) without providing any catchall error handling')) {
             return;
           }
           else { throw e; }
@@ -280,7 +280,7 @@ describe('Machine.prototype.exec()', function (){
           } catch (e) {
             // TODO: use an actual error code here instead
             // (not a huge deal or anything, and this is kind of an edge case... But it'd be a nice thing to help out folks doing higher-level tooling on top)
-            if (e.stack.match('Invalid usage- an `error` callback must be provided.  The machine was not executed.')) {
+            if (e.stack.match('Invalid usage: Cannot execute machine (`anonymous`) without providing any catchall error handling')) {
               return done();
             }
             else { return done(e); }
