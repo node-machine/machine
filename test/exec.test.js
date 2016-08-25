@@ -64,9 +64,7 @@ describe('Machine.prototype.exec()', function (){
         try {
           m({ foo: 'bar' }).exec();
         } catch (e) {
-          // TODO: use an actual error code here instead
-          // (not a huge deal or anything, and this is kind of an edge case... But it'd be a nice thing to help out folks doing higher-level tooling on top)
-          if (e.stack.match('Invalid usage: Cannot execute machine (`anonymous`) without providing any catchall error handling')) {
+          if (e.code === 'E_NO_ERROR_CALLBACK_CONFIGURED') {
             return;
           }
           else { throw e; }
@@ -137,9 +135,7 @@ describe('Machine.prototype.exec()', function (){
               }
             });
           } catch (e) {
-            // TODO: use an actual error code here instead
-            // (not a huge deal or anything, and this is kind of an edge case... But it'd be a nice thing to help out folks doing higher-level tooling on top)
-            if (e.stack.match('Invalid usage: Cannot execute machine (`anonymous`) without providing any catchall error handling')) {
+            if (e.code === 'E_NO_ERROR_CALLBACK_CONFIGURED') {
               return done();
             }
             else { return done(e); }
@@ -196,16 +192,14 @@ describe('Machine.prototype.exec()', function (){
       fn: function (inputs, exits){ return exits.success(); }
     };
 
-    describe.skip('calling naked .exec()', function () {
+    describe('calling naked .exec()', function () {
       it('should not hang forever, go into an infinite loop, or crash the process -- instead, throw a predictable error', function (){
         var m = Machine.build(NM_DEF_FIXTURE);
 
         try {
           m().exec();
         } catch (e) {
-          // TODO: use an actual error code here instead
-          // (not a huge deal or anything, and this is kind of an edge case... But it'd be a nice thing to help out folks doing higher-level tooling on top)
-          if (e.stack.match('Invalid usage: Cannot execute machine (`anonymous`) without providing any catchall error handling')) {
+          if (e.code === 'E_NO_ERROR_CALLBACK_CONFIGURED') {
             return;
           }
           else { throw e; }
@@ -267,7 +261,7 @@ describe('Machine.prototype.exec()', function (){
         });
       });//</describe :: with an `error` callback provided>
 
-      describe.skip('WITHOUT providing an `error` callback', function () {
+      describe('WITHOUT providing an `error` callback', function () {
         it('should not hang forever, go into an infinite loop, or crash the process -- instead, throw a predictable error', function (done){
           var m = Machine.build(NM_DEF_FIXTURE);
 
@@ -278,9 +272,7 @@ describe('Machine.prototype.exec()', function (){
               }
             });
           } catch (e) {
-            // TODO: use an actual error code here instead
-            // (not a huge deal or anything, and this is kind of an edge case... But it'd be a nice thing to help out folks doing higher-level tooling on top)
-            if (e.stack.match('Invalid usage: Cannot execute machine (`anonymous`) without providing any catchall error handling')) {
+            if (e.code === 'E_NO_ERROR_CALLBACK_CONFIGURED') {
               return done();
             }
             else { return done(e); }
