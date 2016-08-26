@@ -23,10 +23,10 @@ describe('timeout', function (){
       it('should call its error exit with a timeout error', function (done){
         machineInstance().exec({
           error: function (err) {
-            if (err.code === 'E_TIMEOUT') {
+            if (err.code === 'E_MACHINE_TIMEOUT') {
               return done();
             }
-            return done(new Error('Expecting Error instance w/ `code` === "E_TIMEOUT", but instead got this error (code:'+err.code+'): '+err.stack));
+            return done(new Error('Expecting Error instance w/ `code` === "E_MACHINE_TIMEOUT", but instead got this error (code:'+err.code+'): '+err.stack));
           },
           success: function (){
             return done(new Error('wtf'));
@@ -54,10 +54,10 @@ describe('timeout', function (){
       it('should call its error exit with a timeout error', function (done){
         machineInstance().exec({
           error: function (err) {
-            if (err.code === 'E_TIMEOUT') {
+            if (err.code === 'E_MACHINE_TIMEOUT') {
               return done();
             }
-            return done(new Error('Expecting Error instance w/ `code` === "E_TIMEOUT", but instead got this error (code:'+err.code+'): '+err.stack));
+            return done(new Error('Expecting Error instance w/ `code` === "E_MACHINE_TIMEOUT", but instead got this error (code:'+err.code+'): '+err.stack));
           },
           success: function (){
             return done(new Error('Should not have called the success exit (should have been prevented by timeout alarm)'));
