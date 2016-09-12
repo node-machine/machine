@@ -6,7 +6,7 @@ var Machine = require('../');
 
 
 
-describe('maxRecursion', function (){
+xdescribe('maxRecursion', function (){
 
 
   describe('by default', function (){
