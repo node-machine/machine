@@ -79,6 +79,7 @@ describe('Machine.prototype.execSync()', function (){
 
 var machineFixtures = [
 
+  // (0)
   // Standard asynchronous machine
   {
     inputs: {
@@ -101,6 +102,7 @@ var machineFixtures = [
       exits.success('stuff');
     }
   },
+  // (1)
   // Same machine as above, but with sync:true
   {
     sync: true,
@@ -124,6 +126,7 @@ var machineFixtures = [
       exits.success('stuff');
     }
   },
+  // (2)
   // Sync machine which calls a non-success exit with whatever
   // was passed into the `value` input.
   {
@@ -150,6 +153,7 @@ var machineFixtures = [
       exits.someOtherExit(inputs.value);
     }
   },
+  // (3)
   // Sync machine which calls a non-success exit with a new Error.
   {
     sync: true,
