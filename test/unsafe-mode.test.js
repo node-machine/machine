@@ -3,12 +3,12 @@ var util = require('util');
 var _ = require('lodash');
 var M = require('../lib/Machine.constructor');
 
-describe.skip('Unsafe mode', function() {
+describe('Unsafe mode', function() {
 
   it('should not coerce input data into proper types', function(done) {
     var _inputs;
 
-    var machine = {
+    var sampleMachineDef = {
       inputs: {
         foo: {
           example: 100
@@ -32,14 +32,21 @@ describe.skip('Unsafe mode', function() {
     };
 
     try {
-      M.build(machine)
+
+      var live = M.build(sampleMachineDef)
       .configure({
         foo: '20',
         bar: 20
-      })
-      .unsafe(true)
-      .exec(function(err, result) {
-        if(err) return done(err);
+      });
+
+      // Set experimental flags:
+      live._unsafeMode = true;
+      live._runTimeTypeCheck = false;
+      live._inputCoercion = false;
+      live._exitCoercion = false;
+
+      live.exec(function(err, result) {
+        if(err) { return done(err); }
         assert.strictEqual(_inputs.foo,'20');
         assert.strictEqual(_inputs.bar,20);
         done();
@@ -89,7 +96,7 @@ describe.skip('Unsafe mode', function() {
   it('should fail if input expects string, but `{foo:{bar: "baz"}}` is provided', function(done) {
     testInputConfiguration({
       example: 'asdf',
-      actual: {foo:{bar: "baz"}}
+      actual: {foo:{bar: 'baz'}}
     }, function (err, result){
       if (!err) {
         return done();
@@ -101,7 +108,7 @@ describe.skip('Unsafe mode', function() {
   it('should fail if input expects number, but `{foo:{bar: "baz"}}` is provided', function(done) {
     testInputConfiguration({
       example: 1234,
-      actual: {foo:{bar: "baz"}}
+      actual: {foo:{bar: 'baz'}}
     }, function (err, result){
       if (!err) {
         return done();
@@ -125,7 +132,7 @@ describe.skip('Unsafe mode', function() {
 function testInputConfiguration(options, cb){
   var _inputsInFn;
   var outputValue;
-  var machine = M.build({
+  var live = M.build({
     inputs: {
       x: (function _determineInputDefinition(){
         var def = {};
@@ -146,9 +153,15 @@ function testInputConfiguration(options, cb){
   })
   .configure({
     x: options.actual
-  })
-  .unsafe(true)
-  .exec(function (err, result){
+  });
+
+  // Set experimental flags:
+  live._unsafeMode = true;
+  live._runTimeTypeCheck = false;
+  live._inputCoercion = false;
+  live._exitCoercion = false;
+
+  live.exec(function (err, result){
     return cb(err, result);
   });
 }

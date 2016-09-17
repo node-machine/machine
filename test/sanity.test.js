@@ -35,14 +35,17 @@ describe('Sanity test', function() {
     });
   });
 
-  it.skip('should error with mildly-invalid inputs when input coercion is off', function(done) {
-    M.build(machine)
+  it('should error with mildly-invalid inputs when input coercion is off', function(done) {
+
+    var live = M.build(machine)
     .configure({
       foo: 'hello',
       bar: '4'
-    })
-    .inputCoercion(false)
-    .exec(function(err, result) {
+    });
+
+    live._inputCoercion = false;
+
+    live.exec(function(err, result) {
       assert(err, 'expected error providing `"4"` to an input with example === `4`');
       done();
     });
@@ -60,21 +63,25 @@ describe('Sanity test', function() {
     });
   });
 
-  it.skip('should error when undeclared exits are configured', function(done) {
+  it('should error when undeclared exits are configured', function(done) {
     try {
-      M.build(machine)
+      var live = M.build(machine)
       .configure({
         foo: 'hello',
         bar: 4
-      })
-      .inputCoercion(false)
-      .exec({
+      });
+
+      live._inputCoercion = false;
+
+      live.exec({
         success: function(){},
         error: function() {},
         baz: function() {},
         boop: function() {}
       });
+
       return done(new Error('Expected an error regarding undeclared exits `baz, boop`.'));
+
     } catch (e) {
       return done();
     }
