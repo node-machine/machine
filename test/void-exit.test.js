@@ -1,7 +1,10 @@
 var assert = require('assert');
 var M = require('../lib/Machine.constructor');
 
-// TODO: deprecate `void`-- `example: undefined` works just as well.
+// TODO: deprecate `void`-- `outputExample: undefined` works just as well.
+// (technically you can't smash output passed through that way, but that's
+//  probably fine, considering it has never come up so far after ~3 yrs of
+//  production use!)
 describe('void exit', function() {
 
   it('should not return data from a voided exit', function(done) {
@@ -29,7 +32,7 @@ describe('void exit', function() {
       foo: 'hello'
     })
     .exec(function(err, result) {
-      if(err) return done(err);
+      if(err) { return done(err); }
       assert(!result);
       done();
     });
