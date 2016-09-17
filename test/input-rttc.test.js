@@ -7,7 +7,7 @@ var _ = require('lodash');
 var runSuite = require('../node_modules/rttc/spec/helpers/run-suite');
 var TEST_SUITE = require('../node_modules/rttc/spec/validation.spec.js');
 var expandSuite = require('../node_modules/rttc/spec/helpers/expand-suite');
-var toRunTest = require('./helpers/test-input-validation.helper');
+var toRunTest = require('./util/test-input-validation.helper');
 
 describe('exhaustive input validation tests', function (){
 

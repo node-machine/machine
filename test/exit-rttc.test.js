@@ -4,7 +4,7 @@
 
 var runSuite = require('../node_modules/rttc/spec/helpers/run-suite');
 var TEST_SUITE = require('../node_modules/rttc/spec/coercion.spec.js');
-var toRunTest = require('./helpers/test-exit-coercion.helper');
+var toRunTest = require('./util/test-exit-coercion.helper');
 var expandSuite = require('../node_modules/rttc/spec/helpers/expand-suite');
 
 describe('exhaustive exit coercion tests', function (){

@@ -8,6 +8,7 @@ var rttc = require('rttc');
 var Machine = require('../../');
 var isEquivalent = require('../../node_modules/rttc/spec/helpers/is-equivalent');
 
+
 module.exports = function testExitCoercion(expectations, cb){
 
   // Determine type schema of the value.

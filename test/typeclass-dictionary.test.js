@@ -1,6 +1,7 @@
 var assert = require('assert');
 var M = require('../lib/Machine.constructor');
 
+
 describe('Machine inputs typeclass dictionary', function() {
 
   var _inputValsInFn;

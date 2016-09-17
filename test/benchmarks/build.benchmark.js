@@ -3,7 +3,7 @@
  */
 
 var util = require('util');
-var runBenchmarks = require('../helpers/run-benchmarks.helper');
+var runBenchmarks = require('../util/run-benchmarks.helper');
 var Machine = require('../../');
 
 
