@@ -10,10 +10,7 @@ var Machine = require('../../');
 //  ╔╗ ╔═╗╔╗╔╔═╗╦ ╦╔╦╗╔═╗╦═╗╦╔═╔═╗
 //  ╠╩╗║╣ ║║║║  ╠═╣║║║╠═╣╠╦╝╠╩╗╚═╗
 //  ╚═╝╚═╝╝╚╝╚═╝╩ ╩╩ ╩╩ ╩╩╚═╩ ╩╚═╝
-(process.env.NO_BENCH ?
-  describe.skip :
-  describe
-)('benchmark :: Machine.build() + Machine.prototype.exec()', function (){
+describe('benchmark :: Machine.build() + Machine.prototype.exec()', function (){
   // Set "timeout" and "slow" thresholds incredibly high
   // to avoid running into issues.
   this.slow(240000);
