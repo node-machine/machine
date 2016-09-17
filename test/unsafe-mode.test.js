@@ -3,7 +3,7 @@ var util = require('util');
 var _ = require('lodash');
 var M = require('../lib/Machine.constructor');
 
-describe('Unsafe mode', function() {
+describe.skip('Unsafe mode', function() {
 
   it('should not coerce input data into proper types', function(done) {
     var _inputs;
