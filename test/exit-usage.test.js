@@ -836,13 +836,13 @@ function testDifferentUsages (machine, runtimeValueToReturn, expectedOutputIfSuc
   });
 
   ////////////////////////////////////////////////////////////////////
-  // Binding exit callbacks with .setExits()
+  // Binding exit callbacks with .configure()
   ////////////////////////////////////////////////////////////////////
-  it('should call the success exit when `fn` calls `exits()` and callbacks are bound using .setExits()', function(done) {
+  it('should call the success exit when `fn` calls `exits()` and callbacks are bound using .configure()', function(done) {
     M.build(machine)
     .configure({
       foo: 'hello'
-    }).setExits({
+    }, {
       success: function(resultMaybe) {
         // Verify the output, if expected output was provided to this test helper.
         if (!_.isUndefined(expectedOutputIfSuccessExitIsCalled)) {
@@ -863,11 +863,11 @@ function testDifferentUsages (machine, runtimeValueToReturn, expectedOutputIfSuc
     .exec();
   });
 
-  it('should call the error exit when `fn` calls `exits("ERROR!")` and callbacks are bound using .setExits()', function(done) {
+  it('should call the error exit when `fn` calls `exits("ERROR!")` and callbacks are bound using .configure()', function(done) {
     M.build(machine)
     .configure({
       foo: 'error'
-    }).setExits({
+    }, {
       success: function() { return done(new Error('Should NOT have called the success exit!')); },
       error: function(err) {
         assert(err, 'expected `'+err+'` to be truthy');
@@ -877,32 +877,32 @@ function testDifferentUsages (machine, runtimeValueToReturn, expectedOutputIfSuc
     .exec();
   });
 
-  it('should call the error exit when `fn` calls `exits()` and ONLY an `error` callback is bound using .setExits()', function(done) {
+  it('should call the error exit when `fn` calls `exits()` and ONLY an `error` callback is bound using .configure()', function(done) {
     M.build(machine)
     .configure({
       foo: 'hello'
-    }).setExits({
+    }, {
       error: function(err) { return done(); }
     })
     .exec();
   });
 
-  it('should call the error exit when `fn` calls `exits("ERROR!")` and ONLY an `error` callback is bound using .setExits()', function(done) {
+  it('should call the error exit when `fn` calls `exits("ERROR!")` and ONLY an `error` callback is bound using .configure()', function(done) {
     M.build(machine)
     .configure({
       foo: 'error'
-    }).setExits({
+    }, {
       error: function(err) { return done(); }
     })
     .exec();
   });
 
-  it('should throw an error when no `error` callback is bound using .setExits()', function(done) {
+  it('should throw an error when no `error` callback is bound using .configure()', function(done) {
     assert.throws(function (){
       M.build(machine)
       .configure({
         foo: 'hello'
-      }).setExits({
+      }, {
         success: function() {
           return done(new Error('Should have thrown, and not called any exit!'));
         }
@@ -914,14 +914,13 @@ function testDifferentUsages (machine, runtimeValueToReturn, expectedOutputIfSuc
   });
 
   ////////////////////////////////////////////////////////////////////
-  // Binding Node callback with .setExits()
+  // Binding Node callback with configure()
   ////////////////////////////////////////////////////////////////////
-  it('should call the success exit when `fn` calls `exits()` and a single Node callback is bound using .setExits()', function(done) {
+  it('should call the success exit when `fn` calls `exits()` and a single Node callback is bound using .configure()', function(done) {
     M.build(machine)
     .configure({
       foo: 'hello'
-    })
-    .setExits(function (err, resultMaybe){
+    }, function (err, resultMaybe){
       if (err) {
         return done(new Error('`err` should NOT have been set!'));
       }
@@ -947,11 +946,11 @@ function testDifferentUsages (machine, runtimeValueToReturn, expectedOutputIfSuc
     .exec();
   });
 
-  it('should call the error exit when `fn` calls `exits("ERROR!")` and a single Node callback is bound using .setExits()', function(done) {
+  it('should call the error exit when `fn` calls `exits("ERROR!")` and a single Node callback is bound using .configure()', function(done) {
     M.build(machine)
     .configure({
       foo: 'error'
-    }).setExits(function (err){
+    }, function (err){
       if (err) {
         return done();
       }
