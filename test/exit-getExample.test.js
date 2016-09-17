@@ -39,7 +39,7 @@ describe('Machine exits getExample', function() {
       foo: 'bar'
     })
     .exec(function(err, result) {
-      if(err) return done(err);
+      if(err) { return done(err); }
       assert.strictEqual(result.code, 404);
       assert.strictEqual(result.status, 'not found');
       done();
@@ -61,7 +61,7 @@ describe('Machine exits getExample', function() {
             return {
               code: 400,
               status: 'ok'
-            }
+            };
           }
         },
         error: {}
@@ -77,7 +77,7 @@ describe('Machine exits getExample', function() {
       foo: 'world'
     })
     .exec(function(err, result) {
-      if(err) return done(err);
+      if(err) { return done(err); }
       assert.strictEqual(result.code, 404);
       assert.strictEqual(result.status, 'not found');
       done();
@@ -99,7 +99,7 @@ describe('Machine exits getExample', function() {
       })
       .configure({ foo: 'world' })
       .exec(function(err, result) {
-        if(err) return done(err);
+        if(err) { return done(err); }
         assert.deepEqual(result, [false, false, true, true, false]);
         done();
       });
@@ -120,7 +120,7 @@ describe('Machine exits getExample', function() {
       })
       .configure({ foo: 'world' })
       .exec(function(err, result) {
-        if(err) return done(err);
+        if(err) { return done(err); }
         assert.deepEqual(result, {x: [false, false, true, true, false]});
         done();
       });
@@ -143,7 +143,7 @@ describe('Machine exits getExample', function() {
       })
       .configure({ foo: 'world' })
       .exec(function(err, result) {
-        if(err) return done(err);
+        if(err) { return done(err); }
         assert(!_.isEqual(result[0], nov5), 'Should not treat example as [===] when getExample returns [null]! Expected Date reference to be coerced to a JSON string (since example should have been coerced to `[]`)');
         assert.strictEqual(result[0], '1605-11-05T00:00:00.000Z');
         done();
@@ -165,7 +165,7 @@ describe('Machine exits getExample', function() {
       })
       .configure({ foo: 'world' })
       .exec(function(err, result) {
-        if(err) return done(err);
+        if(err) { return done(err); }
         assert.deepEqual(result, {c: '3'});
         done();
       });
@@ -190,7 +190,7 @@ describe('Machine exits getExample', function() {
         foo: 'world'
       })
       .exec(function(err, result) {
-        if(err) return done(err);
+        if(err) { return done(err); }
         assert.strictEqual(result, someStream);
         done();
       });
@@ -216,7 +216,7 @@ describe('Machine exits getExample', function() {
         foo: 'world'
       })
       .exec(function(err, result) {
-        if(err) return done(err);
+        if(err) { return done(err); }
         assert.strictEqual(result, someStream);
         done();
       });
@@ -260,7 +260,7 @@ describe('Machine exits getExample', function() {
       foo: 'hello'
     })
     .exec(function(err, result) {
-      if(err) return done(err);
+      if(err) { return done(err); }
       assert.strictEqual(result.code, 0);
       assert.strictEqual(result.status, '');
       done();
