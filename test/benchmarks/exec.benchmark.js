@@ -6,12 +6,14 @@ var util = require('util');
 var runBenchmarks = require('../helpers/run-benchmarks.helper');
 var Machine = require('../../');
 
-if (process.env.NO_BENCH) {return;}
 
 //  ╔╗ ╔═╗╔╗╔╔═╗╦ ╦╔╦╗╔═╗╦═╗╦╔═╔═╗
 //  ╠╩╗║╣ ║║║║  ╠═╣║║║╠═╣╠╦╝╠╩╗╚═╗
 //  ╚═╝╚═╝╝╚╝╚═╝╩ ╩╩ ╩╩ ╩╩╚═╩ ╩╚═╝
-describe('benchmark :: Machine.build() + Machine.prototype.exec()', function (){
+(process.env.NO_BENCH ?
+  describe.skip :
+  describe
+)('benchmark :: Machine.build() + Machine.prototype.exec()', function (){
   // Set "timeout" and "slow" thresholds incredibly high
   // to avoid running into issues.
   this.slow(240000);
