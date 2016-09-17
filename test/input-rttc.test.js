@@ -2,12 +2,12 @@
  * Module dependencies
  */
 
+var Stream = require('stream');
 var _ = require('lodash');
 var runSuite = require('../node_modules/rttc/spec/helpers/run-suite');
 var TEST_SUITE = require('../node_modules/rttc/spec/validation.spec.js');
 var expandSuite = require('../node_modules/rttc/spec/helpers/expand-suite');
 var toRunTest = require('./helpers/test-input-validation.helper');
-var Stream = require('stream');
 
 describe('exhaustive input validation tests', function (){
 
@@ -34,7 +34,7 @@ describe('exhaustive input validation tests', function (){
         return _val;
       }
       // Otherwise allow vanilla _.cloneDeep() behavior:
-      else return undefined;
+      else { return undefined; }
     });
   };
 
