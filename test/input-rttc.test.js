@@ -9,7 +9,7 @@ var TEST_SUITE = require('../node_modules/rttc/spec/validation.spec.js');
 var expandSuite = require('../node_modules/rttc/spec/helpers/expand-suite');
 var toRunTest = require('./util/test-input-validation.helper');
 
-describe('exhaustive input validation tests', function (){
+describe('exhaustive input validation+"light" coercion  (using fixtures from RTTC)', function (){
 
   // Take the array of tests and extend them with some derivative
   // tests automatically.

@@ -7,7 +7,7 @@ var TEST_SUITE = require('../node_modules/rttc/spec/coercion.spec.js');
 var toRunTest = require('./util/test-exit-coercion.helper');
 var expandSuite = require('../node_modules/rttc/spec/helpers/expand-suite');
 
-describe('exhaustive exit coercion tests', function (){
+describe('exhaustive exit "heavy" coercion  (using fixtures from RTTC)', function (){
 
   // Take the array of tests and extend them with some derivative
   // tests automatically.  Then run them.
