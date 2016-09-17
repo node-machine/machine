@@ -41,7 +41,7 @@
     "async": "2.0.1",
     "benchmark": "2.1.0",
     "licensing": "0.1.0",
-    "mocha": "1.21.5",
+    "mocha": "3.0.2",
     "test-machinepack-mocha": "^2.1.3"
   }
 }

@@ -49,7 +49,7 @@ describe('Specific machine exit coercion use cases', function() {
       foo: 'hello'
     })
     .exec(function(err, result) {
-      if(err) return done(err);
+      if(err) { return done(err); }
       assert(result === 'foo');
       done();
     });
@@ -79,7 +79,7 @@ describe('Specific machine exit coercion use cases', function() {
       foo: 'hello'
     })
     .exec(function(err, result) {
-      if(err) return done(err);
+      if(err) { return done(err); }
       assert.strictEqual(result,100);
       done();
     });
@@ -109,7 +109,7 @@ describe('Specific machine exit coercion use cases', function() {
       foo: 'hello'
     })
     .exec(function(err, result) {
-      if(err) return done(err);
+      if(err) { return done(err); }
       assert.strictEqual(result,0);
       done();
     });
@@ -129,7 +129,7 @@ describe('Specific machine exit coercion use cases', function() {
         exits.success('whatever');
       }
     }).exec(function(err, result) {
-      if(err) return done(err);
+      if(err) { return done(err); }
       assert.strictEqual(result,0);
       done();
     });
@@ -149,7 +149,7 @@ describe('Specific machine exit coercion use cases', function() {
         exits.success(true);
       }
     }).exec(function(err, result) {
-      if(err) return done(err);
+      if(err) { return done(err); }
       assert.strictEqual(result,1);
       done();
     });
@@ -169,7 +169,7 @@ describe('Specific machine exit coercion use cases', function() {
         exits.success();
       }
     }).exec(function(err, result) {
-      if(err) return done(err);
+      if(err) { return done(err); }
       assert.deepEqual(result,{});
       done();
     });
@@ -189,7 +189,7 @@ describe('Specific machine exit coercion use cases', function() {
         exits.success(0);
       }
     }).exec(function(err, result) {
-      if(err) return done(err);
+      if(err) { return done(err); }
       assert.deepEqual(result,{});
       done();
     });
@@ -208,7 +208,7 @@ describe('Specific machine exit coercion use cases', function() {
         exits.success(0);
       }
     }).exec(function(err, result) {
-      if(err) return done(err);
+      if(err) { return done(err); }
       assert.deepEqual(result,{foo:''});
       done();
     });
@@ -227,7 +227,7 @@ describe('Specific machine exit coercion use cases', function() {
         exits.success(0);
       }
     }).exec(function(err, result) {
-      if(err) return done(err);
+      if(err) { return done(err); }
       assert.deepEqual(result,{foo:[], bar: {}});
       done();
     });
@@ -246,7 +246,7 @@ describe('Specific machine exit coercion use cases', function() {
         exits.success(0);
       }
     }).exec(function(err, result) {
-      if(err) return done(err);
+      if(err) { return done(err); }
       assert.deepEqual(result,{foo:[], bar: {baz: 0}});
       done();
     });
@@ -265,7 +265,7 @@ describe('Specific machine exit coercion use cases', function() {
         exits.success(0);
       }
     }).exec(function(err, result) {
-      if(err) return done(err);
+      if(err) { return done(err); }
       assert.deepEqual(result,{foo:[], someArray: []});
       done();
     });
@@ -284,7 +284,7 @@ describe('Specific machine exit coercion use cases', function() {
         exits.success(0);
       }
     }).exec(function(err, result) {
-      if(err) return done(err);
+      if(err) { return done(err); }
       assert.deepEqual(result,{foo:[], someArray: []});
       done();
     });
@@ -303,7 +303,7 @@ describe('Specific machine exit coercion use cases', function() {
         exits.success({foo: ['hi'], someArray: [1234]});
       }
     }).exec(function(err, result) {
-      if(err) return done(err);
+      if(err) { return done(err); }
       assert.deepEqual(result,{foo:['hi'], someArray: [1234]});
       done();
     });
@@ -322,7 +322,7 @@ describe('Specific machine exit coercion use cases', function() {
         exits.success();
       }
     }).exec(function(err, result) {
-      if(err) return done(err);
+      if(err) { return done(err); }
       assert.deepEqual(result,[]);
       done();
     });
@@ -341,7 +341,7 @@ describe('Specific machine exit coercion use cases', function() {
         exits.success(null);
       }
     }).exec(function(err, result) {
-      if(err) return done(err);
+      if(err) { return done(err); }
       assert.deepEqual(result,[]);
       done();
     });
@@ -360,7 +360,7 @@ describe('Specific machine exit coercion use cases', function() {
         exits.success(0);
       }
     }).exec(function(err, result) {
-      if(err) return done(err);
+      if(err) { return done(err); }
       assert.deepEqual(result,[]);
       done();
     });
@@ -379,7 +379,7 @@ describe('Specific machine exit coercion use cases', function() {
         exits.success(0);
       }
     }).exec(function(err, result) {
-      if(err) return done(err);
+      if(err) { return done(err); }
       assert.deepEqual(result,[]);
       done();
     });
@@ -398,7 +398,7 @@ describe('Specific machine exit coercion use cases', function() {
         exits.success(0);
       }
     }).exec(function(err, result) {
-      if(err) return done(err);
+      if(err) { return done(err); }
       assert.deepEqual(result,[]);
       done();
     });
@@ -417,7 +417,7 @@ describe('Specific machine exit coercion use cases', function() {
         exits.success(0);
       }
     }).exec(function(err, result) {
-      if(err) return done(err);
+      if(err) { return done(err); }
       assert.deepEqual(result,[]);
       done();
     });
@@ -432,17 +432,17 @@ describe('Specific machine exit coercion use cases', function() {
   var edgeCaseMachineDef = {
     inputs: {
       criteria: {
-        friendlyName: "criteria",
-        typeclass: "dictionary",
-        description: "Waterline search criteria to use in retrieving Job instances"
+        friendlyName: 'criteria',
+        typeclass: 'dictionary',
+        description: 'Waterline search criteria to use in retrieving Job instances'
       }
     },
     exits: {
       success: {
-        friendlyName: "then",
+        friendlyName: 'then',
         example: {
-          title: "scott",
-          description: "scott",
+          title: 'scott',
+          description: 'scott',
           votes: 123,
           id: 123
         }
@@ -466,7 +466,7 @@ describe('Specific machine exit coercion use cases', function() {
       // return exits(null, thing);
       return exits.success(thing);
     },
-    identity: "findOne_job"
+    identity: 'findOne_job'
   };
 
   // Same as edgeCaseMachine but w/ a slightly different fn that uses switchback-style usage:
@@ -482,7 +482,7 @@ describe('Specific machine exit coercion use cases', function() {
   };
 
 
-  it('should coerce null to 0', function (done){
+  it('should coerce output properly (null=>0 in this case) when using normal `exits.success(result)` from within the machine `fn`', function (done){
     Machine.build(edgeCaseMachineDef).configure({criteria: {id: 1}}).exec({
       error: function (err){
         return done(err);
@@ -495,7 +495,7 @@ describe('Specific machine exit coercion use cases', function() {
     });
   });
 
-  it.skip('should coerce null to 0 w/ switchback usage', function (done){
+  it.skip('should coerce output properly (null=>0 in this case) when using implementor switchback (`exits(err, result)`) within the machine `fn`', function (done){
     Machine.build(edgeCaseMachineDef2).configure({criteria: {id: 1}}).exec({
       error: function (err){
         return done(err);
@@ -537,8 +537,6 @@ describe('Specific machine exit coercion use cases', function() {
       }
     });
   });
-
-
 
 
 });
