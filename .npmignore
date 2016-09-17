@@ -15,5 +15,7 @@ nbproject
 .jshintrc
 .editorconfig
 CONTRIBUTING.md
+*.md
 docs
 test
+spec
