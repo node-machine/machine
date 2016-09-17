@@ -495,7 +495,7 @@ describe('Specific machine exit coercion use cases', function() {
     });
   });
 
-  it.skip('should coerce output properly (null=>0 in this case) when using implementor switchback (`exits(err, result)`) within the machine `fn`', function (done){
+  it('should coerce output properly (null=>0 in this case) when using implementor switchback (`exits(err, result)`) within the machine `fn`', function (done){
     Machine.build(edgeCaseMachineDef2).configure({criteria: {id: 1}}).exec({
       error: function (err){
         return done(err);
