@@ -31,7 +31,7 @@ describe('Machine inputs typeclass array', function() {
       foo: [{ bar: 'baz' }, { bar: 'foo' }]
     })
     .exec(function(err, result) {
-      if(err) return done(err);
+      if(err) { return done(err); }
       done();
     });
   });
@@ -42,7 +42,7 @@ describe('Machine inputs typeclass array', function() {
       foo: []
     })
     .exec(function(err, result) {
-      if(err) return done(err);
+      if(err) { return done(err); }
       done();
     });
   });
