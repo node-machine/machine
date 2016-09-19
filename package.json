@@ -32,7 +32,7 @@
   "dependencies": {
     "convert-to-ecmascript-compatible-varname": "0.1.4",
     "debug": "2.2.0",
-    "include-all": "1.0.2",
+    "include-all": "^1.0.5",
     "lodash": "3.10.1",
     "rttc": "^9.8.1",
     "switchback": "^2.0.1"
