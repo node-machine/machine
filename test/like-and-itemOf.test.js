@@ -3,7 +3,7 @@
  */
 
 var assert = require('assert');
-var _ = require('lodash');
+var _ = require('@sailshq/lodash');
 var Machine = require('../');
 var testMachineWithMocha = require('test-machinepack-mocha').testMachineWithMocha;
 

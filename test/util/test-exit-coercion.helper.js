@@ -3,7 +3,7 @@
  */
 
 var util = require('util');
-var _ = require('lodash');
+var _ = require('@sailshq/lodash');
 var rttc = require('rttc');
 var Machine = require('../../');
 var isEquivalent = require('../../node_modules/rttc/spec/helpers/is-equivalent');

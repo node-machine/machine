@@ -5,7 +5,7 @@
 var assert = require('assert');
 var util = require('util');
 var Stream = require('stream');
-var _ = require('lodash');
+var _ = require('@sailshq/lodash');
 var M = require('../lib/Machine.constructor');
 
 var runSuite = require('../node_modules/rttc/spec/helpers/run-suite');
