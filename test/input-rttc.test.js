@@ -136,10 +136,109 @@ describe('argin validation & "light coercion"  (for inputs)', function (){
       }
     });
 
+    it('should work the same using `type` instead of `example`', function(done) {
+      var _inputs;
+
+      var machine = {
+        inputs: {
+          foo: {
+            type: 'number',
+            example: 100
+          },
+          bar: {
+            type: 'string',
+            example: 'foobar'
+          }
+        },
+        exits: {
+          success: {
+            example: 'hello'
+          },
+          error: {
+            example: 'world'
+          }
+        },
+        fn: function (inputs, exits, deps) {
+          _inputs = inputs;
+          exits(null, 'foo');
+        }
+      };
+
+      try {
+        M.build(machine)
+        .configure({
+          foo: '20',
+          bar: 20
+        })
+        .exec(function(err, result) {
+          if(err) { return done(err); }
+          assert.strictEqual(_inputs.foo,20);
+          assert.strictEqual(_inputs.bar,'20');
+          done();
+        });
+      }
+      catch (e){
+        assert(false, 'Should not throw');
+      }
+    });
+
     it('should error if an example or typeclass is not given for an input', function() {
       var machine = {
         inputs: {
           foo: {}
+        },
+        exits: {
+          success: {
+            example: 'hello'
+          },
+          error: {
+            example: 'world'
+          }
+        },
+        fn: function (inputs, exits, deps) {
+          exits(null, 'foo');
+        }
+      };
+
+      assert.throws(function() {
+        M.build(machine);
+      }, Error);
+    });
+
+
+    it('should error if an invalid type is given for an input', function() {
+      var machine = {
+        inputs: {
+          foo: {
+            type: 'foobar'
+          }
+        },
+        exits: {
+          success: {
+            example: 'hello'
+          },
+          error: {
+            example: 'world'
+          }
+        },
+        fn: function (inputs, exits, deps) {
+          exits(null, 'foo');
+        }
+      };
+
+      assert.throws(function() {
+        M.build(machine);
+      }, Error);
+    });
+
+
+    it('should error if an input has an incompatible type / example combo', function() {
+      var machine = {
+        inputs: {
+          foo: {
+            type: 'number',
+            example: 'abc'
+          }
         },
         exits: {
           success: {
