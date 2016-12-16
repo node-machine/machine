@@ -1,5 +1,5 @@
 var assert = require('assert');
-var _ = require('lodash');
+var _ = require('@sailshq/lodash');
 var M = require('../lib/Machine.constructor');
 
 describe('Machine fn calling `exits()` (w/ different usages)', function() {
