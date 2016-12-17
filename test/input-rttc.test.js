@@ -226,9 +226,16 @@ describe('argin validation & "light coercion"  (for inputs)', function (){
         }
       };
 
-      assert.throws(function() {
+      try {
         M.build(machine);
-      }, Error);
+      }
+      catch (e) {
+        switch (e.code) {
+          case 'MACHINE_INPUT_INVALID': break; // ok
+          default: throw new Error('Expected MACHINE_INPUT_INVALID error, but instead got `code: '+e.code+'`.  Details: '+e.stack);
+        }
+      }
+
     });
 
 
