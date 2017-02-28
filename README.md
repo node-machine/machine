@@ -10,7 +10,7 @@
 
 A runner for [machines](http://node-machine.org) written in JavaScript.  Machines are atomic, context-free bits of code which conform to the [machine specification](http://node-machine.org/spec/machine): an open standard for functions and subroutines.
 
-> Chances are you don't need to use this module directly- see [About This Module](https://github.com/node-machine/machine#about-this-module) below for info.
+> **Chances are you don't need to use this module directly**- see [About This Module](https://github.com/node-machine/machine#about-this-module) below for info.
 
 
 ## Installation &nbsp;  [![NPM version](https://badge.fury.io/js/machine.svg)](http://badge.fury.io/js/machine)  [![Build Status](https://travis-ci.org/node-machine/machine.png?branch=master)](https://travis-ci.org/node-machine/machine)
