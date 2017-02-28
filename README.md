@@ -10,12 +10,12 @@
 
 A runner for [machines](http://node-machine.org) written in JavaScript.  Machines are atomic, context-free bits of code which conform to the [machine specification](http://node-machine.org/spec/machine): an open standard for functions and subroutines.
 
-> Chances are you don't need to use this module directly- see [About This Module](https://github.com/node-machine/machine#about-this-module) below for info.
+> **Chances are you don't need to use this module directly**- see [About This Module](https://github.com/node-machine/machine#about-this-module) below for info.
 
 
 ## Installation &nbsp;  [![NPM version](https://badge.fury.io/js/machine.svg)](http://badge.fury.io/js/machine)  [![Build Status](https://travis-ci.org/node-machine/machine.png?branch=master)](https://travis-ci.org/node-machine/machine)
 
-**With [node](http://nodejs.org) [installed](http://sailsjs.org/#!documentation/new-to-nodejs):**
+**With [node](http://nodejs.org) [installed](http://sailsjs.com/get-started):**
 ```sh
 # Get the machine runner
 $ npm install machine --save
@@ -88,7 +88,10 @@ You can use it anywhere you like!  For instance, you might want to implement a o
 ## License
 
 MIT
+&copy; 2014 Mike McNeil; &copy; 2015-2017 The Sails Company
 
-&copy; 2014 Mike McNeil; &copy; 2015 The Treeline Company
+Like the [Sails framework](http://sailsjs.com), [this package](http://npmjs.com/package/machine) is available under the **MIT license**.
+
+![image_squidhome@2x.png](http://i.imgur.com/RIvu9.png)
 
 
