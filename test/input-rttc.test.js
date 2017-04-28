@@ -24,6 +24,13 @@ describe('argin validation & "light coercion"  (for inputs)', function (){
     // tests automatically.
     TEST_SUITE = expandSuite(TEST_SUITE);
 
+    // Remove the "empty string" test for string examples, since these tests set the
+    // input as "required" and for Machine (but not RTTC) an empty string is not a
+    // valid value for a required string input.
+    TEST_SUITE = _.reject(TEST_SUITE, function(test) {
+      return test.example === 'foo' && test.actual === '' && test.result === '';
+    });
+
     // Lodash 3.0 deprecated prototypal cloning of things like Errors
     // (so we shim a quick version for our purposes)
     var customCloneDeep = function (val){
