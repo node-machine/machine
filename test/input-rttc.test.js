@@ -26,9 +26,17 @@ describe('argin validation & "light coercion"  (for inputs)', function (){
 
     // Remove the "empty string" test for string examples, since these tests set the
     // input as "required" and for Machine (but not RTTC) an empty string is not a
-    // valid value for a required string input.
+    // valid value for a required string input.  Also remove tests that expect null
+    // values to work, since null is never okay for required inputs in machines.
     TEST_SUITE = _.reject(TEST_SUITE, function(test) {
-      return test.example === 'foo' && test.actual === '' && test.result === '';
+      return _.any([
+        { example: 'foo', actual: '', result: '' },
+        { example: '===', actual: null, result: null },
+        { example: '===', actual: 'null', result: 'null' },
+        { example: '*', actual: null, result: null },
+      ], function(testToSkip) {
+        return _.isEqual(test, testToSkip);
+      });
     });
 
     // Lodash 3.0 deprecated prototypal cloning of things like Errors
