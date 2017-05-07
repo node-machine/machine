@@ -298,11 +298,18 @@ module.exports = function buildCallableMachine(nmDef){
 };
 
 
+//   ██████╗ ██████╗ ███╗   ███╗██████╗  █████╗ ████████╗██╗██████╗ ██╗██╗     ██╗████████╗██╗   ██╗
+//  ██╔════╝██╔═══██╗████╗ ████║██╔══██╗██╔══██╗╚══██╔══╝██║██╔══██╗██║██║     ██║╚══██╔══╝╚██╗ ██╔╝██╗
+//  ██║     ██║   ██║██╔████╔██║██████╔╝███████║   ██║   ██║██████╔╝██║██║     ██║   ██║    ╚████╔╝ ╚═╝
+//  ██║     ██║   ██║██║╚██╔╝██║██╔═══╝ ██╔══██║   ██║   ██║██╔══██╗██║██║     ██║   ██║     ╚██╔╝  ██╗
+//  ╚██████╗╚██████╔╝██║ ╚═╝ ██║██║     ██║  ██║   ██║   ██║██████╔╝██║███████╗██║   ██║      ██║   ╚═╝
+//   ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝     ╚═╝  ╚═╝   ╚═╝   ╚═╝╚═════╝ ╚═╝╚══════╝╚═╝   ╚═╝      ╚═╝
+//
 // Compatibility:
 // =====================================================================================================================
 module.exports.build = function(){
   console.warn('WARNING: As of v15, machine should be called directly instead of using `.build()`.  (Adjusting for you this time...)');
-  module.exports.apply(undefined, arguments);
+  return module.exports.apply(undefined, arguments);
 };
 module.exports.pack = function(){
   throw flaverr({name:'CompatibilityError'}, new Error('As of machine v15, `.pack()` is no longer supported.  Instead, please use `require(\'machinepack\')`.'));
