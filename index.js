@@ -301,7 +301,7 @@ module.exports = function buildCallableMachine(nmDef){
       },
 
       // If provided, use the timeout (max # of ms to wait for this machine to finish executing)
-      _.isFunction(nmDef.timeout) ? nmDef.timeout : undefined
+      nmDef.timeout ? nmDef.timeout : undefined
 
     );
 
