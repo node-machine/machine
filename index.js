@@ -31,7 +31,7 @@ module.exports = function buildCallableMachine(nmDef){
   var identity;//TODO
 
   // Sanitize input definitions.
-  var inputDefs = nmDef.inputs || {};
+  // var inputDefs = nmDef.inputs || {};
   // TODO
 
   // Sanitize exit definitions.
@@ -272,7 +272,7 @@ module.exports = function buildCallableMachine(nmDef){
         },
 
         meta: function (_metadata){
-          meta = _metadata;
+          metadata = _metadata;
         },
 
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
