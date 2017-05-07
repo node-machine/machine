@@ -31,12 +31,10 @@
     "npm": ">= 1.4.0"
   },
   "dependencies": {
-    "convert-to-ecmascript-compatible-varname": "0.1.4",
-    "debug": "2.2.0",
-    "include-all": "^1.0.5",
     "@sailshq/lodash": "^3.10.2",
-    "rttc": "^9.8.1",
-    "switchback": "^2.0.1"
+    "flaverr": "^1.1.1",
+    "parley": "^2.3.1",
+    "rttc": "^9.8.1"
   },
   "devDependencies": {
     "async": "2.0.1",
