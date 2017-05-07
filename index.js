@@ -154,6 +154,24 @@ module.exports = function buildCallableMachine(nmDef){
     return parley(
       function (done){
 
+        // Before proceeding to execute the function, set up a `setTimeout` that will fire
+        // when the runtime duration exceeds the configured timeout.
+        // > If configured timeout is falsey or <0, then we ignore it.
+        var configuredTimeoutMs = nmDef.timeout || 0;
+        var timeoutAlarm;
+        if (configuredTimeoutMs > 0){
+          timeoutAlarm = setTimeout(function(){
+            return done(flaverr('E_MACHINE_TIMEOUT', new Error(
+              'This machine took too long to execute (timeout of '+configuredTimeoutMs+'ms exceeded.)  '+
+              'There is probably an issue in the machine\'s implementation (might have forgotten to call `exits.success()`, etc.)  '+
+              'If you are the implementor of this machine, and you\'re sure there are no problems, you can configure '+
+              'the maximum expected number of miliseconds for this machine using `timeout` (a top-level property in '+
+              'your machine definition).  To disable this protection, set `timeout` to 0.'
+            )));
+          }, configuredTimeoutMs);// _∏_
+        }//>-
+
+
         // Now actually run the machine, in whatever way is appropriate based on its implementation type.
         switch (nmDef.implementationType) {
           // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -222,7 +240,7 @@ module.exports = function buildCallableMachine(nmDef){
                         // And is then augmented by some additional basic rules:
                         //  • if there is no raw output, append the exit description if available.
                         if (_.isUndefined(rawOutput)) {
-                          if (!_.isObject(exitDefs[miscExitCodeName])) { throw new Error('Consistency violation: Live machine instance ('+identity+') has become corrupted!  One of its exits (`'+miscExitCodeName+'`) has gone missing _while the machine was being executed_!'); }
+                          if (!_.isObject(exitDefs[miscExitCodeName])) { throw new Error('Consistency violation: Machine ('+identity+') has become corrupted!  One of its exits (`'+miscExitCodeName+'`) has gone missing _while the machine was being executed_!'); }
                           if (exitDefs[miscExitCodeName].description) {
                             errMsg += ': '+exitDefs[miscExitCodeName].description;
                           }
@@ -243,6 +261,13 @@ module.exports = function buildCallableMachine(nmDef){
                   });//</ each misc. exit >
 
                 })(function (err, result){
+
+                  // Clear timeout, if relevant.
+                  if (timeoutAlarm) {
+                    clearTimeout(timeoutAlarm);
+                  }
+
+                  // Then trigger our callback with the appropriate arguments.
                   if (err) { return done(err); }
                   if (_.isUndefined(result)) { return done(); }
                   return done(undefined, result);
