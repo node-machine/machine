@@ -1,10 +1,18 @@
 {
   "name": "machine",
   "version": "15.0.0-0",
-  "description": "Build your project with machines: a standard format for JavaScript logic.",
+  "description": "Build functions in standardized containers.",
+  "keywords": [
+    "functions",
+    "containers",
+    "validation",
+    "coercion",
+    "type-checking",
+    "data-types"
+  ],
   "main": "index.js",
   "scripts": {
-    "test": "nodever=`node -e \"console.log('\\`node -v\\`'[1]);\"` && if [ $nodever != \"0\" ]; then npm run lint; fi && node ./node_modules/mocha/bin/mocha -R dot test/*.test.js",
+    "test": "npm run lint && node ./node_modules/mocha/bin/mocha -R dot test/*.test.js",
     "lint": "node ./node_modules/eslint/bin/eslint . --max-warnings=0 --ignore-pattern 'test/'",
     "bench": "node ./node_modules/mocha/bin/mocha -R dot --recursive -b test/benchmarks/"
   },
