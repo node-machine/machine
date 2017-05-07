@@ -1,7 +1,7 @@
 {
   "name": "machine",
-  "version": "14.0.1",
-  "description": "Configure and execute machines",
+  "version": "15.0.0-0",
+  "description": "Build your project with machines: a standard format for JavaScript logic.",
   "main": "index.js",
   "scripts": {
     "test": "nodever=`node -e \"console.log('\\`node -v\\`'[1]);\"` && if [ $nodever != \"0\" ]; then npm run lint; fi && node ./node_modules/mocha/bin/mocha -R dot test/*.test.js",
@@ -13,22 +13,17 @@
     "url": "http://node-machine.org/spec"
   },
   "author": "The Sails Company",
-  "contributors": [
-    "Scott Gress <@sgress454>",
-    "Cody Stoltman <@particlebanana>",
-    "Mike McNeil <@mikermcneil>"
-  ],
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git://github.com/node-machine/machine.git"
   },
   "bugs": {
-    "url": "http://github.com/node-machine/machine/issues"
+    "url": "http://sailsjs.com/bugs"
   },
   "engines": {
-    "node": ">= 0.10.0",
-    "npm": ">= 1.4.0"
+    "node": ">= 4.0.0",
+    "npm": ">= 2.0.0"
   },
   "dependencies": {
     "@sailshq/lodash": "^3.10.2",
