@@ -203,13 +203,13 @@ module.exports = function buildCallableMachine(nmDef){
 
                       // Now build our Error instance (our "forwarding error").
                       var err = flaverr({
-                        exit: miscExitCodeName,
-                        code: miscExitCodeName,// `exit` and `code` are just aliases of each other
+                        code: miscExitCodeName,
                         raw: rawOutput,
                         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                         // FUTURE: Potentially add backwards-compatibility:
                         // ```
-                        //     output: rawOutput,//<<for backwards-compatibility
+                        //     exit: miscExitCodeName,
+                        //     output: rawOutput,
                         // ```
                         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                       }, new Error((function _gettingErrMsg(){
