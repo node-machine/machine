@@ -47,7 +47,6 @@ module.exports = function buildCallableMachine(nmDef){
   // TODO
 
 
-
   // Return our callable ("wet") machine function in the appropriate format.
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // FUTURE: Consider support for returning a machine function with other usage styles
@@ -208,7 +207,7 @@ module.exports = function buildCallableMachine(nmDef){
                     return proceed(undefined, result);
                   };
 
-                  _.each(_.omit(_.keys(exitDefs), ['error','success']), function (miscExitCodeName){
+                  _.each(_.difference(_.keys(exitDefs), ['error','success']), function (miscExitCodeName){
                     handlerCbs[miscExitCodeName] = function (rawOutput){
 
                       // Now build our Error instance for our "exception" (fka "forwarding error").
