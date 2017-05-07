@@ -24,11 +24,11 @@ var parley = require('parley');
 
 module.exports = function buildCallableMachine(nmDef){
 
-  // Verify correctness of node-machine definition.
-  // TODO
-
   // Determine the effective identity of this machine.
   var identity;//TODO
+
+  // Verify correctness of node-machine definition.
+  // TODO
 
   // Sanitize input definitions.
   // var inputDefs = nmDef.inputs || {};
@@ -39,6 +39,13 @@ module.exports = function buildCallableMachine(nmDef){
   exitDefs.success = exitDefs.success || {};
   exitDefs.error = exitDefs.error || {};
   // TODO
+
+  // Check `sync`.
+  // TODO
+
+  // Check `timeout`.
+  // TODO
+
 
 
   // Return our callable ("wet") machine function in the appropriate format.
@@ -154,24 +161,6 @@ module.exports = function buildCallableMachine(nmDef){
     return parley(
       function (done){
 
-        // Before proceeding to execute the function, set up a `setTimeout` that will fire
-        // when the runtime duration exceeds the configured timeout.
-        // > If configured timeout is falsey or <0, then we ignore it.
-        var configuredTimeoutMs = nmDef.timeout || 0;
-        var timeoutAlarm;
-        if (configuredTimeoutMs > 0){
-          timeoutAlarm = setTimeout(function(){
-            return done(flaverr('E_MACHINE_TIMEOUT', new Error(
-              'This machine took too long to execute (timeout of '+configuredTimeoutMs+'ms exceeded.)  '+
-              'There is probably an issue in the machine\'s implementation (might have forgotten to call `exits.success()`, etc.)  '+
-              'If you are the implementor of this machine, and you\'re sure there are no problems, you can configure '+
-              'the maximum expected number of miliseconds for this machine using `timeout` (a top-level property in '+
-              'your machine definition).  To disable this protection, set `timeout` to 0.'
-            )));
-          }, configuredTimeoutMs);// _∏_
-        }//>-
-
-
         // Now actually run the machine, in whatever way is appropriate based on its implementation type.
         switch (nmDef.implementationType) {
           // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -262,11 +251,6 @@ module.exports = function buildCallableMachine(nmDef){
 
                 })(function (err, result){
 
-                  // Clear timeout, if relevant.
-                  if (timeoutAlarm) {
-                    clearTimeout(timeoutAlarm);
-                  }
-
                   // Then trigger our callback with the appropriate arguments.
                   if (err) { return done(err); }
                   if (_.isUndefined(result)) { return done(); }
@@ -315,7 +299,10 @@ module.exports = function buildCallableMachine(nmDef){
         //     })
         // ```
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      }
+      },
+
+      nmDef.timeout
+
     );
 
   };//</ return >
