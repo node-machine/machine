@@ -160,8 +160,8 @@ module.exports = function buildCallableMachine(nmDef){
           // FUTURE: Support automatically mapping this usage to other implementation types:
           // (see https://github.com/node-machine/spec/pull/2/files#diff-eba3c42d87dad8fb42b4080df85facecR95)
           // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-          case 'traditional':
-            return done(flaverr({name:'UsageError'}, new Error('The `traditional` implementation type is experimental, and not yet supported.  See https://github.com/node-machine/spec/pull/2/files#diff-eba3c42d87dad8fb42b4080df85facecR95 for background, or https://sailsjs.com/support for help.')));
+          case 'classic':
+            return done(flaverr({name:'UsageError'}, new Error('The `classic` implementation type is experimental, and not yet supported.  See https://github.com/node-machine/spec/pull/2/files#diff-eba3c42d87dad8fb42b4080df85facecR95 for background, or https://sailsjs.com/support for help.')));
 
           case 'composite':
             return done(flaverr({name:'UsageError'}, new Error('Machines built with the `composite` implementation type cannot be executed using this runner.  (For help, visit https://sailsjs.com/support)')));
