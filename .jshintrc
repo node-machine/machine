@@ -27,6 +27,9 @@
   // EVERYTHING ELSE:
   //////////////////////////////////////////////////////////////////////
 
+  // Tolerate ES6 syntax.
+  "esversion": 6,
+
   // Allow the use of `eval` and `new Function()`
   // (we sometimes actually need to use these things)
   "evil": true,
