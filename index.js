@@ -6,6 +6,7 @@ var util = require('util');
 var _ = require('@sailshq/lodash');
 var flaverr = require('flaverr');
 var parley = require('parley');
+var customizeOmenOrBuildNewError = require('./lib/customize-omen-or-build-new-error');
 
 
 /**
@@ -155,6 +156,21 @@ module.exports = function buildCallableMachine(nmDef){
       ));
     }
 
+    // Build an "omen": an Error instance defined ahead of time in order to grab a stack trace.
+    // (used for providing a better experience when viewing the stack trace of errors
+    // that come from one or more asynchronous ticks down the line; e.g. uniqueness errors)
+    //
+    // Remember that this omen can only be used as an Error ONCE!
+    //
+    // > Inspired by the implementation originally devised for Waterline:
+    // > https://github.com/balderdashy/waterline/blob/6b1f65e77697c36561a0edd06dff537307986cb7/lib/waterline/utils/query/build-omen.js
+    var omen;
+    if (Error.captureStackTrace) {
+      omen = new Error('omen');
+      Error.captureStackTrace(omen, runFn);
+    }
+
+
     // Build and return an appropriate deferred object.
     // (Or possibly just start executing the machine immediately, depending on usage)
     return parley(
@@ -162,15 +178,16 @@ module.exports = function buildCallableMachine(nmDef){
 
         // Now actually run the machine, in whatever way is appropriate based on its implementation type.
         switch (nmDef.implementationType) {
-          // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-          // FUTURE: Support automatically mapping this usage to other implementation types:
-          // (see https://github.com/node-machine/spec/pull/2/files#diff-eba3c42d87dad8fb42b4080df85facecR95)
-          // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-          case 'classic':
-            return done(flaverr({name:'UsageError'}, new Error('The `classic` implementation type is experimental, and not yet supported.  See https://github.com/node-machine/spec/pull/2/files#diff-eba3c42d87dad8fb42b4080df85facecR95 for background, or https://sailsjs.com/support for help.')));
 
           case 'composite':
             return done(flaverr({name:'UsageError'}, new Error('Machines built with the `composite` implementation type cannot be executed using this runner.  (For help, visit https://sailsjs.com/support)')));
+
+          case 'classic':
+            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+            // FUTURE: Support automatically mapping this usage to the "classic" implementation type:
+            // (see https://github.com/node-machine/spec/pull/2/files#diff-eba3c42d87dad8fb42b4080df85facecR95)
+            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+            return done(flaverr({name:'UsageError'}, new Error('The `classic` implementation type is experimental, and not yet supported.  See https://github.com/node-machine/spec/pull/2/files#diff-eba3c42d87dad8fb42b4080df85facecR95 for background, or https://sailsjs.com/support for help.')));
 
           default:
 
@@ -192,12 +209,63 @@ module.exports = function buildCallableMachine(nmDef){
               })(),
 
               (function _gettingHandlerCbs(){
+
+                /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                //
+                //    USAGE: Node-style callback, or with a promise, or with async...await
+                //    (note that, when leveraging switchbacks, there are slightly different rules)
+                //
+                //  _______________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+                //  ||            exit => | 'error' (explicit)      | 'error' (throw)         | 'error' (timeout)       | 'error' (validation)    | misc. exit              | misc. exit              | success                 | success                 |
+                //  \/ output             | `exits.error()`         | `throw new Error()`     |                         |                         | (NOT expecting output)  | (EXPECTING output)      | (NOT expecting output)  | (EXPECTING output)      |
+                //  ______________________|_________________________|_________________________|_________________________|_________________________|_________________________|_________________________|_________________________|_________________________|
+                //  Error instance        | pass straight through   | pass straight through   | N/A - always an Error   | N/A - always an Error   | pass straight through   | coerce                  | pass straight through   | coerce                  |
+                //                        |                         |   (handled by parley)   |   (handled by parley)   |                         |                         |                         |                         |                         |
+                //  ----------------------| --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  |
+                //  String data           | new Error w/ str as msg | new Error w/ str as msg | N/A - always an Error   | N/A - always an Error   | new Error w/ str as msg | coerce                  | pass straight through   | coerce                  |
+                //                        |                         |                         |   (handled by parley)   |                         |                         |                         |                         |                         |
+                //  ----------------------| --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  |
+                //  Other non-Error data  | new Error + wrap output | new Error + wrap output | N/A - always an Error   | N/A - always an Error   | new Error + wrap output | coerce                  | pass straight through   | coerce                  |
+                //                        |                         |                         |   (handled by parley)   |                         |                         |                         |                         |                         |
+                //  ----------------------| --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  |
+                //  No output (undefined) | new Error, generic      | new Error, generic      | N/A - always an Error   | N/A - always an Error   | new Error, w/ descrptn. | coerce                  | pass straight through   | coerce                  |
+                //                        |                         |                         |   (handled by parley)   |                         |                         |                         |                         |                         |
+                //  _______________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+                //
+                /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
                 // Build & return exit handler callbacks for use by the machine's `fn`.
                 var handlerCbs = function (){ throw flaverr({name:'CompatibilityError'}, new Error('Implementor-land switchbacks are no longer supported by default in the machine runner.  Instead of `exits()`, please call `exits.success()` or `exits.error()` from within your machine `fn`.  (For help, visit https://sailsjs.com/support)')); };
                 (function _attachingHandlerCbs(proceed){
                   handlerCbs.error = function(rawOutput){
-                    // Ensure error instance.
-                    var err = rawOutput;//TODO
+
+                    // Ensure that the catchall error exit (`error`) always comes back with an Error instance
+                    // (i.e. so node callback expectations are fulfilled)
+                    var err;
+                    if (_.isUndefined(rawOutput)) {
+                      err = customizeOmenOrBuildNewError('Error', 'Unexpected error occurred while running `'+identity+'`.', omen);
+                    }
+                    else if (_.isError(rawOutput)) {
+                      err = rawOutput;
+                    }
+                    else if (_.isString(rawOutput)) {
+                      // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                      // FUTURE: add in separate warning message explaining that there should always
+                      // be an Error instance sent back -- not some other value such as this.
+                      // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                      err = customizeOmenOrBuildNewError('Error', rawOutput, omen);
+                      err.raw = rawOutput;
+                    }
+                    else {
+                      // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                      // FUTURE: add in separate warning message explaining that there should always
+                      // be an Error instance sent back -- not some other value such as this.
+                      // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                      err = customizeOmenOrBuildNewError('Error', 'Unexpected error occurred while running `'+identity+'`.  Got non-error: '+util.inspect(rawOutput, {depth: 5}), omen);
+                      err.raw = rawOutput;
+                    }
+
                     return proceed(err);
                   };
 
@@ -222,7 +290,7 @@ module.exports = function buildCallableMachine(nmDef){
                         //     output: rawOutput,
                         // ```
                         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                      }, new Error((function _gettingErrMsg(){
+                      }, customizeOmenOrBuildNewError('Error', (function _gettingErrMsg(){
                         // The error msg always begins with a standard prefix:
                         var errMsg = '`'+identity+'` triggered its `'+miscExitCodeName+'` exit';
                         // And is then augmented by some additional basic rules:
@@ -242,7 +310,7 @@ module.exports = function buildCallableMachine(nmDef){
                           errMsg += ' with: \n\n' + util.inspect(rawOutput, {depth: 5});
                         }
                         return errMsg;
-                      })()));
+                      })(), omen));
 
                       return proceed(err);
                     };
@@ -268,7 +336,7 @@ module.exports = function buildCallableMachine(nmDef){
       },
 
       // If provided, use the explicit callback.
-      _.isFunction(explicitCbMaybe) ? explicitCbMaybe : undefined,
+      explicitCbMaybe || undefined,
 
       // Extra methods for the Deferred:
       {
@@ -301,7 +369,10 @@ module.exports = function buildCallableMachine(nmDef){
       },
 
       // If provided, use the timeout (max # of ms to wait for this machine to finish executing)
-      nmDef.timeout ? nmDef.timeout : undefined
+      nmDef.timeout || undefined,
+
+      // Pass in the omen, if we were able to create one.
+      omen || undefined
 
     );
 
