@@ -6,7 +6,6 @@ var util = require('util');
 var _ = require('@sailshq/lodash');
 var flaverr = require('flaverr');
 var parley = require('parley');
-var customizeOmenOrBuildNewError = require('./lib/customize-omen-or-build-new-error');
 
 
 /**
@@ -164,11 +163,7 @@ module.exports = function buildCallableMachine(nmDef){
     //
     // > Inspired by the implementation originally devised for Waterline:
     // > https://github.com/balderdashy/waterline/blob/6b1f65e77697c36561a0edd06dff537307986cb7/lib/waterline/utils/query/build-omen.js
-    var omen;
-    if (Error.captureStackTrace) {
-      omen = new Error('omen');
-      Error.captureStackTrace(omen, runFn);
-    }
+    var omen = flaverr({}, new Error('omen'), runFn);
 
 
     // Build and return an appropriate deferred object.
@@ -244,7 +239,9 @@ module.exports = function buildCallableMachine(nmDef){
                     // (i.e. so node callback expectations are fulfilled)
                     var err;
                     if (_.isUndefined(rawOutput)) {
-                      err = customizeOmenOrBuildNewError('Error', 'Unexpected error occurred while running `'+identity+'`.', omen);
+                      err = flaverr({
+                        message: 'Internal error occurred while running `'+identity+'`.'
+                      }, omen);
                     }
                     else if (_.isError(rawOutput)) {
                       err = rawOutput;
@@ -254,16 +251,20 @@ module.exports = function buildCallableMachine(nmDef){
                       // FUTURE: add in separate warning message explaining that there should always
                       // be an Error instance sent back -- not some other value such as this.
                       // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                      err = customizeOmenOrBuildNewError('Error', rawOutput, omen);
-                      err.raw = rawOutput;
+                      err = flaverr({
+                        message: rawOutput,
+                        raw: rawOutput
+                      }, omen);
                     }
                     else {
                       // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                       // FUTURE: add in separate warning message explaining that there should always
                       // be an Error instance sent back -- not some other value such as this.
                       // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                      err = customizeOmenOrBuildNewError('Error', 'Unexpected error occurred while running `'+identity+'`.  Got non-error: '+util.inspect(rawOutput, {depth: 5}), omen);
-                      err.raw = rawOutput;
+                      err = flaverr({
+                        message: 'Internal error occurred while running `'+identity+'`.  Got non-error: '+util.inspect(rawOutput, {depth: 5}),
+                        raw: rawOutput
+                      }, omen);
                     }
 
                     return proceed(err);
@@ -283,34 +284,35 @@ module.exports = function buildCallableMachine(nmDef){
                         name: 'Exception',
                         code: miscExitCodeName,
                         raw: rawOutput,
+                        message: (function _gettingErrMsg(){
+                          // The error msg always begins with a standard prefix:
+                          var errMsg = '`'+identity+'` triggered its `'+miscExitCodeName+'` exit';
+                          // And is then augmented by some additional basic rules:
+                          //  • if there is no raw output, append the exit description if available.
+                          if (_.isUndefined(rawOutput)) {
+                            if (!_.isObject(exitDefs[miscExitCodeName])) { throw new Error('Consistency violation: Machine ('+identity+') has become corrupted!  One of its exits (`'+miscExitCodeName+'`) has gone missing _while the machine was being executed_!'); }
+                            if (exitDefs[miscExitCodeName].description) {
+                              errMsg += ': '+exitDefs[miscExitCodeName].description;
+                            }
+                          }
+                          //  • if the raw output is an Error instance, then just append _its_ message
+                          else if (_.isError(rawOutput)) {
+                            errMsg += ': '+rawOutput.message;
+                          }
+                          //  • if the raw output is anything else, inspect and append it
+                          else if (!_.isError(rawOutput)) {
+                            errMsg += ' with: \n\n' + util.inspect(rawOutput, {depth: 5});
+                          }
+                          return errMsg;
+                        })(),
                         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                        // FUTURE: Potentially add backwards-compatibility:
+                        // FUTURE: Potentially also add backwards-compatibility:
                         // ```
                         //     exit: miscExitCodeName,
                         //     output: rawOutput,
                         // ```
                         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                      }, customizeOmenOrBuildNewError('Error', (function _gettingErrMsg(){
-                        // The error msg always begins with a standard prefix:
-                        var errMsg = '`'+identity+'` triggered its `'+miscExitCodeName+'` exit';
-                        // And is then augmented by some additional basic rules:
-                        //  • if there is no raw output, append the exit description if available.
-                        if (_.isUndefined(rawOutput)) {
-                          if (!_.isObject(exitDefs[miscExitCodeName])) { throw new Error('Consistency violation: Machine ('+identity+') has become corrupted!  One of its exits (`'+miscExitCodeName+'`) has gone missing _while the machine was being executed_!'); }
-                          if (exitDefs[miscExitCodeName].description) {
-                            errMsg += ': '+exitDefs[miscExitCodeName].description;
-                          }
-                        }
-                        //  • if the raw output is an Error instance, then just append _its_ message
-                        else if (_.isError(rawOutput)) {
-                          errMsg += ': '+rawOutput.message;
-                        }
-                        //  • if the raw output is anything else, inspect and append it
-                        else if (!_.isError(rawOutput)) {
-                          errMsg += ' with: \n\n' + util.inspect(rawOutput, {depth: 5});
-                        }
-                        return errMsg;
-                      })(), omen));
+                      }, omen);
 
                       return proceed(err);
                     };
