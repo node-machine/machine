@@ -132,7 +132,8 @@ module.exports = function buildCallableMachine(nmDef){
       argins = {};
     }//>-
 
-    // Tolerate unspecified metadata (aka habitat vars):
+    // Handle unspecified metadata -- the usual case
+    // (these are fka habitat vars)
     if (_.isUndefined(metadata)) {
       metadata = {};
     }//>-
@@ -186,22 +187,21 @@ module.exports = function buildCallableMachine(nmDef){
 
           default:
 
+            var finalArgins = argins;
+            // Validate argins vs. our declared input definitions.
+            // (Potentially, also coerce them.)
+            // TODO
+
+            // Build callable forms of lambda inversions (aka submachines)
+            // TODO
+
             // Run `fn`.
-            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-            // TODO: When running our fn, apply a special `this` context using the provided "metadata" (aka habitat vars)
-            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-            nmDef.fn(
+            //
+            // > Note: When running our fn, we apply a special `this` context
+            // > using the provided meta keys (aka habitat vars)
+            _.bind(nmDef.fn, metadata)(
 
-              (function _gettingArgins(){
-                // Validate argins vs. our declared input definitions.
-                // (Potentially, also coerce them.)
-                // TODO
-
-                // Build callable forms of lambda inversions (aka submachines)
-                // TODO
-
-                return argins;
-              })(),
+              finalArgins,
 
               (function _gettingHandlerCbs(){
 
@@ -249,7 +249,7 @@ module.exports = function buildCallableMachine(nmDef){
                     else if (_.isString(rawOutput)) {
                       // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                       // FUTURE: add in separate warning message explaining that there should always
-                      // be an Error instance sent back -- not some other value such as this.
+                      // be an Error instance sent back -- not some other value like this.
                       // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                       err = flaverr({
                         message: rawOutput,
@@ -259,7 +259,7 @@ module.exports = function buildCallableMachine(nmDef){
                     else {
                       // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                       // FUTURE: add in separate warning message explaining that there should always
-                      // be an Error instance sent back -- not some other value such as this.
+                      // be an Error instance sent back -- not some other value like this.
                       // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                       err = flaverr({
                         message: 'Internal error occurred while running `'+identity+'`.  Got non-error: '+util.inspect(rawOutput, {depth: 5}),
@@ -355,10 +355,13 @@ module.exports = function buildCallableMachine(nmDef){
 
         meta: function (_metadata){
           metadata = _metadata;
+          return this;
         },
 
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         // TODO: figure out how/if we're going to support userland switchbacks going forward.
+        //       (likely it won't be more than just simple backwards compatibility, and it'll
+        //       probably be implemented here, rather than in parley, to avoid problems)
         // e.g.
         // ```
         //     .switch({
@@ -367,7 +370,23 @@ module.exports = function buildCallableMachine(nmDef){
         //       success: function(){...}
         //     })
         // ```
+        // switch: function (handlers) {
+        //   if (!handlers.error) { TODO freak out }
+        //   // etc
+        //   this.exec(function (err, result){
+        //     // TODO
+        //   });
+        // },
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+        setEnv: function (_metadata) {
+          console.warn(
+            'DEPRECATED AS OF MACHINE v15: Please use `.meta()` instead of `.setEnv()` in the future\n'+
+            '(adjusting it for you automatically this time)\n'
+          );
+          return this.meta(_metadata);
+        },
+
       },
 
       // If provided, use the timeout (max # of ms to wait for this machine to finish executing)
