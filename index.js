@@ -235,15 +235,37 @@ module.exports = function buildCallableMachine(nmDef){
                 (function _attachingHandlerCbs(proceed){
                   handlerCbs.error = function(rawOutput){
 
+                    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                    // FUTURE: Consider implementing backwards compatibility for a `code` of `E_TIMEOUT`?
+                    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+                    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                    // FUTURE: Consider implementing backwards compatibility for a `code` of `E_MACHINE_RUNTIME_VALIDATION`?
+                    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
                     // Ensure that the catchall error exit (`error`) always comes back with an Error instance
                     // (i.e. so node callback expectations are fulfilled)
                     var err;
                     if (_.isUndefined(rawOutput)) {
+                      // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                      // FUTURE: Consider actually NOT using the omen in this case -- since we might
+                      // be interested in the line of code where the `exits.error()` was called.
+                      // OR, better yet, still use the omen, but also capture an additional trace
+                      // and attach it as an extra property. (**We might actually consider doing the
+                      // same thing for a few of the other cases below!**)
+                      // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                       err = flaverr({
                         message: 'Internal error occurred while running `'+identity+'`.'
                       }, omen);
                     }
                     else if (_.isError(rawOutput)) {
+                      // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                      // FUTURE: Consider this:  Imagine we checked the Error instance to see if it has a
+                      // `code` or `name` that indicates any special meaning -- whether that be a `name`
+                      // of `RuntimeValidationError`/ `TimeoutError`, or just a `code` that happens to
+                      // overlap with the name of one of this machine's declared exits.  In either of these
+                      // cases, we might strip that information off and preserve it instead.
+                      // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                       err = rawOutput;
                     }
                     else if (_.isString(rawOutput)) {
