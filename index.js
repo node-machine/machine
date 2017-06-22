@@ -238,6 +238,8 @@ module.exports = function buildCallableMachine(nmDef){
                 // Build & return exit handler callbacks for use by the machine's `fn`.
                 var handlerCbs = function (){ throw flaverr({name:'CompatibilityError'}, new Error('Implementor-land switchbacks are no longer supported by default in the machine runner.  Instead of `exits()`, please call `exits.success()` or `exits.error()` from within your machine `fn`.  (For help, visit https://sailsjs.com/support)')); };
                 (function _attachingHandlerCbs(proceed){
+
+                  // * * * Implementation of exits.error()... * * *
                   handlerCbs.error = function(rawOutput){
 
                     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -297,6 +299,7 @@ module.exports = function buildCallableMachine(nmDef){
                     return proceed(err);
                   };
 
+                  // * * * Implementation of exits.success()... * * *
                   handlerCbs.success = function(rawOutput){
                     // Ensure valid result (vs. expected output type for this exit)
                     var result = rawOutput;//TODO
@@ -304,8 +307,8 @@ module.exports = function buildCallableMachine(nmDef){
                   };
 
                   _.each(_.difference(_.keys(exitDefs), ['error','success']), function (miscExitCodeName){
+                    // * * * Implementation of each other misc. exit  (`exits.*()`)... * * *
                     handlerCbs[miscExitCodeName] = function (rawOutput){
-
                       // Now build our Error instance for our "exception" (fka "forwarding error").
                       var err = flaverr({
                         name: 'Exception',
@@ -397,17 +400,46 @@ module.exports = function buildCallableMachine(nmDef){
         //       success: function(){...}
         //     })
         // ```
-        // switch: function (handlers) {
-        //   if (!handlers.error) {
-        //     throw new Error('');
-        //   }
-        //     TODO freak out
-        //   }
-        //   // etc
-        //   this.exec(function (err, result){
-        //     // TODO
-        //   });
-        // },
+        switch: function (handlers) {
+
+          // Before proceeding, ensure error exit is still configured w/ a callback.
+          // If it is not, then get crazy and **throw** BEFORE calling the machine's `fn`.
+          //
+          // This is just yet another failsafe-- better to potentially terminate the process than
+          // open up the possibility of silently swallowing errors later.
+          if (!handlers.error){
+            throw flaverr({name:'UsageError'}, new Error(
+              'Cannot execute `'+identity+'` because of invalid usage of .switch().\n'+
+              'If you use .switch({...}), the provided dictionary must contain an `error` '+
+              'key as a catchall callback for handling unexpected or internal errors.\n'+
+              '> See https://sailsjs.com/support for help.'
+            ));
+          }//-•
+
+
+          this.exec(function (err, result){
+            var traversedExitCodeName;
+
+            if (err === omen) {
+              console.log('`err` has the same memory address as the omen for this call!');
+            }
+            if (err) {
+
+              if (err.name === 'Exception' && err === omen) {
+                console.log('got it!  It has name: Exception and it has the same memory address as the omen for this call!');
+              }
+
+              traversedExitCodeName = 'error';
+              // TODO finish
+            }//-•
+
+            traversedExitCodeName = 'success';
+
+            // TODO finish
+
+
+          });//</ .exec() >
+        },
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
