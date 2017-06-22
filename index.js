@@ -418,14 +418,12 @@ module.exports = function buildCallableMachine(nmDef){
           return this.meta(_metadata);
         },
         demuxSync: function () {
-          // Old implementation, for reference:
-          // https://github.com/node-machine/machine/blob/3cbdf60f7754ef47688320d370ef543eb27e36f0/lib/Machine.prototype.demuxSync.js
           throw flaverr({name:'CompatibilityError'}, new Error('As of machine v15, the experimental `.demuxSync()` method is no longer supported.  Instead, please use something like this:\n'+
             '\n'+
             '```\n'+
             '    var resultFromDemux = (()=>{\n'+
             '      try {\n'+
-            '        thisMethod({...}).execSync();\n'+
+            '        thisMethod().execSync();\n'+
             '        return true;\n'+
             '      } catch (e) { return false; }\n'+
             '    })();\n'+
@@ -434,8 +432,22 @@ module.exports = function buildCallableMachine(nmDef){
             'Here is a link to the original implementation, for reference:\n'+
             'https://github.com/node-machine/machine/blob/3cbdf60f7754ef47688320d370ef543eb27e36f0/lib/Machine.prototype.demuxSync.js'
           ));
-        }
-        // TODO: .cache()
+        },
+        cache: function () {
+          throw flaverr({name:'CompatibilityError'}, new Error('As of machine v15, built-in caching functionality (and thus the `.cache()` method) is no longer supported.  Instead, please use your own caching mechanism-- for example:\n'+
+            '\n'+
+            '```\n'+
+            '    var result = MY_CACHE[\'foo\'];\n'+
+            '    if (_.isUndefined(result)) {\n'+
+            '      result = await thisMethod({id:\'foo\'});\n'+
+            '      MY_CACHE[\'foo\'] = result;\n'+
+            '    }\n'+
+            '```\n'+
+            '\n'+
+            'Here is a link to part of the original implementation, for reference:\n'+
+            'https://github.com/node-machine/machine/blob/3cbdf60f7754ef47688320d370ef543eb27e36f0/lib/Machine.prototype.cache.js'
+          ));
+        },
 
       },
 
