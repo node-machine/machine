@@ -422,9 +422,10 @@ module.exports = function buildCallableMachine(nmDef){
           // open up the possibility of silently swallowing errors later.
           if (!handlers.error){
             throw flaverr({name:'UsageError'}, new Error(
-              'Cannot execute `'+identity+'` because of invalid usage of .switch().\n'+
-              'If you use .switch({...}), the provided dictionary must contain an `error` '+
-              'key as a catchall callback for handling unexpected or internal errors.\n'+
+              'Invalid usage of .switch() -- missing `error` handler.\n'+
+              'If you use .switch({...}), the provided dictionary (aka "switchback"), must\n'+
+              'define an `error` key with a catchall callback function.  Otherwise, there\n'+
+              'would be no way to handle any unexpected or internal errors!\n'+
               '> See https://sailsjs.com/support for help.'
             ));
           }//-•
@@ -452,6 +453,8 @@ module.exports = function buildCallableMachine(nmDef){
 
 
           });//</ .exec() >
+
+          return;
         },
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
