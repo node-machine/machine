@@ -148,12 +148,25 @@ module.exports = function buildCallableMachine(nmDef){
       ));
     }
     if (!_.isUndefined(explicitCbMaybe) && !_.isFunction(explicitCbMaybe)) {
-      throw flaverr({name:'UsageError'}, new Error(
-        'Sorry, this function doesn\'t know how to handle usage like that.\n'+
-        'If provided, the 2nd argument should be a function like `function(err,result){...}`\n'+
-        'that will be triggered as a callback after this fn is finished.\n'+
-        '> See https://sailsjs.com/support for help.'
-      ));
+      if (!_.isArray(explicitCbMaybe) && _.isObject(explicitCbMaybe)) {
+        throw flaverr({name:'UsageError'}, new Error(
+          'Sorry, this function doesn\'t know how to handle {...} callbacks.\n'+
+          'If provided, the 2nd argument should be a function like `function(err,result){...}`\n'+
+          '|  If you passed in {...} on purpose as a "switchback" (dictionary of callbacks),\n'+
+          '|  please be aware that, as of machine v15, you can no longer pass in a switchback\n'+
+          '|  as the 2nd argument.  And you can\'t pass a switchback in to .exec() anymore either.\n'+
+          '|  Instead, you\'ll need to explicitly call .switch().\n'+
+          'See https://sailsjs.com/support for more help.'
+        ));
+      }
+      else {
+        throw flaverr({name:'UsageError'}, new Error(
+          'Sorry, this function doesn\'t know how to handle usage like that.\n'+
+          'If provided, the 2nd argument should be a function like `function(err,result){...}`\n'+
+          'that will be triggered as a callback after this fn is finished.\n'+
+          '> See https://sailsjs.com/support for help.'
+        ));
+      }
     }
 
     // Build an "omen": an Error instance defined ahead of time in order to grab a stack trace.
