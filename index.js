@@ -417,11 +417,16 @@ module.exports = function buildCallableMachine(nmDef){
           );
           return this.meta(_metadata);
         },
+
+        // FUTURE: Consider completely removing the rest of these niceties in production
+        // (to optimize performance of machine construction -- esp. since there are a lot of
+        // other straight-up removed features that we haven't added improved err msgs for via new shims)
+        // =====================================================================================================================
         demuxSync: function () {
           throw flaverr({name:'CompatibilityError'}, new Error('As of machine v15, the experimental `.demuxSync()` method is no longer supported.  Instead, please use something like this:\n'+
             '\n'+
             '```\n'+
-            '    var resultFromDemux = (()=>{\n'+
+            '    var origResultFromDemuxSync = (()=>{\n'+
             '      try {\n'+
             '        thisMethod().execSync();\n'+
             '        return true;\n'+
@@ -437,6 +442,7 @@ module.exports = function buildCallableMachine(nmDef){
           throw flaverr({name:'CompatibilityError'}, new Error('As of machine v15, built-in caching functionality (and thus the `.cache()` method) is no longer supported.  Instead, please use your own caching mechanism-- for example:\n'+
             '\n'+
             '```\n'+
+            '    global.MY_CACHE = global.MY_CACHE || {};\n'+
             '    var result = MY_CACHE[\'foo\'];\n'+
             '    if (_.isUndefined(result)) {\n'+
             '      result = await thisMethod({id:\'foo\'});\n'+
