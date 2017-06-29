@@ -210,8 +210,13 @@ module.exports = function buildCallableMachine(nmDef){
             // (Potentially, also coerce them.)
             // TODO
 
-            // Build callable forms of lambda inversions (aka submachines)
-            // TODO
+            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+            // FUTURE: Build callable forms of lambda inversions (aka submachines)??
+            // But really, maybe consider ripping out support for this in the interest of simplicity.
+            // Only a few machines really need to use it, and it's easy to make it work.  The only thing
+            // is that we would then lose the nice, consistent handling of edge cases provided by the machine
+            // runner.  But the performance benefits and simplification are probably worth it.
+            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
             // Run `fn`.
             //
