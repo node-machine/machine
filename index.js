@@ -227,168 +227,165 @@ module.exports = function buildCallableMachine(nmDef){
             // runner.  But the performance benefits and simplification are probably worth it.
             // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+
+            var implSideExitHandlerCbs = (function _gettingHandlerCbs(){
+
+              /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+              //
+              //    USAGE: Node-style callback, or with a promise, or with async...await
+              //    (note that, when leveraging switchbacks, there are slightly different rules)
+              //
+              //  _______________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+              //  ||            exit => | 'error' (explicit)      | 'error' (throw)         | 'error' (timeout)       | 'error' (validation)    | misc. exit              | misc. exit              | success                 | success                 |
+              //  \/ output             | `exits.error()`         | `throw new Error()`     |                         |                         | (NOT expecting output)  | (EXPECTING output)      | (NOT expecting output)  | (EXPECTING output)      |
+              //  ______________________|_________________________|_________________________|_________________________|_________________________|_________________________|_________________________|_________________________|_________________________|
+              //  Error instance        | pass straight through   | pass straight through   | N/A - always an Error   | N/A - always an Error   | pass straight through   | coerce                  | pass straight through   | coerce                  |
+              //                        |                         |   (handled by parley)   |   (handled by parley)   |                         |                         |                         |                         |                         |
+              //  ----------------------| --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  |
+              //  String data           | new Error w/ str as msg | new Error w/ str as msg | N/A - always an Error   | N/A - always an Error   | new Error w/ str as msg | coerce                  | pass straight through   | coerce                  |
+              //                        |                         |                         |   (handled by parley)   |                         |                         |                         |                         |                         |
+              //  ----------------------| --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  |
+              //  Other non-Error data  | new Error + wrap output | new Error + wrap output | N/A - always an Error   | N/A - always an Error   | new Error + wrap output | coerce                  | pass straight through   | coerce                  |
+              //                        |                         |                         |   (handled by parley)   |                         |                         |                         |                         |                         |
+              //  ----------------------| --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  |
+              //  No output (undefined) | new Error, generic      | new Error, generic      | N/A - always an Error   | N/A - always an Error   | new Error, w/ descrptn. | coerce                  | pass straight through   | coerce                  |
+              //                        |                         |                         |   (handled by parley)   |                         |                         |                         |                         |                         |
+              //  _______________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+              //
+              /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+              // Build & return exit handler callbacks for use by the machine's `fn`.
+              var handlerCbs = function (){ throw flaverr({name:'CompatibilityError'}, new Error('Implementor-land switchbacks are no longer supported by default in the machine runner.  Instead of `exits()`, please call `exits.success()` or `exits.error()` from within your machine `fn`.  (For help, visit https://sailsjs.com/support)')); };
+              (function _attachingHandlerCbs(proceed){
+
+                // * * * Implementation of exits.error()... * * *
+                handlerCbs.error = function(rawOutput){
+
+                  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                  // FUTURE: Consider implementing backwards compatibility for a `code` of `E_TIMEOUT`?
+                  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+                  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                  // FUTURE: Consider implementing backwards compatibility for a `code` of `E_MACHINE_RUNTIME_VALIDATION`?
+                  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+                  // Ensure that the catchall error exit (`error`) always comes back with an Error instance
+                  // (i.e. so node callback expectations are fulfilled)
+                  var err;
+                  if (_.isUndefined(rawOutput)) {
+                    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                    // FUTURE: Consider actually NOT using the omen in this case -- since we might
+                    // be interested in the line of code where the `exits.error()` was called.
+                    // OR, better yet, still use the omen, but also capture an additional trace
+                    // and attach it as an extra property. (**We might actually consider doing the
+                    // same thing for a few of the other cases below!**)
+                    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                    err = flaverr({
+                      message: 'Internal error occurred while running `'+identity+'`.'
+                    }, omen);
+                  }
+                  else if (_.isError(rawOutput)) {
+                    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                    // FUTURE: Consider this:  Imagine we checked the Error instance to see if it has a
+                    // `code` or `name` that indicates any special meaning -- whether that be a `name`
+                    // of `RuntimeValidationError`/ `TimeoutError`, or just a `code` that happens to
+                    // overlap with the name of one of this machine's declared exits.  In either of these
+                    // cases, we might strip that information off and preserve it instead.
+                    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                    err = rawOutput;
+                  }
+                  else if (_.isString(rawOutput)) {
+                    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                    // FUTURE: add in separate warning message explaining that there should always
+                    // be an Error instance sent back -- not some other value like this.
+                    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                    err = flaverr({
+                      message: rawOutput,
+                      raw: rawOutput
+                    }, omen);
+                  }
+                  else {
+                    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                    // FUTURE: add in separate warning message explaining that there should always
+                    // be an Error instance sent back -- not some other value like this.
+                    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                    err = flaverr({
+                      message: 'Internal error occurred while running `'+identity+'`.  Got non-error: '+util.inspect(rawOutput, {depth: 5}),
+                      raw: rawOutput
+                    }, omen);
+                  }
+
+                  return proceed(err);
+                };
+
+                // * * * Implementation of exits.success()... * * *
+                handlerCbs.success = function(rawOutput){
+                  // Ensure valid result (vs. expected output type for this exit)
+                  var result = rawOutput;//TODO
+                  return proceed(undefined, result);
+                };
+
+                _.each(_.difference(_.keys(exitDefs), ['error','success']), function (miscExitCodeName){
+                  // * * * Implementation of each other misc. exit  (`exits.*()`)... * * *
+                  handlerCbs[miscExitCodeName] = function (rawOutput){
+                    // Now build our Error instance for our "exception" (fka "forwarding error").
+                    var err = flaverr({
+                      name: 'Exception',
+                      code: miscExitCodeName,
+                      raw: rawOutput,
+                      message: (function _gettingErrMsg(){
+                        // The error msg always begins with a standard prefix:
+                        var errMsg = '`'+identity+'` triggered its `'+miscExitCodeName+'` exit';
+                        // And is then augmented by some additional basic rules:
+                        //  • if there is no raw output, append the exit description if available.
+                        if (_.isUndefined(rawOutput)) {
+                          if (!_.isObject(exitDefs[miscExitCodeName])) { throw new Error('Consistency violation: Machine ('+identity+') has become corrupted!  One of its exits (`'+miscExitCodeName+'`) has gone missing _while the machine was being executed_!'); }
+                          if (exitDefs[miscExitCodeName].description) {
+                            errMsg += ': '+exitDefs[miscExitCodeName].description;
+                          }
+                        }
+                        //  • if the raw output is an Error instance, then just append _its_ message
+                        else if (_.isError(rawOutput)) {
+                          errMsg += ': '+rawOutput.message;
+                        }
+                        //  • if the raw output is anything else, inspect and append it
+                        else if (!_.isError(rawOutput)) {
+                          errMsg += ' with: \n\n' + util.inspect(rawOutput, {depth: 5});
+                        }
+                        return errMsg;
+                      })(),
+                      // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                      // FUTURE: Potentially also add backwards-compatibility:
+                      // ```
+                      //     exit: miscExitCodeName,
+                      //     output: rawOutput,
+                      // ```
+                      // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                    }, omen);
+
+                    return proceed(err);
+                  };
+                });//</ each misc. exit >
+
+              })(function (err, result){
+
+                // Then trigger our callback with the appropriate arguments.
+                if (err) { return done(err); }
+                if (_.isUndefined(result)) { return done(); }
+                return done(undefined, result);
+              });//</ ... >
+
+              return handlerCbs;
+            })();
+
+
+
             // Run `fn`.
             //
             // > Note: When running our fn, we apply a special `this` context
             // > using the provided meta keys (aka habitat vars)
-            _.bind(nmDef.fn, metadata)(
-
-              finalArgins,
-
-              (function _gettingHandlerCbs(){
-
-                /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                //
-                //    USAGE: Node-style callback, or with a promise, or with async...await
-                //    (note that, when leveraging switchbacks, there are slightly different rules)
-                //
-                //  _______________________________________________________________________________________________________________________________________________________________________________________________________________________________________
-                //  ||            exit => | 'error' (explicit)      | 'error' (throw)         | 'error' (timeout)       | 'error' (validation)    | misc. exit              | misc. exit              | success                 | success                 |
-                //  \/ output             | `exits.error()`         | `throw new Error()`     |                         |                         | (NOT expecting output)  | (EXPECTING output)      | (NOT expecting output)  | (EXPECTING output)      |
-                //  ______________________|_________________________|_________________________|_________________________|_________________________|_________________________|_________________________|_________________________|_________________________|
-                //  Error instance        | pass straight through   | pass straight through   | N/A - always an Error   | N/A - always an Error   | pass straight through   | coerce                  | pass straight through   | coerce                  |
-                //                        |                         |   (handled by parley)   |   (handled by parley)   |                         |                         |                         |                         |                         |
-                //  ----------------------| --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  |
-                //  String data           | new Error w/ str as msg | new Error w/ str as msg | N/A - always an Error   | N/A - always an Error   | new Error w/ str as msg | coerce                  | pass straight through   | coerce                  |
-                //                        |                         |                         |   (handled by parley)   |                         |                         |                         |                         |                         |
-                //  ----------------------| --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  |
-                //  Other non-Error data  | new Error + wrap output | new Error + wrap output | N/A - always an Error   | N/A - always an Error   | new Error + wrap output | coerce                  | pass straight through   | coerce                  |
-                //                        |                         |                         |   (handled by parley)   |                         |                         |                         |                         |                         |
-                //  ----------------------| --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  | --  --  --  --  --  --  |
-                //  No output (undefined) | new Error, generic      | new Error, generic      | N/A - always an Error   | N/A - always an Error   | new Error, w/ descrptn. | coerce                  | pass straight through   | coerce                  |
-                //                        |                         |                         |   (handled by parley)   |                         |                         |                         |                         |                         |
-                //  _______________________________________________________________________________________________________________________________________________________________________________________________________________________________________
-                //
-                /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-                // Build & return exit handler callbacks for use by the machine's `fn`.
-                var handlerCbs = function (){ throw flaverr({name:'CompatibilityError'}, new Error('Implementor-land switchbacks are no longer supported by default in the machine runner.  Instead of `exits()`, please call `exits.success()` or `exits.error()` from within your machine `fn`.  (For help, visit https://sailsjs.com/support)')); };
-                (function _attachingHandlerCbs(proceed){
-
-                  // * * * Implementation of exits.error()... * * *
-                  handlerCbs.error = function(rawOutput){
-
-                    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                    // FUTURE: Consider implementing backwards compatibility for a `code` of `E_TIMEOUT`?
-                    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-                    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                    // FUTURE: Consider implementing backwards compatibility for a `code` of `E_MACHINE_RUNTIME_VALIDATION`?
-                    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-                    // Ensure that the catchall error exit (`error`) always comes back with an Error instance
-                    // (i.e. so node callback expectations are fulfilled)
-                    var err;
-                    if (_.isUndefined(rawOutput)) {
-                      // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                      // FUTURE: Consider actually NOT using the omen in this case -- since we might
-                      // be interested in the line of code where the `exits.error()` was called.
-                      // OR, better yet, still use the omen, but also capture an additional trace
-                      // and attach it as an extra property. (**We might actually consider doing the
-                      // same thing for a few of the other cases below!**)
-                      // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                      err = flaverr({
-                        message: 'Internal error occurred while running `'+identity+'`.'
-                      }, omen);
-                    }
-                    else if (_.isError(rawOutput)) {
-                      // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                      // FUTURE: Consider this:  Imagine we checked the Error instance to see if it has a
-                      // `code` or `name` that indicates any special meaning -- whether that be a `name`
-                      // of `RuntimeValidationError`/ `TimeoutError`, or just a `code` that happens to
-                      // overlap with the name of one of this machine's declared exits.  In either of these
-                      // cases, we might strip that information off and preserve it instead.
-                      // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                      err = rawOutput;
-                    }
-                    else if (_.isString(rawOutput)) {
-                      // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                      // FUTURE: add in separate warning message explaining that there should always
-                      // be an Error instance sent back -- not some other value like this.
-                      // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                      err = flaverr({
-                        message: rawOutput,
-                        raw: rawOutput
-                      }, omen);
-                    }
-                    else {
-                      // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                      // FUTURE: add in separate warning message explaining that there should always
-                      // be an Error instance sent back -- not some other value like this.
-                      // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                      err = flaverr({
-                        message: 'Internal error occurred while running `'+identity+'`.  Got non-error: '+util.inspect(rawOutput, {depth: 5}),
-                        raw: rawOutput
-                      }, omen);
-                    }
-
-                    return proceed(err);
-                  };
-
-                  // * * * Implementation of exits.success()... * * *
-                  handlerCbs.success = function(rawOutput){
-                    // Ensure valid result (vs. expected output type for this exit)
-                    var result = rawOutput;//TODO
-                    return proceed(undefined, result);
-                  };
-
-                  _.each(_.difference(_.keys(exitDefs), ['error','success']), function (miscExitCodeName){
-                    // * * * Implementation of each other misc. exit  (`exits.*()`)... * * *
-                    handlerCbs[miscExitCodeName] = function (rawOutput){
-                      // Now build our Error instance for our "exception" (fka "forwarding error").
-                      var err = flaverr({
-                        name: 'Exception',
-                        code: miscExitCodeName,
-                        raw: rawOutput,
-                        message: (function _gettingErrMsg(){
-                          // The error msg always begins with a standard prefix:
-                          var errMsg = '`'+identity+'` triggered its `'+miscExitCodeName+'` exit';
-                          // And is then augmented by some additional basic rules:
-                          //  • if there is no raw output, append the exit description if available.
-                          if (_.isUndefined(rawOutput)) {
-                            if (!_.isObject(exitDefs[miscExitCodeName])) { throw new Error('Consistency violation: Machine ('+identity+') has become corrupted!  One of its exits (`'+miscExitCodeName+'`) has gone missing _while the machine was being executed_!'); }
-                            if (exitDefs[miscExitCodeName].description) {
-                              errMsg += ': '+exitDefs[miscExitCodeName].description;
-                            }
-                          }
-                          //  • if the raw output is an Error instance, then just append _its_ message
-                          else if (_.isError(rawOutput)) {
-                            errMsg += ': '+rawOutput.message;
-                          }
-                          //  • if the raw output is anything else, inspect and append it
-                          else if (!_.isError(rawOutput)) {
-                            errMsg += ' with: \n\n' + util.inspect(rawOutput, {depth: 5});
-                          }
-                          return errMsg;
-                        })(),
-                        // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                        // FUTURE: Potentially also add backwards-compatibility:
-                        // ```
-                        //     exit: miscExitCodeName,
-                        //     output: rawOutput,
-                        // ```
-                        // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                      }, omen);
-
-                      return proceed(err);
-                    };
-                  });//</ each misc. exit >
-
-                })(function (err, result){
-
-                  // Then trigger our callback with the appropriate arguments.
-                  if (err) { return done(err); }
-                  if (_.isUndefined(result)) { return done(); }
-                  return done(undefined, result);
-                });//</ ... >
-                return handlerCbs;
-              })(),
-
-              (function _gettingHabitatVars() {
-                return metadata;
-              })()
-            );
+            _.bind(nmDef.fn, metadata)(finalArgins, implSideExitHandlerCbs, metadata);
 
         }//</ switch >
 
