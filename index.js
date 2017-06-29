@@ -454,7 +454,7 @@ module.exports = function buildCallableMachine(nmDef){
               // ```
               // var inner = require('./')({ exits: { foo: {description: 'Whoops' } }, fn: function(inputs, exits) { return exits.foo(987); } }); var outer = require('./')({ exits: { foo: { description: 'Not the same' }}, fn: function(inputs, exits) { inner({}, (err)=>{ if (err) { return exits.error(err); } return exits.success(); }); } })().switch({ error: (err)=>{ console.log('Got error:',err); }, foo: ()=>{ console.log('Should NEVER make it here.  The `foo` exit of some other machine in the implementation has nothing to do with THIS `foo` exit!!'); }, success: ()=>{ console.log('Got success.'); }, });
               // ```
-              // (Note that the same thing is true when dealing with thrown exceptions)
+              // (Note that the same thing is true any time we might want to negotiate uncaught errors thrown from inside `fn`, timeouts, and RTTC validation errors)
               if (err.name === 'Exception' && err === omen) {
                 // console.log('This represents an actual exit traversal');
 
@@ -467,7 +467,7 @@ module.exports = function buildCallableMachine(nmDef){
                 }
               }//-•
 
-              // if (err.name === 'Exception') { console.log('This error must have come from some internal machine!'); }
+              // if (err.name === 'Exception') { console.log('This error must have come from some internal machine from within THIS machine\'s implementation (aka `fn`)!'); }
               return handlers.error(err);
             }//-•
 
