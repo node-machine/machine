@@ -48,11 +48,20 @@ module.exports = function buildCallableMachine(nmDef){
 
 
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // FUTURE: Since timeouts, spinlocks, catching, etc don't work unless using the Deferred
+  // usage pattern, then log a warning if this machine declares a `timeout`, but the an
+  // explicit callback was passed in.
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
   // Attach sanitized node machine definition properties to the callable ("wet") machine function.
   // (This is primarily for compatibility with existing tooling, and for easy access to the def.)
   // > Note that these properties should NEVER be changed!!
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // TODO: Either do this, OR figure out a different way-- e.g. using an accessor function.
+  // TODO: Either do this, OR better yet, figure out a different way-- e.g. using an accessor function.
+  // (that would be a breaking change, but it would be worth it for the perf. gains-- esp. w/ simple
+  // synchronous machines)
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
@@ -401,7 +410,7 @@ module.exports = function buildCallableMachine(nmDef){
       // Extra methods for the Deferred:
       {
         execSync: function (){
-          // throw new Error('TODO');
+          // throw new Error('...');
           // TODO: Finish implementing this properly, including the various checks & balances.
           var immediateResult;
           this.exec(function (err, result){
@@ -547,15 +556,12 @@ module.exports = function buildCallableMachine(nmDef){
       // If provided, use the timeout (max # of ms to wait for this machine to finish executing)
       nmDef.timeout || undefined,
       // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      // TODO: test that all of the following scenarios are working:
+      // FUTURE: Write tests that ensure all of the following scenarios are working:
       // ```
       // require('./')({ timeout: 50, exits: { foo: {description: 'Whoops' } }, fn: function(inputs, exits) { setTimeout(()=>{return exits.foo(987);},750); } })().switch({ error: (err)=>{ console.log('Got error:',err); }, foo: ()=>{ console.log('Should NEVER make it here.  The `foo` exit of some other machine in the implementation has nothing to do with THIS `foo` exit!!'); }, success: ()=>{ console.log('Got success.'); }, });
       // ```
       // ```
       // var inner = require('./')({ timeout: 50, exits: { foo: {description: 'Whoops' } }, fn: function(inputs, exits) { setTimeout(()=>{return exits.foo(987);},750); } }); require('./')({ identity: 'outer', exits: { foo: { description: 'Not the same' }}, fn: function(inputs, exits) { inner({}).exec((err)=>{ if (err) { return exits.error(err); } return exits.success(); }); } })().switch({ error: (err)=>{ console.log('Got error:',err); }, foo: ()=>{ console.log('Should NEVER make it here.  The `foo` exit of some other machine in the implementation has nothing to do with THIS `foo` exit!!'); }, success: ()=>{ console.log('Got success.'); }, });
-      // ```
-      // ```
-      // var inner = require('./')({ timeout: 50, exits: { foo: {description: 'Whoops' } }, fn: function(inputs, exits) { setTimeout(()=>{return exits.foo(987);},750); } }); require('./')({ identity: 'outer', exits: { foo: { description: 'Not the same' }}, fn: function(inputs, exits) { inner({}, (err)=>{ if (err) { return exits.error(err); } return exits.success(); }); } })().switch({ error: (err)=>{ console.log('Got error:',err); }, foo: ()=>{ console.log('Should NEVER make it here.  The `foo` exit of some other machine in the implementation has nothing to do with THIS `foo` exit!!'); }, success: ()=>{ console.log('Got success.'); }, });
       // ```
       // ```
       // var inner = require('./')({ exits: { foo: {description: 'Whoops' } }, fn: function(inputs, exits) { setTimeout(()=>{return exits.foo(987);},750); } }); require('./')({ identity: 'outer', timeout: 50, exits: { foo: { description: 'Not the same' }}, fn: function(inputs, exits) { inner({}).exec((err)=>{ if (err) { return exits.error(err); } return exits.success(); }); } })().switch({ error: (err)=>{ console.log('Got error:',err); }, foo: ()=>{ console.log('Should NEVER make it here.  The `foo` exit of some other machine in the implementation has nothing to do with THIS `foo` exit!!'); }, success: ()=>{ console.log('Got success.'); }, });
@@ -565,6 +571,12 @@ module.exports = function buildCallableMachine(nmDef){
       // ```
       // ```
       // var inner = require('./')({ timeout: 45, exits: { foo: {description: 'Whoops' } }, fn: function(inputs, exits) { setTimeout(()=>{return exits.foo(987);},750); } }); require('./')({ identity: 'outer', timeout: 50, exits: { foo: { description: 'Not the same' }}, fn: function(inputs, exits) { inner({}).exec((err)=>{ if (err) { return exits.error(err); } return exits.success(); }); } })().switch({ error: (err)=>{ console.log('Got error:',err); }, foo: ()=>{ console.log('Should NEVER make it here.  The `foo` exit of some other machine in the implementation has nothing to do with THIS `foo` exit!!'); }, success: ()=>{ console.log('Got success.'); }, });
+      // ```
+      //
+      //
+      // NOTE THAT THIS WILL NEVER WORK:
+      // ```
+      // var inner = require('./')({ timeout: 50, exits: { foo: {description: 'Whoops' } }, fn: function(inputs, exits) { setTimeout(()=>{return exits.foo(987);},750); } }); require('./')({ identity: 'outer', exits: { foo: { description: 'Not the same' }}, fn: function(inputs, exits) { inner({}, (err)=>{ if (err) { return exits.error(err); } return exits.success(); }); } })().switch({ error: (err)=>{ console.log('Got error:',err); }, foo: ()=>{ console.log('Should NEVER make it here.  The `foo` exit of some other machine in the implementation has nothing to do with THIS `foo` exit!!'); }, success: ()=>{ console.log('Got success.'); }, });
       // ```
       // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
