@@ -47,6 +47,16 @@ module.exports = function buildCallableMachine(nmDef){
   // TODO
 
 
+
+  // Attach sanitized node machine definition properties to the callable ("wet") machine function.
+  // (This is primarily for compatibility with existing tooling, and for easy access to the def.)
+  // > Note that these properties should NEVER be changed!!
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // TODO: Either do this, OR figure out a different way-- e.g. using an accessor function.
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+
   // Return our callable ("wet") machine function in the appropriate format.
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // FUTURE: Consider support for returning a machine function with other usage styles
@@ -536,6 +546,15 @@ module.exports = function buildCallableMachine(nmDef){
 
       // If provided, use the timeout (max # of ms to wait for this machine to finish executing)
       nmDef.timeout || undefined,
+      // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      // TODO: test that both of the following scenarios are working:
+      // ```
+      // var inner = require('./')({ timeout: 50, exits: { foo: {description: 'Whoops' } }, fn: function(inputs, exits) { setTimeout(()=>{return exits.foo(987);},750); } })().switch({ error: (err)=>{ console.log('Got error:',err); }, foo: ()=>{ console.log('Should NEVER make it here.  The `foo` exit of some other machine in the implementation has nothing to do with THIS `foo` exit!!'); }, success: ()=>{ console.log('Got success.'); }, });
+      // ```
+      // ```
+      // var inner = require('./')({ timeout: 50, exits: { foo: {description: 'Whoops' } }, fn: function(inputs, exits) { setTimeout(()=>{return exits.foo(987);},750); } }); var outer = require('./')({ exits: { foo: { description: 'Not the same' }}, fn: function(inputs, exits) { inner({}, (err)=>{ if (err) { return exits.error(err); } return exits.success(); }); } })().switch({ error: (err)=>{ console.log('Got error:',err); }, foo: ()=>{ console.log('Should NEVER make it here.  The `foo` exit of some other machine in the implementation has nothing to do with THIS `foo` exit!!'); }, success: ()=>{ console.log('Got success.'); }, });
+      // ```
+      // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
       // Pass in the omen, if we were able to create one.
       omen || undefined
