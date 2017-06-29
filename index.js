@@ -47,7 +47,6 @@ module.exports = function buildCallableMachine(nmDef){
   // TODO
 
 
-
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // FUTURE: Since timeouts, spinlocks, catching, etc don't work unless using the Deferred
   // usage pattern, then log a warning if this machine declares a `timeout`, but the an
@@ -227,6 +226,11 @@ module.exports = function buildCallableMachine(nmDef){
             // Validate argins vs. our declared input definitions.
             // (Potentially, also coerce them.)
             // TODO
+
+
+            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+            // TODO: Prevent using unexpected additional argins -- at least without setting a special meta key
+            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
             // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
             // FUTURE: Build callable forms of lambda inversions (aka submachines)??
@@ -469,6 +473,10 @@ module.exports = function buildCallableMachine(nmDef){
             ));
           }//-•
 
+          
+          // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+          // TODO: Prevent using unexpected additional handler callbacks -- at least without setting a special meta key
+          // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
           this.exec(function (err, result){
 
