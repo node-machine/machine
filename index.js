@@ -546,9 +546,12 @@ module.exports = function buildCallableMachine(nmDef){
       // If provided, use the timeout (max # of ms to wait for this machine to finish executing)
       nmDef.timeout || undefined,
       // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      // TODO: test that both of the following scenarios are working:
+      // TODO: test that all of the following scenarios are working:
       // ```
-      // var inner = require('./')({ timeout: 50, exits: { foo: {description: 'Whoops' } }, fn: function(inputs, exits) { setTimeout(()=>{return exits.foo(987);},750); } })().switch({ error: (err)=>{ console.log('Got error:',err); }, foo: ()=>{ console.log('Should NEVER make it here.  The `foo` exit of some other machine in the implementation has nothing to do with THIS `foo` exit!!'); }, success: ()=>{ console.log('Got success.'); }, });
+      // require('./')({ timeout: 50, exits: { foo: {description: 'Whoops' } }, fn: function(inputs, exits) { setTimeout(()=>{return exits.foo(987);},750); } })().switch({ error: (err)=>{ console.log('Got error:',err); }, foo: ()=>{ console.log('Should NEVER make it here.  The `foo` exit of some other machine in the implementation has nothing to do with THIS `foo` exit!!'); }, success: ()=>{ console.log('Got success.'); }, });
+      // ```
+      // ```
+      // var inner = require('./')({ timeout: 50, exits: { foo: {description: 'Whoops' } }, fn: function(inputs, exits) { setTimeout(()=>{return exits.foo(987);},750); } }); var outer = require('./')({ exits: { foo: { description: 'Not the same' }}, fn: function(inputs, exits) { inner({}).exec((err)=>{ if (err) { return exits.error(err); } return exits.success(); }); } })().switch({ error: (err)=>{ console.log('Got error:',err); }, foo: ()=>{ console.log('Should NEVER make it here.  The `foo` exit of some other machine in the implementation has nothing to do with THIS `foo` exit!!'); }, success: ()=>{ console.log('Got success.'); }, });
       // ```
       // ```
       // var inner = require('./')({ timeout: 50, exits: { foo: {description: 'Whoops' } }, fn: function(inputs, exits) { setTimeout(()=>{return exits.foo(987);},750); } }); var outer = require('./')({ exits: { foo: { description: 'Not the same' }}, fn: function(inputs, exits) { inner({}, (err)=>{ if (err) { return exits.error(err); } return exits.success(); }); } })().switch({ error: (err)=>{ console.log('Got error:',err); }, foo: ()=>{ console.log('Should NEVER make it here.  The `foo` exit of some other machine in the implementation has nothing to do with THIS `foo` exit!!'); }, success: ()=>{ console.log('Got success.'); }, });
