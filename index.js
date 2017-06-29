@@ -401,18 +401,6 @@ module.exports = function buildCallableMachine(nmDef){
           return this;
         },
 
-        // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        // TODO: figure out how/if we're going to support userland switchbacks going forward.
-        //       (likely it won't be more than just simple backwards compatibility, and it'll
-        //       probably be implemented here, rather than in parley, to avoid problems)
-        // e.g.
-        // ```
-        //     .switch({
-        //       error: function(err){...},
-        //       foo: function(){...},
-        //       success: function(){...}
-        //     })
-        // ```
         switch: function (handlers) {
 
           // Check usage.
@@ -444,7 +432,7 @@ module.exports = function buildCallableMachine(nmDef){
           // Same thing for the `success` handler -- except in this case, use the provided `error`
           // handler, rather than throwing an uncatchable Error.
           if (!handlers.success){
-            throw flaverr({name:'UsageError'}, new Error(
+            return handlers.error({name:'UsageError'}, new Error(
               'Invalid usage of .switch() -- missing `success` handler.\n'+
               'If you use .switch({...}), the provided dictionary (aka "switchback"), must\n'+
               'define a `success` key with a callback function.  If you do not care about\n'+
@@ -455,31 +443,35 @@ module.exports = function buildCallableMachine(nmDef){
 
 
           this.exec(function (err, result){
-            var traversedExitCodeName;
 
-            // if (err === omen) {
-            //   console.log('`err` has the same memory address as the omen for this call!');
-            // }
             if (err) {
 
+              // To explain why this `=== omen` check is necessary, have a look at this example:
+              // ```
+              // var inner = require('./')({ exits: { foo: {description: 'Whoops' } }, fn: function(inputs, exits) { return exits.foo(987); } }); var outer = require('./')({ exits: { foo: { description: 'Not the same' }}, fn: function(inputs, exits) { inner({}, (err)=>{ if (err) { return exits.error(err); } return exits.success(); }); } })().switch({ error: (err)=>{ console.log('Got error:',err); }, foo: ()=>{ console.log('Should NEVER make it here.  The `foo` exit of some other machine in the implementation has nothing to do with THIS `foo` exit!!'); }, success: ()=>{ console.log('Got success.'); }, });
+              // ```
+              // (Note that the same thing is true when dealing with thrown exceptions)
               if (err.name === 'Exception' && err === omen) {
-                console.log('got it!  It has name: Exception and it has the same memory address as the omen for this call!');
-              }
+                // console.log('This represents an actual exit traversal');
 
-              traversedExitCodeName = 'error';
-              // TODO finish
+                if (!err.code) { throw new Error('Consistency violation: Recognized exceptions from the machine runner should always have a `code` property, but this one does not!  Here is the error:'+util.inspect(err, {depth:null})); }
+                if (err.code === 'error' || !handlers[err.code]) {
+                  return handlers.error(err);
+                }
+                else {
+                  return handlers[err.code](err.raw);
+                }
+              }//-•
+
+              // if (err.name === 'Exception') { console.log('This error must have come from some internal machine!'); }
+              return handlers.error(err);
             }//-•
 
-            traversedExitCodeName = 'success';
-
-            // TODO finish
-
-
+            handlers.success(result);
           });//</ .exec() >
 
           return;
         },
-        // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
         // Compatibility:
