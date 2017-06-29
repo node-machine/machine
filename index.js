@@ -25,7 +25,7 @@ var parley = require('parley');
 module.exports = function buildCallableMachine(nmDef){
 
   // Determine the effective identity of this machine.
-  var identity;//TODO
+  var identity = nmDef.identity || undefined;//TODO
 
   // Verify correctness of node-machine definition.
   // TODO
@@ -188,7 +188,6 @@ module.exports = function buildCallableMachine(nmDef){
     // > Inspired by the implementation originally devised for Waterline:
     // > https://github.com/balderdashy/waterline/blob/6b1f65e77697c36561a0edd06dff537307986cb7/lib/waterline/utils/query/build-omen.js
     var omen = flaverr({}, new Error('omen'), runFn);
-
 
     // Build and return an appropriate deferred object.
     // (Or possibly just start executing the machine immediately, depending on usage)
