@@ -397,6 +397,10 @@ module.exports = function buildCallableMachine(nmDef){
         },
 
         meta: function (_metadata){
+          // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+          // FUTURE: Maybe log warning when `.meta()` is called more than once?
+          // (since it can be confusing that the existing metadata gets replaced)
+          // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
           metadata = _metadata;
           return this;
         },
