@@ -415,6 +415,17 @@ module.exports = function buildCallableMachine(nmDef){
         // ```
         switch: function (handlers) {
 
+          // Check usage.
+          if (!_.isObject(handlers) || _.isArray(handlers) || _.isFunction(handlers)) {
+            throw flaverr({name:'UsageError'}, new Error(
+              'Sorry, .switch() doesn\'t know how to handle usage like that.\n'+
+              'You should pass in a dictionary like `{...}` consisting of at least two\n'+
+              'handler functions: one for `error` and one for `success`.  You can also\n'+
+              'provide additional keys for any other exits you want to explicitly handle.\n'+
+              '> See https://sailsjs.com/support for help.'
+            ));
+          }//-•
+
           // Before proceeding, ensure error exit is still configured w/ a callback.
           // If it is not, then get crazy and **throw** BEFORE calling the machine's `fn`.
           //
@@ -430,13 +441,25 @@ module.exports = function buildCallableMachine(nmDef){
             ));
           }//-•
 
+          // Same thing for the `success` handler -- except in this case, use the provided `error`
+          // handler, rather than throwing an uncatchable Error.
+          if (!handlers.success){
+            throw flaverr({name:'UsageError'}, new Error(
+              'Invalid usage of .switch() -- missing `success` handler.\n'+
+              'If you use .switch({...}), the provided dictionary (aka "switchback"), must\n'+
+              'define a `success` key with a callback function.  If you do not care about\n'+
+              'the success scenario, please provide a no-op callback, or use .exec() instead.\n'+
+              '> See https://sailsjs.com/support for help.'
+            ));
+          }//-•
+
 
           this.exec(function (err, result){
             var traversedExitCodeName;
 
-            if (err === omen) {
-              console.log('`err` has the same memory address as the omen for this call!');
-            }
+            // if (err === omen) {
+            //   console.log('`err` has the same memory address as the omen for this call!');
+            // }
             if (err) {
 
               if (err.name === 'Exception' && err === omen) {
