@@ -228,7 +228,11 @@ module.exports = function buildCallableMachine(nmDef){
             // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
+            // Build & return exit handler callbacks for use by the machine's `fn`.
+            // > Note: The only reason this is a self-calling function is to keep private variables insulated.
             var implSideExitHandlerCbs = (function _gettingHandlerCbs(){
+
+              var handlerCbs = function (){ throw flaverr({name:'CompatibilityError'}, new Error('Implementor-land switchbacks are no longer supported by default in the machine runner.  Instead of `exits()`, please call `exits.success()` or `exits.error()` from within your machine `fn`.  (For help, visit https://sailsjs.com/support)')); };
 
               /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
               //
@@ -254,9 +258,9 @@ module.exports = function buildCallableMachine(nmDef){
               //
               /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-              // Build & return exit handler callbacks for use by the machine's `fn`.
-              var handlerCbs = function (){ throw flaverr({name:'CompatibilityError'}, new Error('Implementor-land switchbacks are no longer supported by default in the machine runner.  Instead of `exits()`, please call `exits.success()` or `exits.error()` from within your machine `fn`.  (For help, visit https://sailsjs.com/support)')); };
+              // Set up support for exit forwarding in implementor-side exit handler callbacks:
+              // > Note: We use another self-calling function in order to share future logic-- it's just for convenience/deduplication.
+              // > The important thing is that we call `done` herein.
               (function _attachingHandlerCbs(proceed){
 
                 // * * * Implementation of exits.error()... * * *
@@ -317,17 +321,17 @@ module.exports = function buildCallableMachine(nmDef){
                   }
 
                   return proceed(err);
-                };
+                };//</ ... >
 
                 // * * * Implementation of exits.success()... * * *
                 handlerCbs.success = function(rawOutput){
                   // Ensure valid result (vs. expected output type for this exit)
                   var result = rawOutput;//TODO
                   return proceed(undefined, result);
-                };
+                };//</ ... >
 
+                // * * * Implementation of each of the other misc. exits  (`exits.*()`)... * * *
                 _.each(_.difference(_.keys(exitDefs), ['error','success']), function (miscExitCodeName){
-                  // * * * Implementation of each other misc. exit  (`exits.*()`)... * * *
                   handlerCbs[miscExitCodeName] = function (rawOutput){
                     // Now build our Error instance for our "exception" (fka "forwarding error").
                     var err = flaverr({
@@ -374,7 +378,7 @@ module.exports = function buildCallableMachine(nmDef){
                 if (err) { return done(err); }
                 if (_.isUndefined(result)) { return done(); }
                 return done(undefined, result);
-              });//</ ... >
+              });//</ ... (_∏_) >
 
               return handlerCbs;
             })();
@@ -416,10 +420,10 @@ module.exports = function buildCallableMachine(nmDef){
           return this;
         },
 
-        switch: function (handlers) {
+        switch: function (userlandHandlers) {
 
           // Check usage.
-          if (!_.isObject(handlers) || _.isArray(handlers) || _.isFunction(handlers)) {
+          if (!_.isObject(userlandHandlers) || _.isArray(userlandHandlers) || _.isFunction(userlandHandlers)) {
             throw flaverr({name:'UsageError'}, new Error(
               'Sorry, .switch() doesn\'t know how to handle usage like that.\n'+
               'You should pass in a dictionary like `{...}` consisting of at least two\n'+
@@ -434,7 +438,7 @@ module.exports = function buildCallableMachine(nmDef){
           //
           // This is just yet another failsafe-- better to potentially terminate the process than
           // open up the possibility of silently swallowing errors later.
-          if (!handlers.error){
+          if (!userlandHandlers.error){
             throw flaverr({name:'UsageError'}, new Error(
               'Invalid usage of .switch() -- missing `error` handler.\n'+
               'If you use .switch({...}), the provided dictionary (aka "switchback"), must\n'+
@@ -446,8 +450,8 @@ module.exports = function buildCallableMachine(nmDef){
 
           // Same thing for the `success` handler -- except in this case, use the provided `error`
           // handler, rather than throwing an uncatchable Error.
-          if (!handlers.success){
-            return handlers.error({name:'UsageError'}, new Error(
+          if (!userlandHandlers.success){
+            return userlandHandlers.error({name:'UsageError'}, new Error(
               'Invalid usage of .switch() -- missing `success` handler.\n'+
               'If you use .switch({...}), the provided dictionary (aka "switchback"), must\n'+
               'define a `success` key with a callback function.  If you do not care about\n'+
@@ -470,19 +474,19 @@ module.exports = function buildCallableMachine(nmDef){
                 // console.log('This represents an actual exit traversal');
 
                 if (!err.code) { throw new Error('Consistency violation: Recognized exceptions from the machine runner should always have a `code` property, but this one does not!  Here is the error:'+util.inspect(err, {depth:null})); }
-                if (err.code === 'error' || !handlers[err.code]) {
-                  return handlers.error(err);
+                if (err.code === 'error' || !userlandHandlers[err.code]) {
+                  return userlandHandlers.error(err);
                 }
                 else {
-                  return handlers[err.code](err.raw);
+                  return userlandHandlers[err.code](err.raw);
                 }
               }//-•
 
               // if (err.name === 'Exception') { console.log('This error must have come from some internal machine from within THIS machine\'s implementation (aka `fn`)!'); }
-              return handlers.error(err);
+              return userlandHandlers.error(err);
             }//-•
 
-            handlers.success(result);
+            userlandHandlers.success(result);
           });//</ .exec() >
 
           return;
