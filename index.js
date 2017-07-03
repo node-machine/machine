@@ -730,12 +730,32 @@ module.exports = function buildCallableMachine(nmDef){
 //  ███████║   ██║   ██║  ██║   ██║   ██║╚██████╗    ██║ ╚═╝ ██║███████╗   ██║   ██║  ██║╚██████╔╝██████╔╝███████║
 //  ╚══════╝   ╚═╝   ╚═╝  ╚═╝   ╚═╝   ╚═╝ ╚═════╝    ╚═╝     ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝
 //                                                                                                                
-//   ██╗ ██████╗ ██████╗ ███╗   ███╗██████╗  █████╗ ████████╗██╗██████╗ ██╗██╗     ██╗████████╗██╗   ██╗██╗
-//  ██╔╝██╔════╝██╔═══██╗████╗ ████║██╔══██╗██╔══██╗╚══██╔══╝██║██╔══██╗██║██║     ██║╚══██╔══╝╚██╗ ██╔╝╚██╗
-//  ██║ ██║     ██║   ██║██╔████╔██║██████╔╝███████║   ██║   ██║██████╔╝██║██║     ██║   ██║    ╚████╔╝  ██║
-//  ██║ ██║     ██║   ██║██║╚██╔╝██║██╔═══╝ ██╔══██║   ██║   ██║██╔══██╗██║██║     ██║   ██║     ╚██╔╝   ██║
-//  ╚██╗╚██████╗╚██████╔╝██║ ╚═╝ ██║██║     ██║  ██║   ██║   ██║██████╔╝██║███████╗██║   ██║      ██║   ██╔╝
-//   ╚═╝ ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝     ╚═╝  ╚═╝   ╚═╝   ╚═╝╚═════╝ ╚═╝╚══════╝╚═╝   ╚═╝      ╚═╝   ╚═╝
+
+module.exports.getMethodName = (function(){
+  
+  /**
+   * Module dependencies
+   */
+
+  var makeECMAScriptCompatible = require('convert-to-ecmascript-compatible-varname');
+
+  /**
+   * `Machine.getMethodName()`
+   *
+   * Determine the `methodName` for a machine: an ECMAScript-compatible
+   * version of its `identity`, replacing dashes w/ camel-case.
+   *
+   * @param  {String} identity
+   * @return {String}
+   */
+  return function getMethodName(identity){
+    return makeECMAScriptCompatible(identity);
+  };
+
+})();
+
+
+
 //
 // Compatibility:
 // =====================================================================================================================
@@ -831,10 +851,11 @@ module.exports.pack = (function(){
     ];
 
 
+    // Sanity
+    if (!_.isObject(this) || !_.isFunction(this.build)) { throw new Error('Consistency violation: Context (`this`) is wrong in Machine.pack()!'); }
 
     // Get the `Machine` constructor
-    var Machine = this;
-    if (!_.isFunction(Machine.build)) { throw new Error('Consistency violation: Context (`this`) is wrong in Machine.pack()!'); }
+    var Machine = module.exports;
 
 
     // Now load & pack the modules.
@@ -867,11 +888,15 @@ module.exports.pack = (function(){
 
       // Build a dictionary of all the machines in this pack
       PackedModules = _.reduce(machines, function (memo, machineID) {
+        // console.log('machineID:',machineID);
 
         try {
           // Require and hydrate each static definition into a callable machine fn
           var requirePath = path.resolve(options.dir, options.pkg.machinepack.machineDir || options.pkg.machinepack.machinedir || '', machineID);
+          // console.log('requirePath:',requirePath);
           var definition = require(requirePath);
+          // console.log('definition.identity:',definition.identity);
+          // console.log('!!definition.identity:',!!definition.identity);
 
           // Attach the string identity as referenced in package.json to
           // the machine definition dictionary as its "identity"
@@ -879,12 +904,12 @@ module.exports.pack = (function(){
           definition.identity = definition.identity || machineID;
 
           // Build the machine.
-          var machineInstance = Machine.build(definition);
+          var machineInstance = Machine(definition);
 
           // Determine the method name.
-          var methodName = Machine.getMethodName(machineInstance.identity);
+          var methodName = Machine.getMethodName(definition.identity);
           if (_.contains(UNCONVENTIONAL_METHOD_NAMES, methodName)) {
-            console.warn('Warning: Machine "'+machineInstance.identity+'" has an unconventional identity that, when converted to a method name (`'+methodName+'`), could conflict with native features of JavaScript/Node.js.  Please consider changing it!');
+            console.warn('Warning: Machine "'+definition.identity+'" has an unconventional identity that, when converted to a method name (`'+methodName+'`), could conflict with native features of JavaScript/Node.js.  Please consider changing it!');
           }
 
           // Expose the machine as a method on our Pack dictionary.
