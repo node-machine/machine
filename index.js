@@ -518,12 +518,17 @@ module.exports = function buildCallableMachine(nmDef){
 
             if (err) {
 
-              // To explain why this `=== omen` check is necessary, have a look at this example:
-              // ```
-              // var inner = require('./')({ exits: { foo: {description: 'Whoops' } }, fn: function(inputs, exits) { return exits.foo(987); } }); var outer = require('./')({ exits: { foo: { description: 'Not the same' }}, fn: function(inputs, exits) { inner({}, (err)=>{ if (err) { return exits.error(err); } return exits.success(); }); } })().switch({ error: (err)=>{ console.log('Got error:',err); }, foo: ()=>{ console.log('Should NEVER make it here.  The `foo` exit of some other machine in the implementation has nothing to do with THIS `foo` exit!!'); }, success: ()=>{ console.log('Got success.'); }, });
-              // ```
-              // (Note that the same thing is true any time we might want to negotiate uncaught errors thrown from inside `fn`, timeouts, and RTTC validation errors)
               if (err.name === 'Exception' && err === omen) {
+                // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                // To explain why this `=== omen` check is necessary, have a look at this example:
+                // ```
+                // var inner = require('./')({ exits: { foo: {description: 'Whoops' } }, fn: function(inputs, exits) { return exits.foo(987); } }); var outer = require('./')({ exits: { foo: { description: 'Not the same' }}, fn: function(inputs, exits) { inner({}, (err)=>{ if (err) { return exits.error(err); } return exits.success(); }); } })().switch({ error: (err)=>{ console.log('Got error:',err); }, foo: ()=>{ console.log('Should NEVER make it here.  The `foo` exit of some other machine in the implementation has nothing to do with THIS `foo` exit!!'); }, success: ()=>{ console.log('Got success.'); }, });
+                // ```
+                // > Note: The same thing is true any time we might want to negotiate uncaught errors or unhandled
+                // > promise rejections thrown from inside `fn`, timeout errors, or RTTC validation errors.
+                // > It is important to remember that other machines used internally within `fn` could cause
+                // > the same errors!
+                // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 // console.log('This represents an actual exit traversal');
 
                 if (!err.code) { throw new Error('Consistency violation: Recognized exceptions from the machine runner should always have a `code` property, but this one does not!  Here is the error:'+util.inspect(err, {depth:null})); }
@@ -535,7 +540,7 @@ module.exports = function buildCallableMachine(nmDef){
                 }
               }//-•
 
-              // if (err.name === 'Exception') { console.log('This error must have come from some internal machine from within THIS machine\'s implementation (aka `fn`)!'); }
+              // if (err.name === 'Exception') { console.log('DEBUG: This error must have come from some internal machine from within THIS machine\'s implementation (aka `fn`)!'); }
               return userlandHandlers.error(err);
             }//-•
 
