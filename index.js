@@ -542,17 +542,44 @@ module.exports = function buildCallableMachine(nmDef){
 
         /**
          * .execSync()
+         *
+         * @returns {Ref} output from machine's success exit
+         * @throws {Error} If something goes wrong, or the machine's fn triggers a non-success exit.
          */
         execSync: function (){
-          // throw new Error('...');
-          // TODO: Finish implementing this properly, including the various checks & balances.
+
+          // Check that the machine definition explicitly flagged itself as synchronous.
+          // > If `sync` was NOT set, then this is a usage error.
+          // > You can't run a machine synchronously unless it proudly declares itself as such.
+          if (!nmDef.sync) {
+            throw flaverr({name:'UsageError'}, new Error(
+              'Sorry, this function cannot be called synchronously, because it does not\n'+
+              'declare support for synchronous usage (i.e. `sync: true`)\n'+
+              '> See https://sailsjs.com/support for help.'
+            ), omen);
+          }//-•
+
+
+          var isFinishedExecuting;
           var immediateResult;
           this.exec(function (err, result){
+            isFinishedExecuting = true;
             if (err) { throw err; }
             immediateResult = result;
           });
+
+          if (!isFinishedExecuting) {
+            throw flaverr({name:'ImplementationError'}, new Error(
+              'Failed to call this function synchronously, because it is not\n'+
+              'actually synchronous.  Instead, its implementation is asynchronous --\n'+
+              'which is inconsistent with its declared interface (`sync: true`).\n'+
+              '> See https://sailsjs.com/support for help.'
+            ));
+          }
+
           return immediateResult;
         },
+
 
         /**
          * .meta()
