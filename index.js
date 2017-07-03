@@ -48,9 +48,9 @@ module.exports = function buildCallableMachine(nmDef){
 
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // FUTURE: Since timeouts, spinlocks, catching, etc don't work unless using the Deferred
-  // usage pattern, then log a warning if this machine declares a `timeout`, but the an
-  // explicit callback was passed in.
+  // FUTURE: (maybe) Since timeouts, spinlocks, catching, etc don't work unless using the
+  // Deferred usage pattern, then log a warning if this machine declares a `timeout`, but
+  // an explicit callback was passed in.
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
@@ -66,11 +66,12 @@ module.exports = function buildCallableMachine(nmDef){
 
 
   // Return our callable ("wet") machine function in the appropriate format.
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // FUTURE: Consider support for returning a machine function with other usage styles
   // > Note: This is the same idea as "invocation style" or "invocation type" -- i.e. as envisioned
   // > for performance improvements when ideating with jdalton earlier in 2017 (see node-machine/spec
   // > repo for details/memory-jogging)
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // FUTURE: Consider support for returning a machine function with other usage styles
+  //
   // For example, instead of:
   //
   // ```
@@ -221,22 +222,25 @@ module.exports = function buildCallableMachine(nmDef){
             //
             // > Note that this should check whether `fn` is an `async function` or not and react accordingly.
             // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-            return done(flaverr({name:'UsageError'}, new Error('The `classic` implementation type is experimental, and not yet supported.  See https://github.com/node-machine/spec/pull/2/files#diff-eba3c42d87dad8fb42b4080df85facecR95 for background, or https://sailsjs.com/support for help.')));
+            return done(flaverr({name:'UsageError'}, new Error('The experimental `classic` implementation type is not yet supported.  See https://github.com/node-machine/spec/pull/2/files#diff-eba3c42d87dad8fb42b4080df85facecR95 for background, or https://sailsjs.com/support for help.')));
 
           default:
 
-            var finalArgins = argins;
             // Validate argins vs. our declared input definitions.
             // (Potentially, also coerce them.)
+            var finalArgins = argins;
+            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
             // TODO
-
-
-            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-            // TODO: Prevent using unexpected additional argins -- at least without setting a special meta key
             // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+
+            // Prevent using unexpected additional argins -- at least without setting a special meta key
             // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-            // FUTURE: Build callable forms of lambda inversions (aka submachines)??
+            // TODO
+            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+            // FUTURE: (maybe) Build callable forms of lambda inversions (aka submachines)??
             // But really, maybe consider ripping out support for this in the interest of simplicity.
             // Only a few machines really need to use it, and it's easy to make it work.  The only thing
             // is that we would then lose the nice, consistent handling of edge cases provided by the machine
@@ -407,7 +411,7 @@ module.exports = function buildCallableMachine(nmDef){
             // > using the provided meta keys (aka habitat vars)
             _.bind(nmDef.fn, metadata)(finalArgins, implSideExitHandlerCbs, metadata);
 
-        }//</ switch >
+        }//</ switch(nmDef.implementationType) >
 
       },
 
@@ -585,14 +589,17 @@ module.exports = function buildCallableMachine(nmDef){
       // ```
       //
       //
-      // NOTE THAT THIS WILL NEVER WORK:
+      // NOTE THAT THIS WILL NEVER WORK IN THE SAME WAY (because it's using the bare, explicit cb usage):
       // ```
       // var inner = require('./')({ timeout: 50, exits: { foo: {description: 'Whoops' } }, fn: function(inputs, exits) { setTimeout(()=>{return exits.foo(987);},750); } }); require('./')({ identity: 'outer', exits: { foo: { description: 'Not the same' }}, fn: function(inputs, exits) { inner({}, (err)=>{ if (err) { return exits.error(err); } return exits.success(); }); } })().switch({ error: (err)=>{ console.log('Got error:',err); }, foo: ()=>{ console.log('Should NEVER make it here.  The `foo` exit of some other machine in the implementation has nothing to do with THIS `foo` exit!!'); }, success: ()=>{ console.log('Got success.'); }, });
       // ```
       // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
       // Pass in the omen, if we were able to create one.
-      omen || undefined
+      omen || undefined,
+
+      // Pass in an interceptor (lifecycle callback) for error/result on the way back out from .exec():
+      undefined//TODO
 
     );
 
