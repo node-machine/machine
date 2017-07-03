@@ -252,18 +252,12 @@ module.exports = function buildCallableMachine(nmDef){
           case '':
           case undefined:
 
-            // Validate argins vs. our declared input definitions.
-            // (Potentially, also coerce them.)
+            // Validate argins vs. the declared input definitions, honoring type safety, potentially performing
+            // light coercion, applying defaultsTo, ensuring required argins are present for all required inputs,
+            // and preventing unexpected extraneous argins unless a special meta key is set.
             var finalArgins = argins;
-            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
             // TODO
-            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-
-            // Prevent using unexpected additional argins -- at least without setting a special meta key
-            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-            // TODO
-            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
             // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
             // FUTURE: (maybe) Build callable forms of lambda inversions (aka submachines)??
@@ -311,14 +305,6 @@ module.exports = function buildCallableMachine(nmDef){
 
                 // * * * Implementation of exits.error()... * * *
                 handlerCbs.error = function(rawOutput){
-
-                  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                  // FUTURE: Consider implementing backwards compatibility for a `code` of `E_TIMEOUT`?
-                  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-                  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                  // FUTURE: Consider implementing backwards compatibility for a `code` of `E_MACHINE_RUNTIME_VALIDATION`?
-                  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
                   // Ensure that the catchall error exit (`error`) always comes back with an Error instance
                   // (i.e. so node callback expectations are fulfilled)
