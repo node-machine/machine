@@ -683,8 +683,9 @@ module.exports = function buildCallableMachine(nmDef){
       omen || undefined,
 
 
-      // Pass in an interceptor (lifecycle callback) for error/result on the way back out from .exec():
-      undefined//TODO
+      // FUTURE: To allow for improved error messages, we could pass in an interceptor
+      // (aka lifecycle callback) here, for intering with the error/result on the way back out from .exec().
+      undefined
 
     );
 
