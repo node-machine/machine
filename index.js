@@ -737,7 +737,7 @@ module.exports.getMethodName = (function(){
    * Module dependencies
    */
 
-  var makeECMAScriptCompatible = require('convert-to-ecmascript-compatible-varname');
+  var makeECMAScriptCompatible = require('./lib/private/convert-to-ecmascript-compatible-varname');
 
   /**
    * `Machine.getMethodName()`
@@ -812,7 +812,7 @@ module.exports.pack = (function(){
    *          A dictionary of packed modules with camel-cased keys, and functions as values.
    */
 
-  return function Machine_pack (options) {// eslint-disable-line camelcase
+  return function pack (options) {// eslint-disable-line camelcase
 
     // If specified as a string, understand as `options.dir`.
     if (_.isString(options)) {
