@@ -25,7 +25,7 @@ var parley = require('parley');
 module.exports = function buildCallableMachine(nmDef){ 
 
   // Determine the effective identity of this machine.
-  var identity = nmDef.identity || undefined;//TODO
+  var identity = nmDef.identity || (nmDef.friendlyName && _.camelCase(nmDef.friendlyName)) || undefined;//TODO
 
   // Verify correctness of node-machine definition.
   // TODO
@@ -439,27 +439,27 @@ module.exports = function buildCallableMachine(nmDef){
             // provide some mechanism for passing in this information so that it can be
             // predetermined (e.g. at build-time).
             // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-            if (nmDef.fn.constructor.name === 'AsyncFunction') {
-              // Note that `_.bind()` works perfectly OK with ES8 async functions, at least
-              // in platforms tested (such as Node 8.1.2).  We still keep this as a separate
-              // code path from below though, just to be 100% about what's going on.
-              var boundES8AsyncFn = _.bind(nmDef.fn, metadata);
-              var promise = boundES8AsyncFn(finalArgins, implSideExitHandlerCbs, metadata);
-              // Also note that here, we don't write in the usual `return done(e)` style.
-              // This is deliberate -- to provide a conspicuous reminder that we aren't
-              // trying to get up to any funny business with the promise chain.
-              promise.catch(function(e) {
-                // Finally, note the `e.raw` bit.  This is because bluebird's "reason" comes back
-                // as something other than an Error instance, which wouldn't be consistent.
-                console.log('!!!');
-                // done(e.raw);
-                done(e);
-              });
-            }
-            else {
+            // if (nmDef.fn.constructor.name === 'AsyncFunction') {
+            //   // Note that `_.bind()` works perfectly OK with ES8 async functions, at least
+            //   // in platforms tested (such as Node 8.1.2).  We still keep this as a separate
+            //   // code path from below though, just to be 100% about what's going on.
+            //   var boundES8AsyncFn = _.bind(nmDef.fn, metadata);
+            //   var promise = boundES8AsyncFn(finalArgins, implSideExitHandlerCbs, metadata);
+            //   // Also note that here, we don't write in the usual `return done(e)` style.
+            //   // This is deliberate -- to provide a conspicuous reminder that we aren't
+            //   // trying to get up to any funny business with the promise chain.
+            //   promise.catch(function(e) {
+            //     // Finally, note the `e.raw` bit.  This is because bluebird's "reason" comes back
+            //     // as something other than an Error instance, which wouldn't be consistent.
+            //     console.log('!!!');
+            //     // done(e.raw);
+            //     done(e);
+            //   });
+            // }
+            // else {
               var boundFn = _.bind(nmDef.fn, metadata);
               boundFn(finalArgins, implSideExitHandlerCbs, metadata);
-            }
+            // }
 
             // ==================================================================
             // HERE'S WHAT ALL THIS MEANS:
