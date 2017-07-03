@@ -22,12 +22,7 @@ var parley = require('parley');
  * - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-module.exports = function buildCallableMachine(nmDef){
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  // FUTURE: Support invocation types as envisioned when ideating on jdalton's
-  // thoughts earlier in 2017 (see node-machine/spec repo for details)
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+module.exports = function buildCallableMachine(nmDef){ 
 
   // Determine the effective identity of this machine.
   var identity = nmDef.identity || undefined;//TODO
@@ -71,6 +66,9 @@ module.exports = function buildCallableMachine(nmDef){
 
 
   // Return our callable ("wet") machine function in the appropriate format.
+  // > Note: This is the same idea as "invocation style" or "invocation type" -- i.e. as envisioned
+  // > for performance improvements when ideating with jdalton earlier in 2017 (see node-machine/spec
+  // > repo for details/memory-jogging)
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // FUTURE: Consider support for returning a machine function with other usage styles
   // For example, instead of:
