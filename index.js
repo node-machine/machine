@@ -337,6 +337,14 @@ module.exports = function buildCallableMachine(nmDef){
                     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                     err = rawOutput;
                   }
+                  // Note that async+await/bluebird/Node 8 errors are not necessarily "true" Error instances,
+                  // as per _.isError() anyway (see https://github.com/node-machine/machine/commits/6b9d9590794e33307df1f7ba91e328dd236446a9).
+                  // So if we want to keep a reasonable stack trace, we have to be a bit more relaxed here and
+                  // tolerate these sorts of "errors" directly as well (by tweezing out the `cause`, which is
+                  // where the original Error lives.)
+                  else if (_.isObject(rawOutput) && rawOutput.cause && _.isError(rawOutput.cause)) {
+                    err = rawOutput.cause;
+                  }
                   else if (_.isString(rawOutput)) {
                     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                     // FUTURE: add in separate warning message explaining that there should always
@@ -391,10 +399,16 @@ module.exports = function buildCallableMachine(nmDef){
                         else if (_.isError(rawOutput)) {
                           errMsg += ': '+rawOutput.message;
                         }
+                        //  • if the raw output is BASICALLY an Error instance, then just append its message
+                        //    (see comments around other usages of _.isError() in this file for more info)
+                        else if (_.isObject(rawOutput) && rawOutput.cause && _.isError(rawOutput.cause)) {
+                          errMsg += ': '+rawOutput.cause.message;
+                        }
                         //  • if the raw output is anything else, inspect and append it
-                        else if (!_.isError(rawOutput)) {
+                        else {
                           errMsg += ' with: \n\n' + util.inspect(rawOutput, {depth: 5});
                         }
+
                         return errMsg;
                       })(),
                       // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -439,27 +453,23 @@ module.exports = function buildCallableMachine(nmDef){
             // provide some mechanism for passing in this information so that it can be
             // predetermined (e.g. at build-time).
             // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-            // if (nmDef.fn.constructor.name === 'AsyncFunction') {
-            //   // Note that `_.bind()` works perfectly OK with ES8 async functions, at least
-            //   // in platforms tested (such as Node 8.1.2).  We still keep this as a separate
-            //   // code path from below though, just to be 100% about what's going on.
-            //   var boundES8AsyncFn = _.bind(nmDef.fn, metadata);
-            //   var promise = boundES8AsyncFn(finalArgins, implSideExitHandlerCbs, metadata);
-            //   // Also note that here, we don't write in the usual `return done(e)` style.
-            //   // This is deliberate -- to provide a conspicuous reminder that we aren't
-            //   // trying to get up to any funny business with the promise chain.
-            //   promise.catch(function(e) {
-            //     // Finally, note the `e.raw` bit.  This is because bluebird's "reason" comes back
-            //     // as something other than an Error instance, which wouldn't be consistent.
-            //     console.log('!!!');
-            //     // done(e.raw);
-            //     done(e);
-            //   });
-            // }
-            // else {
+            if (nmDef.fn.constructor.name === 'AsyncFunction') {
+              // Note that `_.bind()` works perfectly OK with ES8 async functions, at least
+              // in platforms tested (such as Node 8.1.2).  We still keep this as a separate
+              // code path from below though, just to be 100% about what's going on.
+              var boundES8AsyncFn = _.bind(nmDef.fn, metadata);
+              var promise = boundES8AsyncFn(finalArgins, implSideExitHandlerCbs, metadata);
+              // Also note that here, we don't write in the usual `return done(e)` style.
+              // This is deliberate -- to provide a conspicuous reminder that we aren't
+              // trying to get up to any funny business with the promise chain.
+              promise.catch(function(e) {
+                done(e);
+              });
+            }
+            else {
               var boundFn = _.bind(nmDef.fn, metadata);
               boundFn(finalArgins, implSideExitHandlerCbs, metadata);
-            // }
+            }
 
             // ==================================================================
             // HERE'S WHAT ALL THIS MEANS:
