@@ -64,7 +64,8 @@ describe('Machine.prototype.exec()', function (){
         try {
           m({ foo: 'bar' }).exec();
         } catch (e) {
-          if (e.code === 'E_NO_ERROR_CALLBACK_CONFIGURED') {
+          // (Note: In past versions, this was indicated by a code of 'E_NO_ERROR_CALLBACK_CONFIGURED'.)
+          if (e.name === 'UsageError') {
             return;
           }
           else { throw e; }
@@ -98,7 +99,7 @@ describe('Machine.prototype.exec()', function (){
 
     describe('calling .exec(perExitCallbacks)', function () {
       describe('with an `error` callback provided', function () {
-        it('should trigger the `error` callback', function (done){
+        it('should not hang forever, go into an infinite loop, or crash the process -- instead, throw a predictable UsageError', function (done){
           var m = Machine.build(NM_DEF_FIXTURE);
 
           // Save a reference to the original machine instance for comparison below.
@@ -106,6 +107,51 @@ describe('Machine.prototype.exec()', function (){
 
           try {
             _origMachineInstance.exec({
+              error: function (err) {
+                return done(new Error('Should never have made it here'));
+              },
+              success: function (){
+                return done(new Error('Should never have made it here'));
+              }
+            });
+          } catch (e) {
+            if (e.name === 'UsageError') { return done(); }
+            return done(e);
+          }
+          return done(new Error('Should have thrown a UsageError'));
+        });
+      });//</describe :: with an `error` callback provided>
+
+      describe('WITHOUT providing an `error` callback', function () {
+        it('should not hang forever, go into an infinite loop, or crash the process -- instead, throw a predictable UsageError', function (done){
+          var m = Machine.build(NM_DEF_FIXTURE);
+
+          try {
+            m({ foo: 'bar' }).exec({
+              success: function (){
+                return done(new Error('Should never have called this callback!'));
+              }
+            });
+          } catch (e) {
+            if (e.name === 'UsageError') { return done(); }
+            return done(e);
+          }
+          return done(new Error('Should have thrown a UsageError'));
+        });
+      });//</describe :: WITHOUT providing an `error` callback>
+
+    });//</describe :: calling .exec(perExitCallbacks)>
+
+    describe('calling .switch(perExitCallbacks)', function () {
+      describe('with an `error` callback provided', function () {
+        it('should trigger the `error` callback', function (done){
+          var m = Machine.build(NM_DEF_FIXTURE);
+
+          // Save a reference to the original machine instance for comparison below.
+          var _origMachineInstance = m({ foo: 'bar' });
+
+          try {
+            _origMachineInstance.switch({
               error: function (err) {
                 if (err) {
                   // if (err.exit !== 'error') { return done(new Error('The error should have had a `exit` property set to `error`.  Here\'s the whole stack:\n '+err.stack)); }
@@ -129,13 +175,14 @@ describe('Machine.prototype.exec()', function (){
           var m = Machine.build(NM_DEF_FIXTURE);
 
           try {
-            m({ foo: 'bar' }).exec({
+            m({ foo: 'bar' }).switch({
               success: function (){
                 return done(new Error('Should never have called this callback!'));
               }
             });
           } catch (e) {
-            if (e.code === 'E_NO_ERROR_CALLBACK_CONFIGURED') {
+            // (Note: In past versions, this was indicated by a code of 'E_NO_ERROR_CALLBACK_CONFIGURED'.)
+            if (e.name === 'UsageError') {
               return done();
             }
             else { return done(e); }
@@ -144,7 +191,7 @@ describe('Machine.prototype.exec()', function (){
         });
       });//</describe :: WITHOUT providing an `error` callback>
 
-    });//</describe :: calling .exec(perExitCallbacks)>
+    });//</describe :: calling .switch(perExitCallbacks)>
 
 
   });//</describe :: when all required argins are provided>
@@ -199,7 +246,8 @@ describe('Machine.prototype.exec()', function (){
         try {
           m().exec();
         } catch (e) {
-          if (e.code === 'E_NO_ERROR_CALLBACK_CONFIGURED') {
+          // (Note: In past versions, this was indicated by a code of 'E_NO_ERROR_CALLBACK_CONFIGURED'.)
+          if (e.name === 'UsageError') {
             return;
           }
           else { throw e; }
@@ -272,7 +320,8 @@ describe('Machine.prototype.exec()', function (){
               }
             });
           } catch (e) {
-            if (e.code === 'E_NO_ERROR_CALLBACK_CONFIGURED') {
+            // (Note: In past versions, this was indicated by a code of 'E_NO_ERROR_CALLBACK_CONFIGURED'.)
+            if (e.name === 'UsageError') {
               return done();
             }
             else { return done(e); }
@@ -331,7 +380,8 @@ describe('Machine.prototype.exec()', function (){
         try {
           m({foo: ''}).exec();
         } catch (e) {
-          if (e.code === 'E_NO_ERROR_CALLBACK_CONFIGURED') {
+          // (Note: In past versions, this was indicated by a code of 'E_NO_ERROR_CALLBACK_CONFIGURED'.)
+          if (e.name === 'UsageError') {
             return;
           }
           else { throw e; }
@@ -404,7 +454,8 @@ describe('Machine.prototype.exec()', function (){
               }
             });
           } catch (e) {
-            if (e.code === 'E_NO_ERROR_CALLBACK_CONFIGURED') {
+            // (Note: In past versions, this was indicated by a code of 'E_NO_ERROR_CALLBACK_CONFIGURED'.)
+            if (e.name === 'UsageError') {
               return done();
             }
             else { return done(e); }
