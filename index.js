@@ -166,36 +166,6 @@ module.exports = function buildCallableMachine(nmDef){
       metadata = {};
     }//>-
 
-    // Check usage.
-    if (!_.isObject(argins) && _.isFunction(argins) && _.isArray(argins)) {
-      throw flaverr({name:'UsageError'}, new Error(
-        'Sorry, this function doesn\'t know how to handle usage like that.\n'+
-        'If provided, the 1st argument should be a dictionary like `{...}`\n'+
-        'consisting of input values (aka "argins") to pass through to the fn.\n'+
-        '> See https://sailsjs.com/support for help.'
-      ));
-    }
-    if (!_.isUndefined(explicitCbMaybe) && !_.isFunction(explicitCbMaybe)) {
-      if (!_.isArray(explicitCbMaybe) && _.isObject(explicitCbMaybe)) {
-        throw flaverr({name:'UsageError'}, new Error(
-          'Sorry, this function doesn\'t know how to handle {...} callbacks.\n'+
-          'If provided, the 2nd argument should be a function like `function(err,result){...}`\n'+
-          '|  If you passed in {...} on purpose as a "switchback" (dictionary of callbacks),\n'+
-          '|  please be aware that, as of machine v15, you can no longer pass in a switchback\n'+
-          '|  as the 2nd argument.  And you can\'t pass a switchback in to .exec() anymore either.\n'+
-          '|  Instead, you\'ll need to explicitly call .switch().\n'+
-          'See https://sailsjs.com/support for more help.'
-        ));
-      }
-      else {
-        throw flaverr({name:'UsageError'}, new Error(
-          'Sorry, this function doesn\'t know how to handle usage like that.\n'+
-          'If provided, the 2nd argument should be a function like `function(err,result){...}`\n'+
-          'that will be triggered as a callback after this fn is finished.\n'+
-          '> See https://sailsjs.com/support for help.'
-        ));
-      }
-    }
 
     // Build an "omen": an Error instance defined ahead of time in order to grab a stack trace.
     // (used for providing a better experience when viewing the stack trace of errors
@@ -206,6 +176,48 @@ module.exports = function buildCallableMachine(nmDef){
     // > Inspired by the implementation originally devised for Waterline:
     // > https://github.com/balderdashy/waterline/blob/6b1f65e77697c36561a0edd06dff537307986cb7/lib/waterline/utils/query/build-omen.js
     var omen = flaverr({}, new Error('omen'), runFn);
+
+
+    // Check usage.
+    if (!_.isObject(argins) && _.isFunction(argins) && _.isArray(argins)) {
+      throw flaverr({
+        name:
+          'UsageError',
+        message:
+          'Sorry, this function doesn\'t know how to handle usage like that.\n'+
+          'If provided, the 1st argument should be a dictionary like `{...}`\n'+
+          'consisting of input values (aka "argins") to pass through to the fn.\n'+
+          '> See https://sailsjs.com/support for help.'
+      }, omen);
+    }
+    if (!_.isUndefined(explicitCbMaybe) && !_.isFunction(explicitCbMaybe)) {
+      if (!_.isArray(explicitCbMaybe) && _.isObject(explicitCbMaybe)) {
+        throw flaverr({
+          name:
+            'UsageError',
+          message: 
+            'Sorry, this function doesn\'t know how to handle {...} callbacks.\n'+
+            'If provided, the 2nd argument should be a function like `function(err,result){...}`\n'+
+            '|  If you passed in {...} on purpose as a "switchback" (dictionary of callbacks),\n'+
+            '|  please be aware that, as of machine v15, you can no longer pass in a switchback\n'+
+            '|  as the 2nd argument.  And you can\'t pass a switchback in to .exec() anymore either.\n'+
+            '|  Instead, you\'ll need to explicitly call .switch().\n'+
+            'See https://sailsjs.com/support for more help.'        
+        }, omen);
+      }
+      else {
+        throw flaverr({
+          name:
+            'UsageError',
+          message:
+            'Sorry, this function doesn\'t know how to handle usage like that.\n'+
+            'If provided, the 2nd argument should be a function like `function(err,result){...}`\n'+
+            'that will be triggered as a callback after this fn is finished.\n'+
+            '> See https://sailsjs.com/support for help.'
+        }, omen);
+      }
+    }
+
 
     // Build and return an appropriate deferred object.
     // (Or possibly just start executing the machine immediately, depending on usage)
@@ -227,7 +239,7 @@ module.exports = function buildCallableMachine(nmDef){
             // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
             // See https://www.youtube.com/watch?v=1X-Q-HUS4mg&list=PLIQKJlrxhPyIDGAZ6CastNOmSSQkXSx2E&index=1
             // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-            return done(flaverr({name:'UsageError'}, new Error('Machines built with the `composite` implementation type cannot be executed using this runner.  (For help, visit https://sailsjs.com/support)')));
+            return done(flaverr({name:'UsageError', message: 'Machines built with the `composite` implementation type cannot be executed using this runner.  (For help, visit https://sailsjs.com/support)'}, omen));
 
           case 'es8AsyncFunction':
             // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -236,7 +248,7 @@ module.exports = function buildCallableMachine(nmDef){
             // 
             // > Note that this should check whether `fn` is an `async function` or not and warn/error accordingly.
             // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-            return done(flaverr({name:'UsageError'}, new Error('The experimental `es8AsyncFunction` implementation type is not yet supported.  See https://github.com/node-machine/machine/commits/c0d7dba572018a7ec8d1d0683abb7c46f0aabae8 for background, or https://sailsjs.com/support for help.')));
+            return done(flaverr({name:'UsageError', message: 'The experimental `es8AsyncFunction` implementation type is not yet supported.  See https://github.com/node-machine/machine/commits/c0d7dba572018a7ec8d1d0683abb7c46f0aabae8 for background, or https://sailsjs.com/support for help.'}, omen));
 
           case 'classicJsFunction':
             // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -245,7 +257,7 @@ module.exports = function buildCallableMachine(nmDef){
             //
             // > Note that this should check whether `fn` is an `async function` or not and warn/error accordingly.
             // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-            return done(flaverr({name:'UsageError'}, new Error('The experimental `classicJsFunction` implementation type is not yet supported.  See https://github.com/node-machine/spec/pull/2/files#diff-eba3c42d87dad8fb42b4080df85facecR95 for background, or https://sailsjs.com/support for help.')));
+            return done(flaverr({name:'UsageError', message: 'The experimental `classicJsFunction` implementation type is not yet supported.  See https://github.com/node-machine/spec/pull/2/files#diff-eba3c42d87dad8fb42b4080df85facecR95 for background, or https://sailsjs.com/support for help.'}, omen));
 
           case '':
           case undefined:
@@ -270,7 +282,7 @@ module.exports = function buildCallableMachine(nmDef){
             // > Note: The only reason this is a self-calling function is to keep private variables insulated.
             var implSideExitHandlerCbs = (function _gettingHandlerCbs(){
 
-              var handlerCbs = function (){ throw flaverr({name:'CompatibilityError'}, new Error('Implementor-land switchbacks are no longer supported by default in the machine runner.  Instead of `exits()`, please call `exits.success()` or `exits.error()` from within your machine `fn`.  (For help, visit https://sailsjs.com/support)')); };
+              var handlerCbs = function (){ throw flaverr({name:'CompatibilityError', message: 'Implementor-land switchbacks are no longer supported by default in the machine runner.  Instead of `exits()`, please call `exits.success()` or `exits.error()` from within your machine `fn`.  (For help, visit https://sailsjs.com/support)'}); };
 
               /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
               //
@@ -539,11 +551,14 @@ module.exports = function buildCallableMachine(nmDef){
           // > If `sync` was NOT set, then this is a usage error.
           // > You can't run a machine synchronously unless it proudly declares itself as such.
           if (!nmDef.sync) {
-            throw flaverr({name:'UsageError'}, new Error(
-              'Sorry, this function cannot be called synchronously, because it does not\n'+
-              'declare support for synchronous usage (i.e. `sync: true`)\n'+
-              '> See https://sailsjs.com/support for help.'
-            ), omen);
+            throw flaverr({
+              name:
+                'UsageError',
+              message: 
+                'Sorry, this function cannot be called synchronously, because it does not\n'+
+                'declare support for synchronous usage (i.e. `sync: true`)\n'+
+                '> See https://sailsjs.com/support for help.'
+            }, omen);
           }//-•
 
 
@@ -556,12 +571,15 @@ module.exports = function buildCallableMachine(nmDef){
           });
 
           if (!isFinishedExecuting) {
-            throw flaverr({name:'ImplementationError'}, new Error(
-              'Failed to call this function synchronously, because it is not\n'+
-              'actually synchronous.  Instead, its implementation is asynchronous --\n'+
-              'which is inconsistent with its declared interface (`sync: true`).\n'+
-              '> See https://sailsjs.com/support for help.'
-            ));
+            throw flaverr({
+              name:
+                'ImplementationError',
+              message:
+                'Failed to call this function synchronously, because it is not\n'+
+                'actually synchronous.  Instead, its implementation is asynchronous --\n'+
+                'which is inconsistent with its declared interface (`sync: true`).\n'+
+                '> See https://sailsjs.com/support for help.'
+            }, omen);
           }
 
           return immediateResult;
@@ -588,13 +606,16 @@ module.exports = function buildCallableMachine(nmDef){
 
           // Check usage.
           if (!_.isObject(userlandHandlers) || _.isArray(userlandHandlers) || _.isFunction(userlandHandlers)) {
-            throw flaverr({name:'UsageError'}, new Error(
-              'Sorry, .switch() doesn\'t know how to handle usage like that.\n'+
-              'You should pass in a dictionary like `{...}` consisting of at least two\n'+
-              'handler functions: one for `error` and one for `success`.  You can also\n'+
-              'provide additional keys for any other exits you want to explicitly handle.\n'+
-              '> See https://sailsjs.com/support for help.'
-            ));
+            throw flaverr({
+              name:
+                'UsageError',
+              message:
+                'Sorry, .switch() doesn\'t know how to handle usage like that.\n'+
+                'You should pass in a dictionary like `{...}` consisting of at least two\n'+
+                'handler functions: one for `error` and one for `success`.  You can also\n'+
+                'provide additional keys for any other exits you want to explicitly handle.\n'+
+                '> See https://sailsjs.com/support for help.'
+            }, omen);
           }//-•
 
           // Before proceeding, ensure error exit is still configured w/ a callback.
@@ -603,25 +624,31 @@ module.exports = function buildCallableMachine(nmDef){
           // This is just yet another failsafe-- better to potentially terminate the process than
           // open up the possibility of silently swallowing errors later.
           if (!userlandHandlers.error){
-            throw flaverr({name:'UsageError'}, new Error(
-              'Invalid usage of .switch() -- missing `error` handler.\n'+
-              'If you use .switch({...}), the provided dictionary (aka "switchback"), must\n'+
-              'define an `error` key with a catchall callback function.  Otherwise, there\n'+
-              'would be no way to handle any unexpected or internal errors!\n'+
-              '> See https://sailsjs.com/support for help.'
-            ));
+            throw flaverr({
+              name:
+                'UsageError',
+              message:
+                'Invalid usage of .switch() -- missing `error` handler.\n'+
+                'If you use .switch({...}), the provided dictionary (aka "switchback"), must\n'+
+                'define an `error` key with a catchall callback function.  Otherwise, there\n'+
+                'would be no way to handle any unexpected or internal errors!\n'+
+                '> See https://sailsjs.com/support for help.'
+            }, omen);
           }//-•
 
           // Same thing for the `success` handler -- except in this case, use the provided `error`
           // handler, rather than throwing an uncatchable Error.
           if (!userlandHandlers.success){
-            return userlandHandlers.error({name:'UsageError'}, new Error(
-              'Invalid usage of .switch() -- missing `success` handler.\n'+
-              'If you use .switch({...}), the provided dictionary (aka "switchback"), must\n'+
-              'define a `success` key with a callback function.  If you do not care about\n'+
-              'the success scenario, please provide a no-op callback, or use .exec() instead.\n'+
-              '> See https://sailsjs.com/support for help.'
-            ));
+            return userlandHandlers.error({
+              name:
+                'UsageError',
+              message:
+                'Invalid usage of .switch() -- missing `success` handler.\n'+
+                'If you use .switch({...}), the provided dictionary (aka "switchback"), must\n'+
+                'define a `success` key with a callback function.  If you do not care about\n'+
+                'the success scenario, please provide a no-op callback, or use .exec() instead.\n'+
+                '> See https://sailsjs.com/support for help.'
+            }, omen);
           }//-•
 
           
@@ -683,36 +710,46 @@ module.exports = function buildCallableMachine(nmDef){
         // other straight-up removed features that we haven't added improved err msgs for via new shims)
         // =====================================================================================================================
         demuxSync: function () {
-          throw flaverr({name:'CompatibilityError'}, new Error('As of machine v15, the experimental `.demuxSync()` method is no longer supported.  Instead, please use something like this:\n'+
-            '\n'+
-            '```\n'+
-            '    var origResultFromDemuxSync = (()=>{\n'+
-            '      try {\n'+
-            '        thisMethod().execSync();\n'+
-            '        return true;\n'+
-            '      } catch (e) { return false; }\n'+
-            '    })();\n'+
-            '```\n'+
-            '\n'+
-            'Here is a link to the original implementation, for reference:\n'+
-            'https://github.com/node-machine/machine/blob/3cbdf60f7754ef47688320d370ef543eb27e36f0/lib/Machine.prototype.demuxSync.js'
-          ));
+          throw flaverr({
+            name:
+              'CompatibilityError',
+            message:
+              'As of machine v15, the experimental `.demuxSync()` method is no longer supported.\n'+
+              'Instead, please use something like this:\n'+
+              '\n'+
+              '```\n'+
+              '    var origResultFromDemuxSync = (()=>{\n'+
+              '      try {\n'+
+              '        thisMethod().execSync();\n'+
+              '        return true;\n'+
+              '      } catch (e) { return false; }\n'+
+              '    })();\n'+
+              '```\n'+
+              '\n'+
+              'Here is a link to the original implementation, for reference:\n'+
+              'https://github.com/node-machine/machine/blob/3cbdf60f7754ef47688320d370ef543eb27e36f0/lib/Machine.prototype.demuxSync.js'
+          }, omen);
         },
         cache: function () {
-          throw flaverr({name:'CompatibilityError'}, new Error('As of machine v15, built-in caching functionality (and thus the `.cache()` method) is no longer supported.  Instead, please use your own caching mechanism-- for example:\n'+
-            '\n'+
-            '```\n'+
-            '    global.MY_CACHE = global.MY_CACHE || {};\n'+
-            '    var result = MY_CACHE[\'foo\'];\n'+
-            '    if (_.isUndefined(result)) {\n'+
-            '      result = await thisMethod({id:\'foo\'});\n'+
-            '      MY_CACHE[\'foo\'] = result;\n'+
-            '    }\n'+
-            '```\n'+
-            '\n'+
-            'Here is a link to part of the original implementation, for reference:\n'+
-            'https://github.com/node-machine/machine/blob/3cbdf60f7754ef47688320d370ef543eb27e36f0/lib/Machine.prototype.cache.js'
-          ));
+          throw flaverr({
+            name:
+              'CompatibilityError',
+            message: 
+              'As of machine v15, built-in caching functionality (and thus the `.cache()` method) is no longer supported.\n'+
+              'Instead, please use your own caching mechanism-- for example:\n'+
+              '\n'+
+              '```\n'+
+              '    global.MY_CACHE = global.MY_CACHE || {};\n'+
+              '    var result = MY_CACHE[\'foo\'];\n'+
+              '    if (_.isUndefined(result)) {\n'+
+              '      result = await thisMethod({id:\'foo\'});\n'+
+              '      MY_CACHE[\'foo\'] = result;\n'+
+              '    }\n'+
+              '```\n'+
+              '\n'+
+              'Here is a link to part of the original implementation, for reference:\n'+
+              'https://github.com/node-machine/machine/blob/3cbdf60f7754ef47688320d370ef543eb27e36f0/lib/Machine.prototype.cache.js'
+          }, omen);
         },
 
       },
@@ -794,11 +831,7 @@ module.exports.getMethodName = function (identity){
   // One last check to make sure we ended up with a valid variable name:
   // (i.e. don't clash with special JavaScript keywords, like "delete")
   if (!str.match(X_VALID_ECMA51_VARNAME)) {
-    throw (function (){
-      var e = new Error('The string "'+original+'" cannot be converted into an ECMAScript 5.1-compatible variable name because it collides with a JavaScript reserved word, or is otherwise probably a bad idea to use.');
-      e.code = 'E_RESERVED';
-      return e;
-    })();
+    throw flaverr('E_RESERVED', new Error('The string "'+original+'" cannot be converted into an ECMAScript 5.1-compatible variable name because it collides with a JavaScript reserved word, or is otherwise probably a bad idea to use.'));
   }
 
   return str;
@@ -844,7 +877,7 @@ module.exports.inspect = function () {
 // TODO: make a final decision on what to do about this one:
 // =====================================================================================================================
 // module.exports.pack = function(){
-//   throw flaverr({name:'CompatibilityError'}, new Error('As of machine v15, `.pack()` is no longer supported.  Instead, please use `require(\'machinepack\')`.'));
+//   throw flaverr({name:'CompatibilityError', message: 'As of machine v15, `.pack()` is no longer supported.  Instead, please use `require(\'machinepack\')`.'}, omen);
 // };
 //
 // For now, we maintain partial compatibility:
