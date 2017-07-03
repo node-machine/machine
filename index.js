@@ -223,16 +223,26 @@ module.exports = function buildCallableMachine(nmDef){
             // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
             return done(flaverr({name:'UsageError'}, new Error('Machines built with the `composite` implementation type cannot be executed using this runner.  (For help, visit https://sailsjs.com/support)')));
 
-          case 'classic':
+          case 'es8AsyncFunction':
             // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-            // FUTURE: Support automatically mapping this usage to the "classic" implementation type:
+            // FUTURE: Support automatically mapping this usage to the "es8AsyncFunction" implementation type:
+            // (see c0d7dba572018a7ec8d1d0683abb7c46f0aabae8)
+            // 
+            // > Note that this should check whether `fn` is an `async function` or not and warn/error accordingly.
+            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+            return done(flaverr({name:'UsageError'}, new Error('The experimental `es8AsyncFunction` implementation type is not yet supported.  See https://github.com/node-machine/machine/commits/c0d7dba572018a7ec8d1d0683abb7c46f0aabae8 for background, or https://sailsjs.com/support for help.')));
+
+          case 'classicJsFunction':
+            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+            // FUTURE: Support automatically mapping this usage to the "classicJsFunction" implementation type:
             // (see https://github.com/node-machine/spec/pull/2/files#diff-eba3c42d87dad8fb42b4080df85facecR95)
             //
-            // > Note that this should check whether `fn` is an `async function` or not and react accordingly.
+            // > Note that this should check whether `fn` is an `async function` or not and warn/error accordingly.
             // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-            return done(flaverr({name:'UsageError'}, new Error('The experimental `classic` implementation type is not yet supported.  See https://github.com/node-machine/spec/pull/2/files#diff-eba3c42d87dad8fb42b4080df85facecR95 for background, or https://sailsjs.com/support for help.')));
+            return done(flaverr({name:'UsageError'}, new Error('The experimental `classicJsFunction` implementation type is not yet supported.  See https://github.com/node-machine/spec/pull/2/files#diff-eba3c42d87dad8fb42b4080df85facecR95 for background, or https://sailsjs.com/support for help.')));
 
-          default:
+          case '':
+          case undefined:
 
             // Validate argins vs. our declared input definitions.
             // (Potentially, also coerce them.)
@@ -456,7 +466,8 @@ module.exports = function buildCallableMachine(nmDef){
             //   var helpExperiment = Machine(require('./help-experiment'));
             //
             //
-            //   // In the future using `implementationType`, you could do:
+            //   // In the future, with `implementationType: 'es8AsyncFunction'`,
+            //   // you could simply do something like this:
             //   // ---------------------------------
             //   // return await helpExperiment({});
             //
@@ -474,6 +485,10 @@ module.exports = function buildCallableMachine(nmDef){
             // },
             // ```
             // ==================================================================
+
+            break;
+
+            default: throw new Error('Consistency violation: Unrecognized implementation type in the middle of the machine runner -- but this should have been caught earlier!');
 
         }//</ switch(nmDef.implementationType) >
 
