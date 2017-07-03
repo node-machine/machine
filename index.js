@@ -3,9 +3,14 @@
  */
 
 var util = require('util');
+var path = require('path');
 var _ = require('@sailshq/lodash');
 var flaverr = require('flaverr');
 var parley = require('parley');
+
+var X_VALID_ECMA51_VARNAME = require('./lib/private/X_VALID_ECMA51_VARNAME');
+var X_INVALID_CHARACTERS_IN_ECMA51_VARNAME = require('./lib/private/X_INVALID_CHARACTERS_IN_ECMA51_VARNAME');
+var X_INVALID_FIRST_CHARACTER = require('./lib/private/X_INVALID_FIRST_CHARACTER');
 
 
 /**
@@ -372,7 +377,7 @@ module.exports = function buildCallableMachine(nmDef){
                 // * * * Implementation of exits.success()... * * *
                 handlerCbs.success = function(rawOutput){
                   // Ensure valid result (vs. expected output type for this exit)
-                  var result = rawOutput;//TODO
+                  var result = rawOutput;//TODO: RTTC coercion
                   return proceed(undefined, result);
                 };//</ ... >
 
@@ -534,6 +539,10 @@ module.exports = function buildCallableMachine(nmDef){
       //                                                               
       // Extra methods for the Deferred:
       {
+
+        /**
+         * .execSync()
+         */
         execSync: function (){
           // throw new Error('...');
           // TODO: Finish implementing this properly, including the various checks & balances.
@@ -545,6 +554,9 @@ module.exports = function buildCallableMachine(nmDef){
           return immediateResult;
         },
 
+        /**
+         * .meta()
+         */
         meta: function (_metadata){
           // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
           // FUTURE: Maybe log warning when `.meta()` is called more than once?
@@ -554,6 +566,10 @@ module.exports = function buildCallableMachine(nmDef){
           return this;
         },
 
+
+        /**
+         * .switch()
+         */
         switch: function (userlandHandlers) {
 
           // Check usage.
@@ -713,7 +729,7 @@ module.exports = function buildCallableMachine(nmDef){
 
 
       // FUTURE: To allow for improved error messages, we could pass in an interceptor
-      // (aka lifecycle callback) here, for intering with the error/result on the way back out from .exec().
+      // (aka lifecycle callback) here, for interfering with the error/result on the way back out from .exec().
       undefined
 
     );
@@ -731,37 +747,48 @@ module.exports = function buildCallableMachine(nmDef){
 //  ╚══════╝   ╚═╝   ╚═╝  ╚═╝   ╚═╝   ╚═╝ ╚═════╝    ╚═╝     ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝
 //                                                                                                                
 
-module.exports.getMethodName = (function(){
-  
-  /**
-   * Module dependencies
-   */
 
-  var makeECMAScriptCompatible = require('./lib/private/convert-to-ecmascript-compatible-varname');
+/**
+ * `Machine.getMethodName()`
+ *
+ * Determine the `methodName` for a machine: a conventional (ECMAScript-compatible)
+ * method-name-looking thing, determined from its identity (dash-delimited words).
+ * version of its `identity`, replacing dashes w/ camel-case.
+ *
+ * @param  {String} identity
+ * @return {String}
+ * @throws {Error} If `identity` cannot be coerced into a valid machine identity (similar to a ECMAScript 5.1 variable name)
+ */
+module.exports.getMethodName = function (identity){
 
-  /**
-   * `Machine.getMethodName()`
-   *
-   * Determine the `methodName` for a machine: an ECMAScript-compatible
-   * version of its `identity`, replacing dashes w/ camel-case.
-   *
-   * @param  {String} identity
-   * @return {String}
-   */
-  return function getMethodName(identity){
-    return makeECMAScriptCompatible(identity);
-  };
+  // Save original string for error messages and such.
+  var original = identity;
 
-})();
+  // Camel-case dash-delimited things
+  var str = identity.replace(/-+([a-z])/g, function($all, $1) {
+    return $1.toUpperCase();
+  });
 
+  // Remove any other naughty characters
+  str = str.replace(X_INVALID_CHARACTERS_IN_ECMA51_VARNAME, '');
 
+  // Ensure `str` doesn't start with a character which is not a letter or $.
+  // (NOTE: ECMA5.1 is actually more permissive than this, i.e. you can use weird
+  // unicode characters, but we're preventing that here.  Because... cm'on, really?)
+  str = str.replace(X_INVALID_FIRST_CHARACTER, '');
 
-//
-// Compatibility:
-// =====================================================================================================================
-module.exports.build = function(){
-  console.warn('WARNING: As of v15, machine should be called directly instead of using `.build()`.  (Adjusting for you this time...)');
-  return module.exports.apply(undefined, arguments);
+  // One last check to make sure we ended up with a valid variable name:
+  // (i.e. don't clash with special JavaScript keywords, like "delete")
+  if (!str.match(X_VALID_ECMA51_VARNAME)) {
+    throw (function (){
+      var e = new Error('The string "'+original+'" cannot be converted into an ECMAScript 5.1-compatible variable name because it collides with a JavaScript reserved word, or is otherwise probably a bad idea to use.');
+      e.code = 'E_RESERVED';
+      return e;
+    })();
+  }
+
+  return str;
+
 };
 
 
@@ -770,184 +797,153 @@ module.exports.build = function(){
 // module.exports.pack = function(){
 //   throw flaverr({name:'CompatibilityError'}, new Error('As of machine v15, `.pack()` is no longer supported.  Instead, please use `require(\'machinepack\')`.'));
 // };
-// =====================================================================================================================
 //
-// For now, we maintain partial compatibility
-module.exports.pack = (function(){
-
-  /**
-   * Module dependencies
-   */
-
-  var util = require('util');
-  var path = require('path');
-  var _ = require('@sailshq/lodash');
+// For now, we maintain partial compatibility:
+// =====================================================================================================================
 
 
-  /**
-   * `Machine.pack()`
-   *
-   * Load modules in the specified directory and expose them as
-   * a dictionary of set machine instances.
-   *
-   * > This method is used by default in the index.js file of generated machinepacks.
-   *
-   * - - - - - - - - - - - - - - - - - - - - - - - - -
-   * @required {Dictionary?|String} options
-   *       Either the absolute path to the location of the modules to load & pack (see `dir` below)
-   *       -OR- a dictionary of options:
-   *
-   *          @property {String} dir
-   *              The absolute path to the location of the modules to load & pack.
-   *              (If a relative path is specified, it will be resolved relative  from the `pkg`)
-   *
-   *          @property {Dictionary} pkg
-   *              The package dictionary (i.e. what package.json exports).
-   *              Will be used for refining the directory to load modules from.
-   *              If `pkg` is not specified, all `.js` files in `dir` will be loaded
-   *              (with the exception of `index.js`, which is reserved.)
-   *
-   *
-   * @returns {Dictionary}
-   *          A dictionary of packed modules with camel-cased keys, and functions as values.
-   */
+/**
+ * `Machine.pack()`
+ *
+ * Load modules in the specified directory and expose them as
+ * a dictionary of set machine instances.
+ *
+ * > This method is used by default in the index.js file of generated machinepacks.
+ *
+ * - - - - - - - - - - - - - - - - - - - - - - - - -
+ * @required {Dictionary?|String} options
+ *       Either the absolute path to the location of the modules to load & pack (see `dir` below)
+ *       -OR- a dictionary of options:
+ *
+ *          @property {String} dir
+ *              The absolute path to the location of the modules to load & pack.
+ *              (If a relative path is specified, it will be resolved relative  from the `pkg`)
+ *
+ *          @property {Dictionary} pkg
+ *              The package dictionary (i.e. what package.json exports).
+ *              Will be used for refining the directory to load modules from.
+ *              If `pkg` is not specified, all `.js` files in `dir` will be loaded
+ *              (with the exception of `index.js`, which is reserved.)
+ *
+ *
+ * @returns {Dictionary}
+ *          A dictionary of packed modules with camel-cased keys, and functions as values.
+ */
+module.exports.pack = function(options){
 
-  return function pack (options) {// eslint-disable-line camelcase
+  // If specified as a string, understand as `options.dir`.
+  if (_.isString(options)) {
+    options = { dir: options };
+  }
+  else if (_.isUndefined(options)) {
+    options = {};
+  }
+  else if (!_.isObject(options) || _.isFunction(options) || _.isArray(options)) {
+    throw new Error('Usage error: `.pack()` expects a dictionary of options, but instead got:'+util.inspect(options, {depth:null}));
+  }
 
-    // If specified as a string, understand as `options.dir`.
-    if (_.isString(options)) {
-      options = { dir: options };
+  // Validate `dir`
+  if (_.isUndefined(options.dir)) {
+    throw new Error('Usage error: `.pack()` should be provided a `dir` option, but it was not provided.  Received options:'+util.inspect(options, {depth:null}));
+  }
+  if (!_.isString(options.dir)) {
+    throw new Error('Usage error: `.pack()` received a `dir` path which is not a string:'+util.inspect(options.dir, {depth:null}));
+  }
+
+  // Validate `pkg`
+  // (if specified, must be a dictionary)
+  if (!_.isUndefined(options.pkg)) {
+    if (!_.isObject(options.pkg) || _.isArray(options.pkg) || _.isFunction(options.pkg)) {
+      throw new Error('Usage error: `.pack()` received an invalid `pkg`.  If specified, `pkg` must be a dictionary, but instead got:'+util.inspect(options.pkg, {depth:null}));
     }
-    else if (_.isUndefined(options)) {
-      options = {};
+  }
+
+
+  // Build up a constant array of unconventional method names
+  // (used below to show a warning if a machine identity looks too similar to native JS or Node stuff.)
+  var UNCONVENTIONAL_METHOD_NAMES = [
+    'inspect', 'toString', 'valueOf', 'toLocaleString',
+    'prototype', 'constructor',
+    'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable'
+  ];
+
+
+  // Sanity
+  if (!_.isObject(this) || !_.isFunction(this.build)) { throw new Error('Consistency violation: Context (`this`) is wrong in Machine.pack()!'); }
+
+  // Get the `Machine` constructor
+  var Machine = module.exports;
+
+
+  // Now load & pack the modules.
+  var PackedModules;
+
+
+
+  //  ┬┌─┐  ╔═╗╦╔═╔═╗  ┬ ┬┌─┐┌─┐  ┌─┐┌─┐┌─┐┌─┐┬┌─┐┬┌─┐┌┬┐
+  //  │├┤   ╠═╝╠╩╗║ ╦  │││├─┤└─┐  └─┐├─┘├┤ │  │├┤ │├┤  ││
+  //  ┴└    ╩  ╩ ╩╚═╝  └┴┘┴ ┴└─┘  └─┘┴  └─┘└─┘┴└  ┴└─┘─┴┘ooo
+  // If `pkg` was specified...
+  if (!_.isUndefined(options.pkg)) {
+
+    var machines;
+    try {
+      machines = options.pkg.machinepack.machines;
     }
-    else if (!_.isObject(options) || _.isFunction(options) || _.isArray(options)) {
-      throw new Error('Usage error: `.pack()` expects a dictionary of options, but instead got:'+util.inspect(options, {depth:null}));
+    catch (e) {
+      throw flaverr('E_INVALID_OPTION', new Error(
+        'Failed to instantiate hydrated machinepack using the provided `pkg`.\n'+
+        '`pkg` should be a dictionary with a `machinepack` property (also a dictionary, '+
+        'with its own array of strings called `machines`).\n'+
+        'But the actual `pkg` option provided was:\n'+
+        '------------------------------------------------------\n'+
+        ''+util.inspect(options.pkg, false, null)+'\n'+
+        '------------------------------------------------------\n'+
+        'Raw error details:\n'+e.stack)
+      );
     }
 
-    // Validate `dir`
-    if (_.isUndefined(options.dir)) {
-      throw new Error('Usage error: `.pack()` should be provided a `dir` option, but it was not provided.  Received options:'+util.inspect(options, {depth:null}));
-    }
-    if (!_.isString(options.dir)) {
-      throw new Error('Usage error: `.pack()` received a `dir` path which is not a string:'+util.inspect(options.dir, {depth:null}));
-    }
+    // Build a dictionary of all the machines in this pack
+    PackedModules = _.reduce(machines, function (memo, machineID) {
+      // console.log('machineID:',machineID);
 
-    // Validate `pkg`
-    // (if specified, must be a dictionary)
-    if (!_.isUndefined(options.pkg)) {
-      if (!_.isObject(options.pkg) || _.isArray(options.pkg) || _.isFunction(options.pkg)) {
-        throw new Error('Usage error: `.pack()` received an invalid `pkg`.  If specified, `pkg` must be a dictionary, but instead got:'+util.inspect(options.pkg, {depth:null}));
-      }
-    }
-
-
-    // Build up a constant array of unconventional method names
-    // (used below to show a warning if a machine identity looks too similar to native JS or Node stuff.)
-    var UNCONVENTIONAL_METHOD_NAMES = [
-      'inspect', 'toString', 'valueOf', 'toLocaleString',
-      'prototype', 'constructor',
-      'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable'
-    ];
-
-
-    // Sanity
-    if (!_.isObject(this) || !_.isFunction(this.build)) { throw new Error('Consistency violation: Context (`this`) is wrong in Machine.pack()!'); }
-
-    // Get the `Machine` constructor
-    var Machine = module.exports;
-
-
-    // Now load & pack the modules.
-    var PackedModules;
-
-
-
-    //  ┬┌─┐  ╔═╗╦╔═╔═╗  ┬ ┬┌─┐┌─┐  ┌─┐┌─┐┌─┐┌─┐┬┌─┐┬┌─┐┌┬┐
-    //  │├┤   ╠═╝╠╩╗║ ╦  │││├─┤└─┐  └─┐├─┘├┤ │  │├┤ │├┤  ││
-    //  ┴└    ╩  ╩ ╩╚═╝  └┴┘┴ ┴└─┘  └─┘┴  └─┘└─┘┴└  ┴└─┘─┴┘ooo
-    // If `pkg` was specified...
-    if (!_.isUndefined(options.pkg)) {
-
-      var machines;
       try {
-        machines = options.pkg.machinepack.machines;
+        // Require and hydrate each static definition into a callable machine fn
+        var requirePath = path.resolve(options.dir, options.pkg.machinepack.machineDir || options.pkg.machinepack.machinedir || '', machineID);
+        // console.log('requirePath:',requirePath);
+        var definition = require(requirePath);
+        // console.log('definition.identity:',definition.identity);
+        // console.log('!!definition.identity:',!!definition.identity);
+
+        // Attach the string identity as referenced in package.json to
+        // the machine definition dictionary as its "identity"
+        // (unless the machine definition already has an "identity" explicitly specified)
+        definition.identity = definition.identity || machineID;
+
+        // Build the machine.
+        var machineInstance = Machine(definition);
+
+        // Determine the method name.
+        var methodName = Machine.getMethodName(definition.identity);
+        if (_.contains(UNCONVENTIONAL_METHOD_NAMES, methodName)) {
+          console.warn('Warning: Machine "'+definition.identity+'" has an unconventional identity that, when converted to a method name (`'+methodName+'`), could conflict with native features of JavaScript/Node.js.  Please consider changing it!');
+        }
+
+        // Expose the machine as a method on our Pack dictionary.
+        memo[methodName] = machineInstance;
       }
       catch (e) {
-        throw flaverr('E_INVALID_OPTION', new Error(
-          'Failed to instantiate hydrated machinepack using the provided `pkg`.\n'+
-          '`pkg` should be a dictionary with a `machinepack` property (also a dictionary, '+
-          'with its own array of strings called `machines`).\n'+
-          'But the actual `pkg` option provided was:\n'+
-          '------------------------------------------------------\n'+
-          ''+util.inspect(options.pkg, false, null)+'\n'+
-          '------------------------------------------------------\n'+
-          'Raw error details:\n'+e.stack)
-        );
-      }
 
-      // Build a dictionary of all the machines in this pack
-      PackedModules = _.reduce(machines, function (memo, machineID) {
-        // console.log('machineID:',machineID);
-
-        try {
-          // Require and hydrate each static definition into a callable machine fn
-          var requirePath = path.resolve(options.dir, options.pkg.machinepack.machineDir || options.pkg.machinepack.machinedir || '', machineID);
-          // console.log('requirePath:',requirePath);
-          var definition = require(requirePath);
-          // console.log('definition.identity:',definition.identity);
-          // console.log('!!definition.identity:',!!definition.identity);
-
-          // Attach the string identity as referenced in package.json to
-          // the machine definition dictionary as its "identity"
-          // (unless the machine definition already has an "identity" explicitly specified)
-          definition.identity = definition.identity || machineID;
-
-          // Build the machine.
-          var machineInstance = Machine(definition);
-
-          // Determine the method name.
-          var methodName = Machine.getMethodName(definition.identity);
-          if (_.contains(UNCONVENTIONAL_METHOD_NAMES, methodName)) {
-            console.warn('Warning: Machine "'+definition.identity+'" has an unconventional identity that, when converted to a method name (`'+methodName+'`), could conflict with native features of JavaScript/Node.js.  Please consider changing it!');
-          }
-
-          // Expose the machine as a method on our Pack dictionary.
-          memo[methodName] = machineInstance;
-        }
-        catch (e) {
-
-          // Check and see if this is a MODULE_ERROR-
-          // if so, then it's a very different scenario and we should show a different
-          // error message.
-          if (e.code === 'MODULE_NOT_FOUND') {
-            throw (function _buildModuleNotFoundError(){
-              e.originalError = e;
-              e.code = 'E_MACHINE_NOT_FOUND';
-              e.message = util.format(
-              '\n'+
-              'Failed to load machine "%s" (listed in `pkg.machinepack.machines`).\n'+
-              '`pkg.machinepack.machines` should be an array of strings which correspond \n'+
-              'to the filenames of machine modules in this machinepack.\n\n'+
-              'The actual `pkg` option provided was:\n'+
-              '------------------------------------------------------\n'+
-              '%s\n'+
-              '------------------------------------------------------\n\n'+
-              'Error details:\n',
-              machineID,
-              util.inspect(options.pkg, false, null),
-              e.originalError);
-              return e;
-            })();//</throw>
-          }
-
-          // --•
-          throw (function _buildInvalidMachineError(){
+        // Check and see if this is a MODULE_ERROR-
+        // if so, then it's a very different scenario and we should show a different
+        // error message.
+        if (e.code === 'MODULE_NOT_FOUND') {
+          throw (function _buildModuleNotFoundError(){
             e.originalError = e;
-            e.code = 'E_INVALID_MACHINE';
+            e.code = 'E_MACHINE_NOT_FOUND';
             e.message = util.format(
             '\n'+
-            'Failed to instantiate machine "%s" (listed in `pkg.machinepack.machines`).\n'+
+            'Failed to load machine "%s" (listed in `pkg.machinepack.machines`).\n'+
             '`pkg.machinepack.machines` should be an array of strings which correspond \n'+
             'to the filenames of machine modules in this machinepack.\n\n'+
             'The actual `pkg` option provided was:\n'+
@@ -961,54 +957,85 @@ module.exports.pack = (function(){
             return e;
           })();//</throw>
         }
-        return memo;
-      }, {});
-    }//</if `pkg` option was specified>
-    else {
-      throw new Error('pkg option is mandatory again, for the time being.');
-    }
-    // //  ┌─┐┬  ┌─┐┌─┐  ┌─┐┬┌─┌─┐  ┬ ┬┌─┐┌─┐  ╔╗╔╔═╗╔╦╗  ┌─┐┌─┐┌─┐┌─┐┬┌─┐┬┌─┐┌┬┐
-    // //  ├┤ │  └─┐├┤   ├─┘├┴┐│ ┬  │││├─┤└─┐  ║║║║ ║ ║   └─┐├─┘├┤ │  │├┤ │├┤  ││
-    // //  └─┘┴─┘└─┘└─┘  ┴  ┴ ┴└─┘  └┴┘┴ ┴└─┘  ╝╚╝╚═╝ ╩   └─┘┴  └─┘└─┘┴└  ┴└─┘─┴┘
-    // // Otherwise, `pkg` was not specified, so just load all `.js` files in `dir`.
-    // else {
 
-    //   // Ensure we have an absolute path.
-    //   options.dir = path.resolve(options.dir);
+        // --•
+        throw (function _buildInvalidMachineError(){
+          e.originalError = e;
+          e.code = 'E_INVALID_MACHINE';
+          e.message = util.format(
+          '\n'+
+          'Failed to instantiate machine "%s" (listed in `pkg.machinepack.machines`).\n'+
+          '`pkg.machinepack.machines` should be an array of strings which correspond \n'+
+          'to the filenames of machine modules in this machinepack.\n\n'+
+          'The actual `pkg` option provided was:\n'+
+          '------------------------------------------------------\n'+
+          '%s\n'+
+          '------------------------------------------------------\n\n'+
+          'Error details:\n',
+          machineID,
+          util.inspect(options.pkg, false, null),
+          e.originalError);
+          return e;
+        })();//</throw>
+      }
+      return memo;
+    }, {});
+  }//</if `pkg` option was specified>
+  else {
+    throw new Error('pkg option is mandatory again, for the time being.');
+  }
+  // //  ┌─┐┬  ┌─┐┌─┐  ┌─┐┬┌─┌─┐  ┬ ┬┌─┐┌─┐  ╔╗╔╔═╗╔╦╗  ┌─┐┌─┐┌─┐┌─┐┬┌─┐┬┌─┐┌┬┐
+  // //  ├┤ │  └─┐├┤   ├─┘├┴┐│ ┬  │││├─┤└─┐  ║║║║ ║ ║   └─┐├─┘├┤ │  │├┤ │├┤  ││
+  // //  └─┘┴─┘└─┘└─┘  ┴  ┴ ┴└─┘  └┴┘┴ ┴└─┘  ╝╚╝╚═╝ ╩   └─┘┴  └─┘└─┘┴└  ┴└─┘─┴┘
+  // // Otherwise, `pkg` was not specified, so just load all `.js` files in `dir`.
+  // else {
 
-    //   // Load modules (as dry machine definitions)
-    //   var inventory = includeAll({
-    //     dirname: options.dir,
-    //     filter: /(.+)\.js/,
-    //     exclude: [
-    //       /^index.js$/
-    //     ],
-    //     flatten: true
-    //   });
+  //   // Ensure we have an absolute path.
+  //   options.dir = path.resolve(options.dir);
 
-    //   // Now pack the modules, building each individual machine instance.
-    //   PackedModules = _.reduce(inventory, function (memo, rawNMDef, key) {
+  //   // Load modules (as dry machine definitions)
+  //   var inventory = includeAll({
+  //     dirname: options.dir,
+  //     filter: /(.+)\.js/,
+  //     exclude: [
+  //       /^index.js$/
+  //     ],
+  //     flatten: true
+  //   });
 
-    //     // Come up with an identity for debugging purposes.
-    //     rawNMDef.identity = _.kebabCase(key);
+  //   // Now pack the modules, building each individual machine instance.
+  //   PackedModules = _.reduce(inventory, function (memo, rawNMDef, key) {
 
-    //     // Determine the method name.
-    //     var methodName = Machine.getMethodName(rawNMDef.identity);
-    //     if (_.contains(UNCONVENTIONAL_METHOD_NAMES, methodName)) {
-    //       console.warn('Warning: Machine "'+rawNMDef.identity+'" has an unconventional identity that, when converted to a method name (`'+methodName+'`), could conflict with native features of JavaScript/Node.js.  Please consider changing it!');
-    //     }
+  //     // Come up with an identity for debugging purposes.
+  //     rawNMDef.identity = _.kebabCase(key);
 
-    //     memo[methodName] = Machine.build(rawNMDef);
-    //     return memo;
-    //   }, {});
+  //     // Determine the method name.
+  //     var methodName = Machine.getMethodName(rawNMDef.identity);
+  //     if (_.contains(UNCONVENTIONAL_METHOD_NAMES, methodName)) {
+  //       console.warn('Warning: Machine "'+rawNMDef.identity+'" has an unconventional identity that, when converted to a method name (`'+methodName+'`), could conflict with native features of JavaScript/Node.js.  Please consider changing it!');
+  //     }
 
-    // }//</else (no pkg option specified)>
+  //     memo[methodName] = Machine.build(rawNMDef);
+  //     return memo;
+  //   }, {});
 
-
-    return PackedModules;
-
-  };
-  // =====================================================================================================================
+  // }//</else (no pkg option specified)>
 
 
-})();
+  return PackedModules;
+
+};
+
+
+
+
+
+
+//
+// Compatibility:
+// =====================================================================================================================
+module.exports.build = function(){
+  console.warn('WARNING: As of v15, machine should be called directly instead of using `.build()`.  (Adjusting for you this time...)');
+  return module.exports.apply(undefined, arguments);
+};
+
