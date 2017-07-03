@@ -430,16 +430,16 @@ module.exports = function buildCallableMachine(nmDef){
             // predetermined (e.g. at build-time).
             // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
             if (nmDef.fn.constructor.name === 'AsyncFunction') {
-              // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-              // TODO: verify that `_.bind()` works OK with ES8 async functions
-              // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+              // Note that `_.bind()` works perfectly OK with ES8 async functions, at least
+              // in platforms tested (such as Node 8.1.2).  We still keep this as a separate
+              // code path from below though, just to be 100% about what's going on.
               var boundES8AsyncFn = _.bind(nmDef.fn, metadata);
               var promise = boundES8AsyncFn(finalArgins, implSideExitHandlerCbs, metadata);
+              // Also note that here, we don't write in the usual `return done(e)` style.
+              // This is deliberate -- to provide a conspicuous reminder that we aren't
+              // trying to get up to any funny business with the promise chain.
               promise.catch(function(e) {
                 done(e);
-                // Note that here, we don't write in the usual `return done(e)` style.
-                // This is deliberate -- to provide a conspicuous reminder that we aren't
-                // trying to get up to any funny business with the promise chain.
               });
             }
             else {
