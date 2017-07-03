@@ -38,6 +38,11 @@ module.exports = function buildCallableMachine(nmDef){
   // Verify correctness of node-machine definition.
   // TODO
 
+  // TODO: Check `sync`
+  // TODO: Check `timeout`
+  // TODO: Check `sideEffects`
+  // TODO: Check `implementationType`
+
   // Sanitize input definitions.
   // var inputDefs = nmDef.inputs || {};
   // TODO
@@ -46,13 +51,6 @@ module.exports = function buildCallableMachine(nmDef){
   var exitDefs = nmDef.exits || {};
   exitDefs.success = exitDefs.success || {};
   exitDefs.error = exitDefs.error || {};
-  // TODO
-
-  // Check `sync`.
-  // TODO
-
-  // Check `timeout`.
-  // TODO
 
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -989,24 +987,18 @@ module.exports.pack = function(options){
         // if so, then it's a very different scenario and we should show a different
         // error message.
         if (e.code === 'MODULE_NOT_FOUND') {
-          throw (function _buildModuleNotFoundError(){
-            e.originalError = e;
-            e.code = 'E_MACHINE_NOT_FOUND';
-            e.message = util.format(
-            '\n'+
-            'Failed to load machine "%s" (listed in `pkg.machinepack.machines`).\n'+
-            '`pkg.machinepack.machines` should be an array of strings which correspond \n'+
-            'to the filenames of machine modules in this machinepack.\n\n'+
-            'The actual `pkg` option provided was:\n'+
+          throw flaverr({
+            name: 'ImplementationError',
+            code: 'E_MACHINE_NOT_FOUND',
+            raw: e
+          }, new Error(
+            'Failed to load `'+machineID+'`, one of the identities listed in `pkg.machinepack.machines`,\n'+
+            'an array of strings which correspond to the filenames of modules in this machinepack.\n\n'+
+            'Details:\n'+
             '------------------------------------------------------\n'+
-            '%s\n'+
-            '------------------------------------------------------\n\n'+
-            'Error details:\n',
-            machineID,
-            util.inspect(options.pkg, false, null),
-            e.originalError);
-            return e;
-          })();//</throw>
+            util.inspect(e, {depth: 5})+'\n'+
+            '------------------------------------------------------\n'
+          ));
         }
 
         // --•
