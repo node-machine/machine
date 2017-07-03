@@ -447,6 +447,34 @@ module.exports = function buildCallableMachine(nmDef){
               boundFn(finalArgins, implSideExitHandlerCbs, metadata);
             }
 
+            // ==================================================================
+            // HERE'S WHAT ALL THIS MEANS:
+            // ```
+            // fn: async function(inputs, exits) {
+            //
+            //   var Machine = require('machine');
+            //   var helpExperiment = Machine(require('./help-experiment'));
+            //
+            //
+            //   // In the future using `implementationType`, you could do:
+            //   // ---------------------------------
+            //   // return await helpExperiment({});
+            //
+            //   // But RIGHT NOW, you can do:
+            //   // ---------------------------------
+            //   return exits.success(await helpExperiment({}));
+            //
+            //   // Equivalent to:
+            //   // ---------------------------------
+            //   // helpExperiment({}).exec(function(err, result){
+            //   //   if (err) { return exits.error(err); }
+            //   //   return exits.success(result);
+            //   // });
+            //
+            // },
+            // ```
+            // ==================================================================
+
         }//</ switch(nmDef.implementationType) >
 
       },
