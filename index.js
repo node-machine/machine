@@ -449,6 +449,10 @@ module.exports = function buildCallableMachine(nmDef){
               // This is deliberate -- to provide a conspicuous reminder that we aren't
               // trying to get up to any funny business with the promise chain.
               promise.catch(function(e) {
+                // Finally, note the `e.raw` bit.  This is because bluebird's "reason" comes back
+                // as something other than an Error instance, which wouldn't be consistent.
+                console.log('!!!');
+                // done(e.raw);
                 done(e);
               });
             }
