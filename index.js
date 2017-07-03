@@ -24,6 +24,11 @@ var parley = require('parley');
 
 module.exports = function buildCallableMachine(nmDef){
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  // FUTURE: Support invocation types as envisioned when ideating on jdalton's
+  // thoughts earlier in 2017 (see node-machine/spec repo for details)
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
   // Determine the effective identity of this machine.
   var identity = nmDef.identity || undefined;//TODO
 
