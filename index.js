@@ -11,6 +11,9 @@ var parley = require('parley');
 var X_VALID_ECMA51_VARNAME = require('./lib/private/X_VALID_ECMA51_VARNAME');
 var X_INVALID_CHARACTERS_IN_ECMA51_VARNAME = require('./lib/private/X_INVALID_CHARACTERS_IN_ECMA51_VARNAME');
 var X_INVALID_FIRST_CHARACTER = require('./lib/private/X_INVALID_FIRST_CHARACTER');
+var RELEASE_LICENSE = require('./package.json').license;
+var RELEASE_SERIES = 'gen2';
+var RELEASE_VERSION = require('./package.json').version;
 
 
 /**
@@ -817,6 +820,41 @@ module.exports.getMethodName = function (identity){
   return str;
 
 };
+
+
+
+/**
+ * .VERSION
+ * .version
+ *
+ * @type {String}
+ */
+module.exports.VERSION = RELEASE_VERSION;
+module.exports.version = RELEASE_VERSION;
+
+
+
+/**
+ * .inspect()
+ *
+ * When the Machine constructor is inspected (e.g. `util.inspect()` / `console.log()`),
+ * pretty print the current version of node-machine, with license information and a link
+ * to the documentation.
+ *
+ * @returns {String}
+ */
+module.exports.inspect = function () {
+  return ''+
+  '---------------------------------------------------\n'+
+  ' machine'+/*'   (runtime environment)'+*/'\n'+
+  ' v'+RELEASE_VERSION+' ('+RELEASE_SERIES+')\n'+
+  ' \n'+
+  ' • License   : '+RELEASE_LICENSE+'\n'+
+  ' • Package   : http://npmjs.com/package/machine\n'+
+  ' • Questions : https://sailsjs.com/studio\n'+
+  '---------------------------------------------------\n';
+};
+
 
 
 // TODO: make a final decision on what to do about this one:
