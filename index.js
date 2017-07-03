@@ -415,9 +415,37 @@ module.exports = function buildCallableMachine(nmDef){
 
             // Run `fn`.
             //
-            // > Note: When running our fn, we apply a special `this` context
-            // > using the provided meta keys (aka habitat vars)
-            _.bind(nmDef.fn, metadata)(finalArgins, implSideExitHandlerCbs, metadata);
+            // > Notes:
+            // > (1) When running our fn, we apply a special `this` context using
+            // >     the provided meta keys (aka habitat vars)
+            // >
+            // > (2) If the `fn` is an ES8 async function, then we also attach a handler
+            // >     to `.catch()` its return value (which will be a promise) in order to
+            // >     react to unhandled promise rejections in the same way that parley
+            // >     automatically handles any uncaught exceptions that it throws synchronously.
+            // >     (https://trello.com/c/UdK9ooJ3/108-es7-async-await-in-core-sniff-request-handler-function-to-see-if-it-s-an-async-function-if-so-then-grab-the-return-value-from-th)
+            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+            // FUTURE: benchmark this `constructor.name` check and, if tangible enough,
+            // provide some mechanism for passing in this information so that it can be
+            // predetermined (e.g. at build-time).
+            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+            if (nmDef.fn.constructor.name === 'AsyncFunction') {
+              // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+              // TODO: verify that `_.bind()` works OK with ES8 async functions
+              // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+              var boundES8AsyncFn = _.bind(nmDef.fn, metadata);
+              var promise = boundES8AsyncFn(finalArgins, implSideExitHandlerCbs, metadata);
+              promise.catch(function(e) {
+                done(e);
+                // Note that here, we don't write in the usual `return done(e)` style.
+                // This is deliberate -- to provide a conspicuous reminder that we aren't
+                // trying to get up to any funny business with the promise chain.
+              });
+            }
+            else {
+              var boundFn = _.bind(nmDef.fn, metadata);
+              boundFn(finalArgins, implSideExitHandlerCbs, metadata);
+            }
 
         }//</ switch(nmDef.implementationType) >
 
