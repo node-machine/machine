@@ -270,6 +270,11 @@ module.exports = function buildCallableMachine(nmDef){
 
 
             // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+            // FUTURE: (maybe) Anchor validation rules
+            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
             // FUTURE: (maybe) Build callable forms of lambda inversions (aka submachines)??
             // But really, maybe consider ripping out support for this in the interest of simplicity.
             // Only a few machines really need to use it, and it's easy to make it work.  The only thing
