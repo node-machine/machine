@@ -187,7 +187,7 @@ module.exports = function buildCallableMachine(nmDef){
           'Sorry, this function doesn\'t know how to handle usage like that.\n'+
           'If provided, the 1st argument should be a dictionary like `{...}`\n'+
           'consisting of input values (aka "argins") to pass through to the fn.\n'+
-          '> See https://sailsjs.com/support for help.'
+          ' [?] See https://sailsjs.com/support for help.'
       }, omen);
     }
     if (!_.isUndefined(explicitCbMaybe) && !_.isFunction(explicitCbMaybe)) {
@@ -202,7 +202,7 @@ module.exports = function buildCallableMachine(nmDef){
             '|  please be aware that, as of machine v15, you can no longer pass in a switchback\n'+
             '|  as the 2nd argument.  And you can\'t pass a switchback in to .exec() anymore either.\n'+
             '|  Instead, you\'ll need to explicitly call .switch().\n'+
-            'See https://sailsjs.com/support for more help.'        
+            ' [?] See https://sailsjs.com/support for more help.'        
         }, omen);
       }
       else {
@@ -213,7 +213,7 @@ module.exports = function buildCallableMachine(nmDef){
             'Sorry, this function doesn\'t know how to handle usage like that.\n'+
             'If provided, the 2nd argument should be a function like `function(err,result){...}`\n'+
             'that will be triggered as a callback after this fn is finished.\n'+
-            '> See https://sailsjs.com/support for help.'
+            ' [?] See https://sailsjs.com/support for help.'
         }, omen);
       }
     }
@@ -239,7 +239,7 @@ module.exports = function buildCallableMachine(nmDef){
             // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
             // See https://www.youtube.com/watch?v=1X-Q-HUS4mg&list=PLIQKJlrxhPyIDGAZ6CastNOmSSQkXSx2E&index=1
             // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-            return done(flaverr({name:'UsageError', message: 'Machines built with the `composite` implementation type cannot be executed using this runner.  (For help, visit https://sailsjs.com/support)'}, omen));
+            return done(flaverr({name:'UsageError', message: 'Machines built with the `composite` implementation type cannot be executed using this runner.\n[?] For help, visit https://sailsjs.com/support'}, omen));
 
           case 'es8AsyncFunction':
             // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -557,7 +557,7 @@ module.exports = function buildCallableMachine(nmDef){
               message: 
                 'Sorry, this function cannot be called synchronously, because it does not\n'+
                 'declare support for synchronous usage (i.e. `sync: true`)\n'+
-                '> See https://sailsjs.com/support for help.'
+                ' [?] See https://sailsjs.com/support for help.'
             }, omen);
           }//-•
 
@@ -578,7 +578,7 @@ module.exports = function buildCallableMachine(nmDef){
                 'Failed to call this function synchronously, because it is not\n'+
                 'actually synchronous.  Instead, its implementation is asynchronous --\n'+
                 'which is inconsistent with its declared interface (`sync: true`).\n'+
-                '> See https://sailsjs.com/support for help.'
+                ' [?] See https://sailsjs.com/support for help.'
             }, omen);
           }
 
@@ -614,7 +614,7 @@ module.exports = function buildCallableMachine(nmDef){
                 'You should pass in a dictionary like `{...}` consisting of at least two\n'+
                 'handler functions: one for `error` and one for `success`.  You can also\n'+
                 'provide additional keys for any other exits you want to explicitly handle.\n'+
-                '> See https://sailsjs.com/support for help.'
+                ' [?] See https://sailsjs.com/support for help.'
             }, omen);
           }//-•
 
@@ -632,7 +632,7 @@ module.exports = function buildCallableMachine(nmDef){
                 'If you use .switch({...}), the provided dictionary (aka "switchback"), must\n'+
                 'define an `error` key with a catchall callback function.  Otherwise, there\n'+
                 'would be no way to handle any unexpected or internal errors!\n'+
-                '> See https://sailsjs.com/support for help.'
+                ' [?] See https://sailsjs.com/support for help.'
             }, omen);
           }//-•
 
@@ -647,7 +647,7 @@ module.exports = function buildCallableMachine(nmDef){
                 'If you use .switch({...}), the provided dictionary (aka "switchback"), must\n'+
                 'define a `success` key with a callback function.  If you do not care about\n'+
                 'the success scenario, please provide a no-op callback, or use .exec() instead.\n'+
-                '> See https://sailsjs.com/support for help.'
+                ' [?] See https://sailsjs.com/support for help.'
             }, omen);
           }//-•
 
