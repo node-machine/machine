@@ -72,79 +72,6 @@ module.exports = function buildCallableMachine(nmDef){
 
 
   // Return our callable ("wet") machine function in the appropriate format.
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // FUTURE: Consider support for returning a machine function with other usage styles
-  // > Note: This is the same idea as "invocation style" or "invocation type" -- i.e. as envisioned
-  // > for performance improvements when ideating with jdalton earlier in 2017 (see node-machine/spec
-  // > repo for details/memory-jogging)
-  //
-  // For example, instead of:
-  //
-  // ```
-  // var add = Machine.build(nmDef);
-  // // ...
-  // var result = add({a:1,b:1}).execSync();
-  // ```
-  //
-  // You could do:
-  // ```
-  // var add = Machine.buildWithCustomUsage({
-  //   arginStyle: 'serial',
-  //   def: _.extend({ args: ['a','b'] }, nmDef)
-  // });
-  // // ...
-  // var result = add(1,2).execSync();
-  // ```
-  //
-  // Or even:
-  // ```
-  // var add = Machine.buildWithCustomUsage({
-  //   arginStyle: 'serial',   // vs. "named"
-  //   execStyle: 'immediate', // vs. "deferred"
-  //   def: _.extend({ args: ['a','b'] }, nmDef)
-  // });
-  // // ...
-  // var result = add(1,2);
-  // ```
-  //
-  // Same idea for asynchronous logic:
-  // (using the `immediate` exec style, a promise is returned, instead of the actual result)
-  // ```
-  // var fetchTweets = Machine.buildWithCustomUsage({
-  //   arginStyle: 'serial',   // vs. "named"
-  //   execStyle: 'immediate', // vs. "deferred"
-  //   def: _.extend({
-  //     args: [
-  //       [ 'tweetSearchQuery','done()' ],
-  //       [ 'tweetSearchQuery','{...}', 'done()' ]
-  //     ]
-  //   }, nmDef)
-  // });
-  // // ...
-  // var result = await fetchTweets('twinkle', {lat: 37.2332, long: -92.323852});
-  // ```
-  //
-  // One more example:
-  // ```
-  // var fetchTweets = Machine.buildWithCustomUsage({
-  //   arginStyle: 'named',   // vs. "serial"
-  //   execStyle: 'immediate', // vs. "deferred"
-  //   def: _.extend({
-  //     args: [
-  //       [ 'tweetSearchQuery','done()' ],
-  //       [ 'tweetSearchQuery','{...}', 'done()' ]
-  //     ]
-  //   }, nmDef)
-  // });
-  // // ...
-  // var result = await fetchTweets({
-  //   tweetSearchQuery: 'twinkle',
-  //   lat: 37.2332,
-  //   long: -92.323852
-  // });
-  // ```
-  //
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   return function runFn(argins, explicitCbMaybe, metadata){
 
     // Tolerate a few alternative usages:
@@ -880,6 +807,148 @@ module.exports.inspect = function () {
 
 
 
+/**
+ * .buildWithCustomUsage()
+ *
+ * Return a machine function with a custom usage style.
+ *
+ * @property {Dictionary} def
+ * @property {String?} arginStyle  ("named" or "serial")
+ * @property {String?} execStyle  ("deferred" or "immediate")
+ */
+module.exports.buildWithCustomUsage = function (opts) {
+
+  // Verify correctness of node-machine definition.
+  var nmDef = opts.def;// TODO
+
+  // FUTURE: Reject unrecognized opts to help avoid misunderstandings in userland code
+
+  var arginStyle = opts.arginStyle || 'named';
+  var execStyle = opts.execStyle || 'deferred';
+  
+  return function (){
+
+    var argins = {};
+    switch (arginStyle) {
+      
+      case 'named':
+        argins = arguments[0];
+        break;
+
+      case 'serial':
+        _.each(arguments, function(argin, i){
+          var supposedInputName = nmDef.args[i];
+          argins[supposedInputName] = argin;
+        });
+        // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        // FUTURE: Consider more full-featured support for serial args by using smarter arg-reading logic
+        // and supporting a richer symbol language in the `args` prop on machine defs.
+        //
+        // > Note: This is the same idea as "invocation style" or "invocation type" -- i.e. as envisioned
+        // > for performance improvements when ideating with jdalton earlier in 2017 (see node-machine/spec
+        // > repo for details/memory-jogging)
+        //
+        // For example, instead of:
+        //
+        // ```
+        // var add = Machine.build(nmDef);
+        // // ...
+        // var result = add({a:1,b:1}).execSync();
+        // ```
+        //
+        // You could do:
+        // ```
+        // var add = Machine.buildWithCustomUsage({
+        //   arginStyle: 'serial',
+        //   def: _.extend({ args: ['a','b'] }, nmDef)
+        // });
+        // // ...
+        // var result = add(1,2).execSync();
+        // ```
+        //
+        // Or even:
+        // ```
+        // var add = Machine.buildWithCustomUsage({
+        //   arginStyle: 'serial',   // vs. "named"
+        //   execStyle: 'immediate', // vs. "deferred"
+        //   def: _.extend({ args: ['a','b'] }, nmDef)
+        // });
+        // // ...
+        // var result = add(1,2);
+        // ```
+        //
+        // Same idea for asynchronous logic:
+        // (using the `immediate` exec style, a promise is returned, instead of the actual result)
+        // ```
+        // var fetchTweets = Machine.buildWithCustomUsage({
+        //   arginStyle: 'serial',   // vs. "named"
+        //   execStyle: 'immediate', // vs. "deferred"
+        //   def: _.extend({
+        //     args: [
+        //       [ 'tweetSearchQuery','done()' ],
+        //       [ 'tweetSearchQuery','{...}', 'done()' ]
+        //     ]
+        //   }, nmDef)
+        // });
+        // // ...
+        // var result = await fetchTweets('twinkle', {lat: 37.2332, long: -92.323852});
+        // ```
+        //
+        // One more example:
+        // ```
+        // var fetchTweets = Machine.buildWithCustomUsage({
+        //   arginStyle: 'named',   // vs. "serial"
+        //   execStyle: 'immediate', // vs. "deferred"
+        //   def: _.extend({
+        //     args: [
+        //       [ 'tweetSearchQuery','done()' ],
+        //       [ 'tweetSearchQuery','{...}', 'done()' ]
+        //     ]
+        //   }, nmDef)
+        // });
+        // // ...
+        // var result = await fetchTweets({
+        //   tweetSearchQuery: 'twinkle',
+        //   lat: 37.2332,
+        //   long: -92.323852
+        // });
+        // ```
+        //
+        // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        break;
+
+      default:
+        throw flaverr({name:'UsageError'}, new Error('Unrecognized arginStyle: "'+arginStyle+'"'));
+    }
+
+    var basicRunner = module.exports.build(nmDef);
+    var deferredObj = basicRunner(argins);
+    
+    switch (execStyle) {
+
+      case 'deferred':
+        return deferredObj;
+
+      case 'immediate':
+        if (nmDef.sync) {
+          return deferredObj.execSync();
+        }
+        else {
+          return deferredObj.toPromise();
+        }
+
+      default:
+        throw flaverr({name:'UsageError'}, new Error('Unrecognized execStyle: "'+execStyle+'"'));
+
+    }
+
+  };
+
+};
+
+
+
+
 // TODO: make a final decision on what to do about this one:
 // =====================================================================================================================
 // module.exports.pack = function(){
@@ -1117,7 +1186,7 @@ module.exports.pack = function(options){
 // Compatibility:
 // =====================================================================================================================
 module.exports.build = function(){
-  console.warn('WARNING: As of v15, machine should be called directly instead of using `.build()`.  (Adjusting for you this time...)');
+  // console.warn('WARNING: As of v15, machine should be called directly instead of using `.build()`.  (Adjusting for you this time...)');
   return module.exports.apply(undefined, arguments);
 };
 
