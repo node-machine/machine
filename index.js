@@ -8,6 +8,8 @@ var _ = require('@sailshq/lodash');
 var flaverr = require('flaverr');
 var parley = require('parley');
 
+var decorateWetMachine = require('./lib/private/decorate-wet-machine');
+
 var X_VALID_ECMA51_VARNAME = require('./lib/private/X_VALID_ECMA51_VARNAME');
 var X_INVALID_CHARACTERS_IN_ECMA51_VARNAME = require('./lib/private/X_INVALID_CHARACTERS_IN_ECMA51_VARNAME');
 var X_INVALID_FIRST_CHARACTER = require('./lib/private/X_INVALID_FIRST_CHARACTER');
@@ -17,7 +19,7 @@ var RELEASE_VERSION = require('./package.json').version;
 
 
 /**
- * `buildCallableMachine()`
+ * Machine()
  *
  * Build a callable ("wet") machine.
  *
@@ -30,7 +32,7 @@ var RELEASE_VERSION = require('./package.json').version;
  * - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-module.exports = function buildCallableMachine(nmDef){ 
+module.exports = function Machine(nmDef){
 
   // Determine the effective identity of this machine.
   var identity = nmDef.identity || (nmDef.friendlyName && _.camelCase(nmDef.friendlyName)) || undefined;//TODO
@@ -59,20 +61,8 @@ module.exports = function buildCallableMachine(nmDef){
   // an explicit callback was passed in.
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-
-  // Attach sanitized node machine definition properties to the callable ("wet") machine function.
-  // (This is primarily for compatibility with existing tooling, and for easy access to the def.)
-  // > Note that these properties should NEVER be changed!!
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // TODO: Either do this, OR better yet, figure out a different way-- e.g. using an accessor function.
-  // (that would be a breaking change, but it would be worth it for the perf. gains-- esp. w/ simple
-  // synchronous machines)
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-
-
-  // Return our callable ("wet") machine function in the appropriate format.
-  return function runFn(argins, explicitCbMaybe, metadata){
+  // Return our callable ("wet") machine (which is just a function, really.)
+  var wetMachine = function runFn(argins, explicitCbMaybe, metadata){
 
     // Tolerate a few alternative usages:
     // • `runFn(function(err, result){...})`
@@ -80,18 +70,18 @@ module.exports = function buildCallableMachine(nmDef){
     if (_.isFunction(argins) && _.isUndefined(explicitCbMaybe)) {
       metadata = explicitCbMaybe;
       explicitCbMaybe = argins;
-    }//>-
+    }//ﬁ
 
     // Tolerate unspecified argins:
     if (_.isUndefined(argins)) {
       argins = {};
-    }//>-
+    }//ﬂ
 
     // Handle unspecified metadata -- the usual case
     // (these are fka habitat vars)
     if (_.isUndefined(metadata)) {
       metadata = {};
-    }//>-
+    }//ﬁ
 
 
     // Build an "omen": an Error instance defined ahead of time in order to grab a stack trace.
@@ -122,14 +112,14 @@ module.exports = function buildCallableMachine(nmDef){
         throw flaverr({
           name:
             'UsageError',
-          message: 
+          message:
             'Sorry, this function doesn\'t know how to handle {...} callbacks.\n'+
             'If provided, the 2nd argument should be a function like `function(err,result){...}`\n'+
             '|  If you passed in {...} on purpose as a "switchback" (dictionary of callbacks),\n'+
             '|  please be aware that, as of machine v15, you can no longer pass in a switchback\n'+
             '|  as the 2nd argument.  And you can\'t pass a switchback in to .exec() anymore either.\n'+
             '|  Instead, you\'ll need to explicitly call .switch().\n'+
-            ' [?] See https://sailsjs.com/support for more help.'        
+            ' [?] See https://sailsjs.com/support for more help.'
         }, omen);
       }
       else {
@@ -150,13 +140,13 @@ module.exports = function buildCallableMachine(nmDef){
     // (Or possibly just start executing the machine immediately, depending on usage)
     return parley(
 
-      //  ███████╗██╗  ██╗███████╗ ██████╗██╗   ██╗████████╗██╗ ██████╗ ███╗   ██╗███████╗██████╗ 
+      //  ███████╗██╗  ██╗███████╗ ██████╗██╗   ██╗████████╗██╗ ██████╗ ███╗   ██╗███████╗██████╗
       //  ██╔════╝╚██╗██╔╝██╔════╝██╔════╝██║   ██║╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝██╔══██╗
       //  █████╗   ╚███╔╝ █████╗  ██║     ██║   ██║   ██║   ██║██║   ██║██╔██╗ ██║█████╗  ██████╔╝
       //  ██╔══╝   ██╔██╗ ██╔══╝  ██║     ██║   ██║   ██║   ██║██║   ██║██║╚██╗██║██╔══╝  ██╔══██╗
       //  ███████╗██╔╝ ██╗███████╗╚██████╗╚██████╔╝   ██║   ██║╚██████╔╝██║ ╚████║███████╗██║  ██║
       //  ╚══════╝╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═════╝    ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝
-      //                                                                                          
+      //
       function (done){
 
         // Now actually run the machine, in whatever way is appropriate based on its implementation type.
@@ -172,7 +162,7 @@ module.exports = function buildCallableMachine(nmDef){
             // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
             // FUTURE: Support automatically mapping this usage to the "es8AsyncFunction" implementation type:
             // (see c0d7dba572018a7ec8d1d0683abb7c46f0aabae8)
-            // 
+            //
             // > Note that this should check whether `fn` is an `async function` or not and warn/error accordingly.
             // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
             return done(flaverr({name:'UsageError', message: 'The experimental `es8AsyncFunction` implementation type is not yet supported.  See https://github.com/node-machine/machine/commits/c0d7dba572018a7ec8d1d0683abb7c46f0aabae8 for background, or https://sailsjs.com/support for help.'}, omen));
@@ -444,30 +434,30 @@ module.exports = function buildCallableMachine(nmDef){
 
       },
 
-      //  ███████╗██╗  ██╗██████╗ ██╗     ██╗ ██████╗██╗████████╗     ██████╗██████╗ 
+      //  ███████╗██╗  ██╗██████╗ ██╗     ██╗ ██████╗██╗████████╗     ██████╗██████╗
       //  ██╔════╝╚██╗██╔╝██╔══██╗██║     ██║██╔════╝██║╚══██╔══╝    ██╔════╝██╔══██╗
       //  █████╗   ╚███╔╝ ██████╔╝██║     ██║██║     ██║   ██║       ██║     ██████╔╝
       //  ██╔══╝   ██╔██╗ ██╔═══╝ ██║     ██║██║     ██║   ██║       ██║     ██╔══██╗
       //  ███████╗██╔╝ ██╗██║     ███████╗██║╚██████╗██║   ██║       ╚██████╗██████╔╝
-      //  ╚══════╝╚═╝  ╚═╝╚═╝     ╚══════╝╚═╝ ╚═════╝╚═╝   ╚═╝        ╚═════╝╚═════╝ 
-      //                                                                             
+      //  ╚══════╝╚═╝  ╚═╝╚═╝     ╚══════╝╚═╝ ╚═════╝╚═╝   ╚═╝        ╚═════╝╚═════╝
+      //
       // If provided, use the explicit callback.
       explicitCbMaybe || undefined,
 
-      //  ███████╗██╗  ██╗████████╗██████╗  █████╗                     
-      //  ██╔════╝╚██╗██╔╝╚══██╔══╝██╔══██╗██╔══██╗                    
-      //  █████╗   ╚███╔╝    ██║   ██████╔╝███████║                    
-      //  ██╔══╝   ██╔██╗    ██║   ██╔══██╗██╔══██║                    
-      //  ███████╗██╔╝ ██╗   ██║   ██║  ██║██║  ██║                    
-      //  ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝                    
-      //                                                               
+      //  ███████╗██╗  ██╗████████╗██████╗  █████╗
+      //  ██╔════╝╚██╗██╔╝╚══██╔══╝██╔══██╗██╔══██╗
+      //  █████╗   ╚███╔╝    ██║   ██████╔╝███████║
+      //  ██╔══╝   ██╔██╗    ██║   ██╔══██╗██╔══██║
+      //  ███████╗██╔╝ ██╗   ██║   ██║  ██║██║  ██║
+      //  ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝
+      //
       //  ███╗   ███╗███████╗████████╗██╗  ██╗ ██████╗ ██████╗ ███████╗
       //  ████╗ ████║██╔════╝╚══██╔══╝██║  ██║██╔═══██╗██╔══██╗██╔════╝
       //  ██╔████╔██║█████╗     ██║   ███████║██║   ██║██║  ██║███████╗
       //  ██║╚██╔╝██║██╔══╝     ██║   ██╔══██║██║   ██║██║  ██║╚════██║
       //  ██║ ╚═╝ ██║███████╗   ██║   ██║  ██║╚██████╔╝██████╔╝███████║
       //  ╚═╝     ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝
-      //                                                               
+      //
       // Extra methods for the Deferred:
       {
 
@@ -486,7 +476,7 @@ module.exports = function buildCallableMachine(nmDef){
             throw flaverr({
               name:
                 'UsageError',
-              message: 
+              message:
                 'Sorry, this function cannot be called synchronously, because it does not\n'+
                 'declare support for synchronous usage (i.e. `sync: true`)\n'+
                 ' [?] See https://sailsjs.com/support for help.'
@@ -583,7 +573,7 @@ module.exports = function buildCallableMachine(nmDef){
             }, omen);
           }//-•
 
-          
+
           // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
           // TODO: Prevent using unexpected additional handler callbacks -- at least without setting a special meta key
           // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -666,7 +656,7 @@ module.exports = function buildCallableMachine(nmDef){
           throw flaverr({
             name:
               'CompatibilityError',
-            message: 
+            message:
               'As of machine v15, built-in caching functionality (and thus the `.cache()` method) is no longer supported.\n'+
               'Instead, please use your own caching mechanism-- for example:\n'+
               '\n'+
@@ -688,17 +678,17 @@ module.exports = function buildCallableMachine(nmDef){
 
       //  ████████╗██╗███╗   ███╗███████╗ ██████╗ ██╗   ██╗████████╗
       //  ╚══██╔══╝██║████╗ ████║██╔════╝██╔═══██╗██║   ██║╚══██╔══╝
-      //     ██║   ██║██╔████╔██║█████╗  ██║   ██║██║   ██║   ██║   
-      //     ██║   ██║██║╚██╔╝██║██╔══╝  ██║   ██║██║   ██║   ██║   
-      //     ██║   ██║██║ ╚═╝ ██║███████╗╚██████╔╝╚██████╔╝   ██║   
-      //     ╚═╝   ╚═╝╚═╝     ╚═╝╚══════╝ ╚═════╝  ╚═════╝    ╚═╝   
-      //                                                            
+      //     ██║   ██║██╔████╔██║█████╗  ██║   ██║██║   ██║   ██║
+      //     ██║   ██║██║╚██╔╝██║██╔══╝  ██║   ██║██║   ██║   ██║
+      //     ██║   ██║██║ ╚═╝ ██║███████╗╚██████╔╝╚██████╔╝   ██║
+      //     ╚═╝   ╚═╝╚═╝     ╚═╝╚══════╝ ╚═════╝  ╚═════╝    ╚═╝
+      //
       // If provided, use the timeout (max # of ms to wait for this machine to finish executing)
       nmDef.timeout || undefined,
       // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       // FUTURE: Write tests that ensure all of the scenarios in c4e738e8016771bd55b78cba277e62a83d5c61fc are working.
       // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      
+
 
       //   ██████╗ ███╗   ███╗███████╗███╗   ██╗
       //  ██╔═══██╗████╗ ████║██╔════╝████╗  ██║
@@ -706,7 +696,7 @@ module.exports = function buildCallableMachine(nmDef){
       //  ██║   ██║██║╚██╔╝██║██╔══╝  ██║╚██╗██║
       //  ╚██████╔╝██║ ╚═╝ ██║███████╗██║ ╚████║
       //   ╚═════╝ ╚═╝     ╚═╝╚══════╝╚═╝  ╚═══╝
-      //                                        
+      //
       // Pass in the omen, if we were able to create one.
       omen || undefined,
 
@@ -717,7 +707,16 @@ module.exports = function buildCallableMachine(nmDef){
 
     );
 
-  };//</ return >
+  };//</ƒ>
+
+
+  // Attach sanitized node machine definition properties to the callable ("wet") machine function.
+  // (This is primarily for compatibility with existing tooling, and for easy access to the def.)
+  // > Note that these properties should NEVER be changed after this point!
+  decorateWetMachine(wetMachine, nmDef);
+
+
+  return wetMachine;
 
 };
 
@@ -729,7 +728,7 @@ module.exports = function buildCallableMachine(nmDef){
 //  ╚════██║   ██║   ██╔══██║   ██║   ██║██║         ██║╚██╔╝██║██╔══╝     ██║   ██╔══██║██║   ██║██║  ██║╚════██║
 //  ███████║   ██║   ██║  ██║   ██║   ██║╚██████╗    ██║ ╚═╝ ██║███████╗   ██║   ██║  ██║╚██████╔╝██████╔╝███████║
 //  ╚══════╝   ╚═╝   ╚═╝  ╚═╝   ╚═╝   ╚═╝ ╚═════╝    ╚═╝     ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝
-//                                                                                                                
+//
 
 
 /**
@@ -825,12 +824,12 @@ module.exports.buildWithCustomUsage = function (opts) {
 
   var arginStyle = opts.arginStyle || 'named';
   var execStyle = opts.execStyle || 'deferred';
-  
+
   return function (){
 
     var argins = {};
     switch (arginStyle) {
-      
+
       case 'named':
         argins = arguments[0];
         break;
@@ -923,7 +922,7 @@ module.exports.buildWithCustomUsage = function (opts) {
 
     var basicRunner = module.exports.build(nmDef);
     var deferredObj = basicRunner(argins);
-    
+
     switch (execStyle) {
 
       case 'deferred':

@@ -37,7 +37,7 @@
     "@sailshq/lodash": "^3.10.2",
     "flaverr": "^1.1.1",
     "parley": "^2.4.0-0",
-    "rttc": "^9.8.1"
+    "rttc": "^10.0.0-1"
   },
   "devDependencies": {
     "async": "2.0.1",
