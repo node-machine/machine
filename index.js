@@ -32,7 +32,8 @@ var RELEASE_VERSION = require('./package.json').version;
 
 module.exports = function Machine(nmDef){
 
-  // Determine the effective identity of this machine.
+  // Determine the effective identity of this machine
+  // > Note that we modify the "dry" definition in place.
   var identity = nmDef.identity || (nmDef.friendlyName && _.camelCase(nmDef.friendlyName)) || undefined;//TODO
 
   // Verify correctness of node-machine definition.
@@ -932,6 +933,6 @@ module.exports.buildWithCustomUsage = function (opts) {
 // =====================================================================================================================
 module.exports.build = function(){
   // console.warn('WARNING: As of v15, machine should be called directly instead of using `.build()`.  (Adjusting for you this time...)');
-  return module.exports.apply(undefined, arguments);
+  return this.apply(undefined, arguments);
 };
 
