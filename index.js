@@ -206,6 +206,7 @@ module.exports = function Machine(nmDef){
             //    ╚═╝╚══════╝╚══════╝ ╚═════╝  ╚══╝╚══╝     ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝
             //
             // TODO: optimize it (see `./machine-runner-performance-july-7-2017.txt`)
+            // (This is probably as easy as just moving this logic that builds `handlerCbs` out so that it happens only once-- at build)
 
             // Build & return exit handler callbacks for use by the machine's `fn`.
             // > Note: The only reason this is a self-calling function is to keep private variables insulated.
@@ -300,14 +301,14 @@ module.exports = function Machine(nmDef){
                   }
 
                   return proceed(err);
-                };//</ ... >
+                };//</ƒ>
 
                 // * * * Implementation of exits.success()... * * *
                 handlerCbs.success = function(rawOutput){
                   // Ensure valid result (vs. expected output type for this exit)
                   var result = rawOutput;//TODO: RTTC coercion
                   return proceed(undefined, result);
-                };//</ ... >
+                };//</ƒ>
 
                 // * * * Implementation of each of the other misc. exits  (`exits.*()`)... * * *
                 _.each(_.difference(_.keys(exitDefs), ['error','success']), function (miscExitCodeName){
@@ -354,7 +355,7 @@ module.exports = function Machine(nmDef){
                     }, omen);
 
                     return proceed(err);
-                  };
+                  };//</ƒ>
                 });//</ each misc. exit >
 
               })(function (err, result){
