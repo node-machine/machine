@@ -1,0 +1,140 @@
+//   ██████╗ ██╗     ██████╗ 
+//  ██╔═══██╗██║     ██╔══██╗
+//  ██║   ██║██║     ██║  ██║
+//  ██║   ██║██║     ██║  ██║
+//  ╚██████╔╝███████╗██████╔╝
+//   ╚═════╝ ╚══════╝╚═════╝ 
+//                           
+
+
+  benchmark :: Machine.build()
+                                   
+   o                               
+                                    
+       •                            
+      o                  .          
+       •                •            
+        •                •           
+                •       o            
+                            •        o
+ o   •              •          o   •
+      o              o         •    
+  •  •      •       •      •    •    
+           •      •              o  
+  •    b e n c h m a r k s      •    
+   •        •                        
+ •                        ___  •    
+    • o •    •      •    /o/•\_   • 
+       •   •  o    •    /_/\ o \_ • 
+       o    O   •   o • •   \ o .\_    
+          •       o  •       \. O  \   
+
+ • sanity_check x 730,018 ops/sec ±0.52% (80 runs sampled)
+ • build_very_simple_machine x 185,725 ops/sec ±2.14% (76 runs sampled)
+ • build_machine_with_inputs_and_exits_but_nothing_crazy x 96,870 ops/sec ±3.33% (71 runs sampled)
+ • build_machine_with_inputs_and_exits_that_have_big_ole_exemplars x 99,483 ops/sec ±3.28% (70 runs sampled)
+ • build_machine_with_crazy_numbers_of_inputs_and_exits x 48,380 ops/sec ±2.48% (70 runs sampled)
+ • build_machine_with_crazy_numbers_of_inputs_and_exits_and_is_cacheable x 47,694 ops/sec ±2.44% (67 runs sampled)
+ • build_machine_with_crazy_numbers_of_inputs_and_exits_with_huge_exemplars x 60,209 ops/sec ±2.65% (70 runs sampled)
+ • build_machine_with_crazy_numbers_of_inputs_and_exits_with_ref_exemplars x 47,886 ops/sec ±2.20% (66 runs sampled)
+Fastest is sanity_check
+Slowest is build_machine_with_crazy_numbers_of_inputs_and_exits_and_is_cacheable,build_machine_with_crazy_numbers_of_inputs_and_exits_with_ref_exemplars,build_machine_with_crazy_numbers_of_inputs_and_exits
+    ✓ should be performant enough
+
+
+  1 passing (48s)
+
+∑ mocha test/benchmarks/
+build.benchmark.js     exec.benchmark.js      execSync.benchmark.js  
+∑ mocha test/benchmarks/exec.benchmark.js 
+
+
+  benchmark :: Machine.build() + Machine.prototype.exec()
+ • sanity_check x 728,895 ops/sec ±0.38% (84 runs sampled)
+ • exec_very_simple_machine x 15,684 ops/sec ±7.49% (76 runs sampled)
+ • exec_machine_with_inputs_and_exits_but_nothing_crazy x 12,110 ops/sec ±2.72% (76 runs sampled)
+ • exec_machine_with_inputs_and_exits_that_have_big_ole_exemplars x 4,766 ops/sec ±1.82% (78 runs sampled)
+ • exec_machine_with_crazy_numbers_of_inputs_and_exits x 5,130 ops/sec ±1.76% (78 runs sampled)
+ • exec_machine_with_crazy_numbers_of_inputs_and_exits_and_is_cacheable x 5,203 ops/sec ±1.87% (78 runs sampled)
+ • exec_machine_with_crazy_numbers_of_inputs_and_exits_with_huge_exemplars x 1,164 ops/sec ±2.00% (80 runs sampled)
+ • exec_machine_with_crazy_numbers_of_inputs_and_exits_with_ref_exemplars x 8,121 ops/sec ±1.92% (75 runs sampled)
+Fastest is sanity_check
+Slowest is exec_machine_with_crazy_numbers_of_inputs_and_exits_with_huge_exemplars
+    ✓ should be performant enough
+
+
+  1 passing (49s)
+
+
+
+
+
+
+//  ███╗   ██╗███████╗██╗    ██╗
+//  ████╗  ██║██╔════╝██║    ██║
+//  ██╔██╗ ██║█████╗  ██║ █╗ ██║
+//  ██║╚██╗██║██╔══╝  ██║███╗██║
+//  ██║ ╚████║███████╗╚███╔███╔╝
+//  ╚═╝  ╚═══╝╚══════╝ ╚══╝╚══╝ 
+//                              
+
+// As of Friday July 7, 2017
+
+∑ mocha test/benchmarks/build.benchmark.js 
+
+
+  benchmark :: Machine.build()
+                                   
+   o                               
+                                    
+       •                            
+      o                  .          
+       •                •            
+        •                •           
+                •       o            
+                            •        o
+ o   •              •          o   •
+      o              o         •    
+  •  •      •       •      •    •    
+           •      •              o  
+  •    b e n c h m a r k s      •    
+   •        •                        
+ •                        ___  •    
+    • o •    •      •    /o/•\_   • 
+       •   •  o    •    /_/\ o \_ • 
+       o    O   •   o • •   \ o .\_    
+          •       o  •       \. O  \   
+
+ • sanity_check x 755,310 ops/sec ±1.03% (81 runs sampled)
+ • build_very_simple_machine x 224,105 ops/sec ±0.56% (83 runs sampled)
+ • build_machine_with_inputs_and_exits_but_nothing_crazy x 178,060 ops/sec ±0.91% (83 runs sampled)
+ • build_machine_with_inputs_and_exits_that_have_big_ole_exemplars x 176,362 ops/sec ±0.90% (83 runs sampled)
+ • build_machine_with_crazy_numbers_of_inputs_and_exits x 155,990 ops/sec ±0.76% (82 runs sampled)
+ • build_machine_with_crazy_numbers_of_inputs_and_exits_and_is_cacheable x 156,097 ops/sec ±0.82% (82 runs sampled)
+ • build_machine_with_crazy_numbers_of_inputs_and_exits_with_huge_exemplars x 236,036 ops/sec ±0.70% (82 runs sampled)
+ • build_machine_with_crazy_numbers_of_inputs_and_exits_with_ref_exemplars x 155,541 ops/sec ±0.84% (82 runs sampled)
+Fastest is sanity_check
+Slowest is build_machine_with_crazy_numbers_of_inputs_and_exits_with_ref_exemplars,build_machine_with_crazy_numbers_of_inputs_and_exits,build_machine_with_crazy_numbers_of_inputs_and_exits_and_is_cacheable
+    ✓ should be performant enough
+
+
+  1 passing (49s)
+
+∑ mocha test/benchmarks/exec.benchmark.js 
+
+
+  benchmark :: Machine.build() + Machine.prototype.exec()
+ • sanity_check x 782,625 ops/sec ±0.47% (83 runs sampled)
+ • exec_very_simple_machine x 9,674 ops/sec ±2.58% (75 runs sampled)
+ • exec_machine_with_inputs_and_exits_but_nothing_crazy x 9,065 ops/sec ±2.65% (67 runs sampled)
+ • exec_machine_with_inputs_and_exits_that_have_big_ole_exemplars x 8,487 ops/sec ±2.67% (73 runs sampled)
+ • exec_machine_with_crazy_numbers_of_inputs_and_exits x 8,287 ops/sec ±2.79% (75 runs sampled)
+ • exec_machine_with_crazy_numbers_of_inputs_and_exits_and_is_cacheable x 8,323 ops/sec ±2.86% (75 runs sampled)
+ • exec_machine_with_crazy_numbers_of_inputs_and_exits_with_huge_exemplars x 8,268 ops/sec ±2.67% (72 runs sampled)
+ • exec_machine_with_crazy_numbers_of_inputs_and_exits_with_ref_exemplars x 8,297 ops/sec ±3.13% (66 runs sampled)
+Fastest is sanity_check
+Slowest is exec_machine_with_crazy_numbers_of_inputs_and_exits_with_ref_exemplars,exec_machine_with_crazy_numbers_of_inputs_and_exits_with_huge_exemplars,exec_machine_with_crazy_numbers_of_inputs_and_exits,exec_machine_with_crazy_numbers_of_inputs_and_exits_and_is_cacheable,exec_machine_with_inputs_and_exits_that_have_big_ole_exemplars
+    ✓ should be performant enough
+
+
+  1 passing (49s)
