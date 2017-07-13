@@ -14,7 +14,7 @@
   "scripts": {
     "test": "npm run lint && npm run custom-tests && npm run bench",
     "custom-tests": "node ./node_modules/mocha/bin/mocha -R dot test/*.test.js",
-    "lint": "node ./node_modules/eslint/bin/eslint . --max-warnings=0 --ignore-pattern 'test/'",
+    "lint": "node ./node_modules/eslint/bin/eslint . --max-warnings=0 --ignore-pattern 'test/' && echo '✔  Your code looks good.'",
     "bench": "node ./node_modules/mocha/bin/mocha -R dot --recursive -b test/benchmarks/"
   },
   "docs": {
