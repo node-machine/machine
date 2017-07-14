@@ -138,7 +138,8 @@ module.exports.buildWithCustomUsage = function (opts) {
   }//ﬁ
 
 
-  // Verify correctness of node-machine definition.
+  // Verify custom-usage-specific aspects of this node-machine definition's
+  // implementation vs. the sort of custom usage desired here.
   var nmDef = opts.def;// TODO
 
   var arginStyle = opts.arginStyle || 'named';
