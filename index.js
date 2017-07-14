@@ -86,7 +86,7 @@ module.exports.inspect = function () {
   ' \n'+
   ' • License   : '+RELEASE_LICENSE+'\n'+
   ' • Package   : http://npmjs.com/package/machine\n'+
-  ' • Questions : https://sailsjs.com/studio\n'+
+  ' • Questions : https://sailsjs.com/support\n'+
   '---------------------------------------------------\n';
 };
 
