@@ -2,12 +2,14 @@
  * Module dependencies
  */
 
+var util = require('util');
 var _ = require('@sailshq/lodash');
 var flaverr = require('flaverr');
 
 var build = require('./lib/build');
 var getMethodName = require('./lib/get-method-name');
 var pack = require('./lib/pack');
+var getIsProduction = require('./lib/private/get-is-production');
 
 var RELEASE_LICENSE = require('./package.json').license;
 var RELEASE_SERIES = 'gen2';
@@ -114,10 +116,30 @@ module.exports.build = function(){
  */
 module.exports.buildWithCustomUsage = function (opts) {
 
+  // Assert valid usage of this method.
+  // > (in production, we skip this stuff to save cycles.  We can get away w/ that
+  // > because we only include this here to provide better error msgs in development
+  // > anyway)
+  if (!getIsProduction()) {
+    if (!_.isObject(opts.def) || _.isArray(opts.def) || _.isFunction(opts.def)) {
+      throw new Error('Consistency violation: `def` must be a dictionary.  But instead got: '+util.inspect(opts.def, {depth: 5}));
+    }
+    if (opts.arginStyle !== undefined && !_.contains(['named','serial'], opts.arginStyle)) {
+      throw new Error('Consistency violation: If specified, `arginStyle` must be either "named" or "serial".  But instead got: '+util.inspect(opts.arginStyle, {depth: 5}));
+    }
+    if (opts.execStyle !== undefined && !_.contains(['deferred','immediate'], opts.execStyle)) {
+      throw new Error('Consistency violation: If specified, `execStyle` must be either "deferred" or "immediate".  But instead got: '+util.inspect(opts.execStyle, {depth: 5}));
+    }
+    var VALID_OPTIONS = ['def', 'arginStyle', 'execStyle'];
+    var extraneousOpts = _.difference(_.keys(opts), VALID_OPTIONS);
+    if (extraneousOpts.length > 0) {
+      throw new Error('Consistency violation: Unrecognized option(s): '+util.inspect(extraneousOpts, {depth: 5}));
+    }
+  }//ﬁ
+
+
   // Verify correctness of node-machine definition.
   var nmDef = opts.def;// TODO
-
-  // FUTURE: Reject unrecognized opts to help avoid misunderstandings in userland code
 
   var arginStyle = opts.arginStyle || 'named';
   var execStyle = opts.execStyle || 'deferred';
