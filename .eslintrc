@@ -34,6 +34,7 @@
     "no-unexpected-multiline":      [1],
     "no-unused-vars":               [1],
     "one-var":                      [2, "never"],
+    "quotes":                       [1, "single", { "avoidEscape": false, "allowTemplateLiterals": true }],
     "semi":                         [2, "always"]
   }
 

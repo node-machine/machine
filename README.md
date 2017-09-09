@@ -4,11 +4,116 @@
 </h1>
 
 
+## Status
+
 This branch is currently a work in progress.
 
 
+## Usage
 
-### Benchmarks
+
+#### .build()
+
+Call `Machine.build()` (or just `Machine()`) with a machine definition to build a callable function:
+
+```js
+const Machine = require('machine');
+
+const callable = Machine({
+  inputs: {
+    foo: { type: 'string', required: true }
+  },
+  fn: function(inputs, exits){
+    let result = `The result, based on ${inputs.foo}.`;
+    return exits.success(result);
+  }
+});//ƒ
+
+let result = await callable({foo: 'bar'});
+console.log(result);
+
+// => 'The result, based on "bar"'.
+```
+
+
+#### .pack()
+
+Call `Machine.pack()` to construct a "machinepack", a JavaScript (usually Node.js) package of callable functions:
+
+```js
+const machinepack = Machine.pack({
+  dir: __dirname,
+  pkg: require('./package.json')
+});
+```
+
+#### .VERSION
+
+The current version of the machine runner.
+
+```js
+console.log(Machine.VERSION);
+
+// => '15.0.0-3'
+```
+
+
+#### .getMethodName()
+
+Get the proper method name for a machine definition.
+
+```js
+const methodName = Machine.getMethodName({
+  identity: 'do-something-cool',
+  friendlyName: 'Do summthin real neat',
+  description: 'Do something quite skillful and well-balanced.',
+  inputs: {/*…*/},
+  exits: {/*…*/},
+  fn: function(inputs, exits) { /*…*/ return exits.success(); }
+});//ƒ
+
+console.log('.'+methodName+'()');
+
+//=> '.doSomethingCool()'
+```
+
+
+
+#### .buildWithCustomUsage()
+
+> Experimental.
+
+```js
+const customCallable = Machine.buildWithCustomUsage({
+  arginStyle: 'serial',
+  execStyle: 'immediate',
+  def: {
+    sync: true,
+    args: ['foo', 'bar'],
+    inputs: {
+      foo: { type: 'string', required: true },
+      bar: { type: 'number' },
+    },
+    fn: function(inputs, exits){
+      let result = `The result, based on ${inputs.foo}`;
+      if (inputs.bar) {
+        result += ` and ${inputs.bar}.`;
+      }
+      return exits.success(result);
+    }
+  }
+});//ƒ
+
+let result = callable('abc', 123);
+console.log(result);
+
+// => 'The result, based on "abc" and "123"'.
+```
+
+
+
+
+## Benchmarks
 
 As of [morning, Friday, August 18, 2017](https://github.com/node-machine/machine/tree/35548a4a1425d5a21bff481470a615c0561a536b):
 
@@ -51,3 +156,12 @@ As of [morning, Friday, August 18, 2017](https://github.com/node-machine/machine
  Fastest is sanity_check
  Slowest is exec_machine_with_crazy_numbers_of_inputs_and_exits_with_ref_exemplars,exec_machine_with_crazy_numbers_of_inputs_and_exits_and_is_cacheable
   ```
+
+
+## License
+
+MIT
+
+Copyright (c) Mike McNeil, 2014
+Copyright (c) The Sails Co., 2015-2017
+
