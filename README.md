@@ -79,7 +79,6 @@ It also supports some other methods, such as:
 - `deferred.log()`
 - `deferred.then()`
 - `deferred.catch()`
-- `deferred.execSync()`
 - `deferred.exec()`
 - `deferred.switch()`
 - `deferred.meta()`
