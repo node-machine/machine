@@ -35,17 +35,75 @@ console.log(result);
 // => 'The result, based on "bar"'.
 ```
 
+##### Machine definitions
+
+A machine definition is a dictionary (plain JavaScript object) that describes the implementation of a function, according to the [specification](http://node-machine.org/spec).
+
+By itself, a machine definition can be programmatically parsed for things like generating documentation and tests, performing static analysis, enabling IDE plugins with features such as code completion and high-level linting, inferring user interface elements such as forms, and much more.
+
+But to actually _use_ a machine definition in your code, you need some kind of runner.  That's what this module is for:
+
+```js
+
+const Machine = require('machine');
+const def = { /* … */ };
+const callable = Machine(def);
+```
+
+##### Callables
+
+A "callable" (or "wet machine") is a function returned after building a machine.  It has standard usage out of the box (unless you used `buildWithCustomUsage()`).
+
+```js
+let argins = { /*…*/ };
+let result = await callable(argins);
+```
+
+It also has some additional custom methods, available as properties:
+
+- `callable.getDef()`
+- `callable.customize()`
+
+
+##### Deferreds
+
+Invoking a "callable" returns a Deferred instance, that can be used with async/await:
+
+```js
+let deferred = callable(argins);
+let result = await deferred;
+```
+
+It also supports some other methods, such as:
+
+- `deferred.log()`
+- `deferred.then()`
+- `deferred.catch()`
+- `deferred.exec()`
+- `deferred.switch()`
+
+> See [parley](https://github.com/mikermcneil/parley) for more information.
+
 
 #### .pack()
 
 Call `Machine.pack()` to construct a "machinepack", a JavaScript (usually Node.js) package of callable functions:
 
 ```js
-const machinepack = Machine.pack({
+const mp = Machine.pack({
   dir: __dirname,
   pkg: require('./package.json')
 });
 ```
+
+##### Machinepacks
+
+Machinepacks are simple dictionaries (plain JavaScript objects) that expose a set of "callables" as methods.
+
+They also support one built-in method:
+
+- `mp.customize()`
+
 
 #### .VERSION
 
