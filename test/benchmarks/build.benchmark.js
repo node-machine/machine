@@ -38,6 +38,7 @@ describe('benchmark :: Machine.build()', function (){
 
   it('should be performant enough', function (done){
 
+    // (Including this squid tentacle here just since this file is alphabetically first.)
     console.log(
     '                                   \n'+
     '   o                               \n'+
@@ -61,7 +62,7 @@ describe('benchmark :: Machine.build()', function (){
     '          •       o  •       \\. O  \\   \n'+
     '');
 
-    runBenchmarks('Machine.build()', [
+    runBenchmarks('just Machine.build()', [
 
       function sanity_check(next){
         // Do nothing.

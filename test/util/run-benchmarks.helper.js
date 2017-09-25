@@ -40,8 +40,8 @@ module.exports = function runBenchmarks (name, testFns, done) {
     console.log(' •',String(event.target));
   })
   .on('complete', function() {
-    console.log('Fastest is ' + this.filter('fastest').map('name'));
-    console.log('Slowest is ' + this.filter('slowest').map('name'));
+    // console.log('Fastest is ' + this.filter('fastest').map('name'));
+    // console.log('Slowest is ' + this.filter('slowest').map('name'));
     return done(undefined, this);
   })
   .run();

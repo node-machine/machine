@@ -40,7 +40,7 @@ describe('benchmark :: just .exec()  (assuming machines have already been built)
 
   it('should be performant enough', function (done){
 
-    runBenchmarks('.exec()', [
+    runBenchmarks('just .exec()', [
 
       function sanity_check(next){
         // Do nothing.
