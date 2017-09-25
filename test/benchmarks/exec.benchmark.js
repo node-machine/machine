@@ -209,7 +209,7 @@ describe('benchmark :: Machine.build() + Machine.prototype.exec()', function (){
       function exec_machine_with_crazy_numbers_of_inputs_and_exits_and_is_cacheable(next){
         var m = Machine.build({
           description: 'Do something that demands a crap ton of inputs and exits and is cacheable',
-          cacheable: true,
+          sideEffects: 'cacheable',
           inputs: {
             one: { example: 'stuff', required: true },
             two: { example: 'stuff', required: true },
@@ -283,7 +283,7 @@ describe('benchmark :: Machine.build() + Machine.prototype.exec()', function (){
       function exec_machine_with_crazy_numbers_of_inputs_and_exits_with_huge_exemplars(next){
         var m = Machine.build({
           description: 'Do something that demands a crap ton of inputs and exits where all of them have ref exemplars',
-          cacheable: true,
+          sideEffects: 'cacheable',
           inputs: {
             one: { example: USERS_EXEMPLAR, required: true },
             two: { example: USERS_EXEMPLAR, required: true },
@@ -365,7 +365,7 @@ describe('benchmark :: Machine.build() + Machine.prototype.exec()', function (){
       function exec_machine_with_crazy_numbers_of_inputs_and_exits_with_ref_exemplars(next){
         var m = Machine.build({
           description: 'Do something that demands a crap ton of inputs and exits where all of them have ref exemplars',
-          cacheable: true,
+          sideEffects: 'cacheable',
           inputs: {
             one: { example: '===', required: true },
             two: { example: '===', required: true },
