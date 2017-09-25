@@ -19,13 +19,13 @@ var Machine = require('../../');
 //  ╚  ╩╩ ╚═ ╩ ╚═╝╩╚═╚═╝╚═╝
 // > Note that we extend all of the test machine defs with `sync: true`--
 // > a necessary step, given the nature of this particular benchmark.
-var doSomethingVerySimple = _.extend({sync: true}, Machine.build(require('./private/do-something-very-simple.fixture')));
-var doSomethingNormal = _.extend({sync: true}, Machine.build(require('./private/do-something-normal.fixture')));
-var doSomethingNormalWithComplexExemplars = _.extend({sync: true}, Machine.build(require('./private/do-something-normal-with-complex-exemplars.fixture')));
-var doSomethingInsaneWithManyBasicExemplars = _.extend({sync: true}, Machine.build(require('./private/do-something-insane-with-many-basic-exemplars.fixture')));
-var doSomethingInsaneButCacheableWithManyBasicExemplars = _.extend({sync: true}, Machine.build(require('./private/do-something-insane-but-cacheable-with-many-basic-exemplars.fixture')));
-var doSomethingInsaneWithManyComplexExemplars = _.extend({sync: true}, Machine.build(require('./private/do-something-insane-with-many-complex-exemplars.fixture')));
-var doSomethingInsaneWithManyRefExemplars = _.extend({sync: true}, Machine.build(require('./private/do-something-insane-with-many-ref-exemplars.fixture')));
+var doSomethingVerySimple = Machine.build(_.extend({sync: true}, require('./private/do-something-very-simple.fixture')));
+var doSomethingNormal = Machine.build(_.extend({sync: true}, require('./private/do-something-normal.fixture')));
+var doSomethingNormalWithComplexExemplars = Machine.build(_.extend({sync: true}, require('./private/do-something-normal-with-complex-exemplars.fixture')));
+var doSomethingInsaneWithManyBasicExemplars = Machine.build(_.extend({sync: true}, require('./private/do-something-insane-with-many-basic-exemplars.fixture')));
+var doSomethingInsaneButCacheableWithManyBasicExemplars = Machine.build(_.extend({sync: true}, require('./private/do-something-insane-but-cacheable-with-many-basic-exemplars.fixture')));
+var doSomethingInsaneWithManyComplexExemplars = Machine.build(_.extend({sync: true}, require('./private/do-something-insane-with-many-complex-exemplars.fixture')));
+var doSomethingInsaneWithManyRefExemplars = Machine.build(_.extend({sync: true}, require('./private/do-something-insane-with-many-ref-exemplars.fixture')));
 
 var SAMPLE_USERS = require('./private/sample-users.fixture');
 var SAMPLE_SPECIES = require('./private/sample-species.fixture');
@@ -54,7 +54,7 @@ describe('benchmark :: just .execSync()  (assuming machines have already been bu
       },
 
       function execSync_very_simple_machine(next){
-        doSomethingVerySimple.execSync();
+        doSomethingVerySimple({}).execSync();
         return next();
       },
 
