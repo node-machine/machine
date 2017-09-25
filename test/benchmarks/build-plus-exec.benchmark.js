@@ -2,7 +2,6 @@
  * Module dependencies
  */
 
-var rttc = require('rttc');
 var runBenchmarks = require('../util/run-benchmarks.helper');
 var Machine = require('../../');
 
@@ -26,11 +25,13 @@ var DO_SOMETHING_INSANE_WITH_MANY_REF_EXEMPLARS = require('./private/do-somethin
 
 var SAMPLE_USERS = require('./private/sample-users.fixture');
 var SAMPLE_SPECIES = require('./private/sample-species.fixture');
+var SAMPLE_MANY_BASIC_ARGINS = require('./private/sample-many-basic-argins.fixture');
+var SAMPLE_MANY_COMPLEX_ARGINS = require('./private/sample-many-complex-argins.fixture');
 
 //  ╔╗ ╔═╗╔╗╔╔═╗╦ ╦╔╦╗╔═╗╦═╗╦╔═╔═╗
 //  ╠╩╗║╣ ║║║║  ╠═╣║║║╠═╣╠╦╝╠╩╗╚═╗
 //  ╚═╝╚═╝╝╚╝╚═╝╩ ╩╩ ╩╩ ╩╩╚═╩ ╩╚═╝
-describe('benchmark :: Machine.build() + Machine.prototype.exec()', function (){
+describe('benchmark :: Machine.build() + .exec()', function (){
   // Set "timeout" and "slow" thresholds incredibly high
   // to avoid running into issues.
   this.slow(240000);
@@ -39,7 +40,7 @@ describe('benchmark :: Machine.build() + Machine.prototype.exec()', function (){
 
   it('should be performant enough', function (done){
 
-    runBenchmarks('Machine.prototype.exec()', [
+    runBenchmarks('.exec()', [
 
       function sanity_check(next){
         // Do nothing.
@@ -77,115 +78,25 @@ describe('benchmark :: Machine.build() + Machine.prototype.exec()', function (){
 
       function exec_machine_with_crazy_numbers_of_inputs_and_exits(next){
         var m = Machine.build(DO_SOMETHING_INSANE_WITH_MANY_BASIC_EXEMPLARS);
-        m({
-          one: 'testing stuff',
-          two: 'testing stuff',
-          three: 'testing stuff',
-          four: 'testing stuff',
-          five: 'testing stuff',
-          six: 'testing stuff',
-          seven: 'testing stuff',
-          eight: 'testing stuff',
-          nine: 'testing stuff',
-          ten: 'testing stuff',
-          eleven: 'testing stuff',
-          twelve: 'testing stuff',
-          thirteen: 'testing stuff',
-          fourteen: 'testing stuff',
-          fifteen: 'testing stuff',
-          sixteen: 'testing stuff',
-          seventeen: 'testing stuff',
-          eighteen: 'testing stuff',
-          nineteen: 'testing stuff',
-          twenty: 'testing stuff',
-        }).exec(next);
+        m(SAMPLE_MANY_BASIC_ARGINS).exec(next);
       },
 
 
       function exec_machine_with_crazy_numbers_of_inputs_and_exits_and_is_cacheable(next){
         var m = Machine.build(DO_SOMETHING_INSANE_BUT_CACHEABLE_WITH_MANY_BASIC_EXEMPLARS);
-        m({
-          one: 'testing stuff',
-          two: 'testing stuff',
-          three: 'testing stuff',
-          four: 'testing stuff',
-          five: 'testing stuff',
-          six: 'testing stuff',
-          seven: 'testing stuff',
-          eight: 'testing stuff',
-          nine: 'testing stuff',
-          ten: 'testing stuff',
-          eleven: 'testing stuff',
-          twelve: 'testing stuff',
-          thirteen: 'testing stuff',
-          fourteen: 'testing stuff',
-          fifteen: 'testing stuff',
-          sixteen: 'testing stuff',
-          seventeen: 'testing stuff',
-          eighteen: 'testing stuff',
-          nineteen: 'testing stuff',
-          twenty: 'testing stuff',
-        }).exec(next);
+        m(SAMPLE_MANY_BASIC_ARGINS).exec(next);
       },
 
 
       function exec_machine_with_crazy_numbers_of_inputs_and_exits_with_huge_exemplars(next){
         var m = Machine.build(DO_SOMETHING_INSANE_WITH_MANY_COMPLEX_EXEMPLARS);
-        m({
-          // Note:
-          // > We just abritarily use samples from the exemplars as argmts so this
-          // > benchmark is easier to read.
-          one: SAMPLE_USERS,
-          two: SAMPLE_USERS,
-          three: SAMPLE_USERS,
-          four: SAMPLE_USERS,
-          five: SAMPLE_USERS,
-          six: SAMPLE_USERS,
-          seven: SAMPLE_USERS,
-          eight: SAMPLE_USERS,
-          nine: SAMPLE_USERS,
-          ten: SAMPLE_USERS,
-          eleven: SAMPLE_USERS,
-          twelve: SAMPLE_USERS,
-          thirteen: SAMPLE_USERS,
-          fourteen: SAMPLE_USERS,
-          fifteen: SAMPLE_USERS,
-          sixteen: SAMPLE_USERS,
-          seventeen: SAMPLE_USERS,
-          eighteen: SAMPLE_USERS,
-          nineteen: SAMPLE_USERS,
-          twenty: SAMPLE_USERS,
-        }).exec(next);
+        m(SAMPLE_MANY_COMPLEX_ARGINS).exec(next);
       },
 
 
       function exec_machine_with_crazy_numbers_of_inputs_and_exits_with_ref_exemplars(next){
         var m = Machine.build(DO_SOMETHING_INSANE_WITH_MANY_REF_EXEMPLARS);
-        m({
-          // Note:
-          // > We just abritarily use samples from the exemplars as argmts so this
-          // > benchmark is easier to read.
-          one: SAMPLE_USERS,
-          two: SAMPLE_USERS,
-          three: SAMPLE_USERS,
-          four: SAMPLE_USERS,
-          five: SAMPLE_USERS,
-          six: SAMPLE_USERS,
-          seven: SAMPLE_USERS,
-          eight: SAMPLE_USERS,
-          nine: SAMPLE_USERS,
-          ten: SAMPLE_USERS,
-          eleven: SAMPLE_USERS,
-          twelve: SAMPLE_USERS,
-          thirteen: SAMPLE_USERS,
-          fourteen: SAMPLE_USERS,
-          fifteen: SAMPLE_USERS,
-          sixteen: SAMPLE_USERS,
-          seventeen: SAMPLE_USERS,
-          eighteen: SAMPLE_USERS,
-          nineteen: SAMPLE_USERS,
-          twenty: SAMPLE_USERS,
-        }).exec(next);
+        m(SAMPLE_MANY_COMPLEX_ARGINS).exec(next);
       },
 
     ], done);
