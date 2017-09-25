@@ -24,8 +24,8 @@ var DO_SOMETHING_INSANE_BUT_CACHEABLE_WITH_MANY_BASIC_EXEMPLARS = require('./pri
 var DO_SOMETHING_INSANE_WITH_MANY_COMPLEX_EXEMPLARS = require('./private/do-something-insane-with-many-complex-exemplars.fixture');
 var DO_SOMETHING_INSANE_WITH_MANY_REF_EXEMPLARS = require('./private/do-something-insane-with-many-ref-exemplars.fixture');
 
-var SAMPLE_USERS = rttc.sample(rttc.infer(DO_SOMETHING_NORMAL_WITH_COMPLEX_EXEMPLARS.inputs.users.example))[0];
-var SAMPLE_SPECIES = rttc.sample(rttc.infer(DO_SOMETHING_NORMAL_WITH_COMPLEX_EXEMPLARS.inputs.availableSpecies.example))[0];
+var SAMPLE_USERS = require('./private/sample-users.fixture');
+var SAMPLE_SPECIES = require('./private/sample-species.fixture');
 
 //  ╔╗ ╔═╗╔╗╔╔═╗╦ ╦╔╦╗╔═╗╦═╗╦╔═╔═╗
 //  ╠╩╗║╣ ║║║║  ╠═╣║║║╠═╣╠╦╝╠╩╗╚═╗
