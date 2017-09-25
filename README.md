@@ -176,45 +176,67 @@ console.log(result);
 
 As of [morning, Friday, August 18, 2017](https://github.com/node-machine/machine/tree/35548a4a1425d5a21bff481470a615c0561a536b):
 
-
 ```
+∑ NODE_ENV=production npm run bench
 
 > machine@15.0.0-3 bench /Users/mikermcneil/code/machine
-> NODE_ENV=production node ./node_modules/mocha/bin/mocha -R dot --recursive -b test/benchmarks/exec.benchmark.js
+> node ./node_modules/mocha/bin/mocha -R dot --recursive -b test/benchmarks/
 
 
-   o
-
-       •
-      o                  .
-       •                •
-        •                •
-                •       o
+                                   
+   o                               
+                                    
+       •                            
+      o                  .          
+       •                •            
+        •                •           
+                •       o            
                             •        o
  o   •              •          o   •
-      o              o         •
-  •  •      •       •      •    •
-           •      •              o
-  •    b e n c h m a r k s      •
-   •        •
- •                        ___  •
-    • o •    •      •    /o/•\_   •
-       •   •  o    •    /_/\ o \_ •
-       o    O   •   o • •   \ o .\_
-          •       o  •       \. O  \
+      o              o         •    
+  •  •      •       •      •    •    
+           •      •              o  
+  •    b e n c h m a r k s      •    
+   •        •                        
+ •                        ___  •    
+    • o •    •      •    /o/•\_   • 
+       •   •  o    •    /_/\ o \_ • 
+       o    O   •   o • •   \ o .\_    
+          •       o  •       \. O  \   
 
+ • sanity_check x 794,661 ops/sec ±0.47% (85 runs sampled)
+ • build_very_simple_machine x 152,975 ops/sec ±0.54% (84 runs sampled)
+ • build_machine_with_inputs_and_exits_but_nothing_crazy x 129,236 ops/sec ±0.56% (84 runs sampled)
+ • build_machine_with_inputs_and_exits_that_have_big_ole_exemplars x 122,899 ops/sec ±0.91% (82 runs sampled)
+ • build_machine_with_crazy_numbers_of_inputs_and_exits x 81,030 ops/sec ±0.77% (81 runs sampled)
+ • build_machine_with_crazy_numbers_of_inputs_and_exits_and_is_cacheable x 79,177 ops/sec ±0.75% (85 runs sampled)
+ • build_machine_with_crazy_numbers_of_inputs_and_exits_with_huge_exemplars x 89,338 ops/sec ±0.64% (83 runs sampled)
+ • build_machine_with_crazy_numbers_of_inputs_and_exits_with_ref_exemplars x 76,974 ops/sec ±0.67% (84 runs sampled)
+Fastest is sanity_check
+Slowest is build_machine_with_crazy_numbers_of_inputs_and_exits_with_ref_exemplars
 
-  • sanity_check x 772,990 ops/sec ±0.44% (83 runs sampled)
-  • exec_very_simple_machine x 40,115 ops/sec ±3.87% (69 runs sampled)
-  • exec_machine_with_inputs_and_exits_but_nothing_crazy x 32,824 ops/sec ±4.00% (63 runs sampled)
-  • exec_machine_with_inputs_and_exits_that_have_big_ole_exemplars x 30,845 ops/sec ±4.25% (69 runs sampled)
-  • exec_machine_with_crazy_numbers_of_inputs_and_exits x 23,494 ops/sec ±2.91% (72 runs sampled)
-  • exec_machine_with_crazy_numbers_of_inputs_and_exits_and_is_cacheable x 23,073 ops/sec ±2.82% (70 runs sampled)
-  • exec_machine_with_crazy_numbers_of_inputs_and_exits_with_huge_exemplars x 24,805 ops/sec ±2.57% (71 runs sampled)
-  • exec_machine_with_crazy_numbers_of_inputs_and_exits_with_ref_exemplars x 22,092 ops/sec ±2.46% (68 runs sampled)
- Fastest is sanity_check
- Slowest is exec_machine_with_crazy_numbers_of_inputs_and_exits_with_ref_exemplars,exec_machine_with_crazy_numbers_of_inputs_and_exits_and_is_cacheable
-  ```
+  ․ • sanity_check x 755,851 ops/sec ±0.77% (85 runs sampled)
+ • exec_very_simple_machine x 37,835 ops/sec ±3.80% (69 runs sampled)
+ • exec_machine_with_inputs_and_exits_but_nothing_crazy x 32,015 ops/sec ±3.66% (62 runs sampled)
+ • exec_machine_with_inputs_and_exits_that_have_big_ole_exemplars x 30,895 ops/sec ±3.49% (62 runs sampled)
+ • exec_machine_with_crazy_numbers_of_inputs_and_exits x 22,669 ops/sec ±2.97% (72 runs sampled)
+ • exec_machine_with_crazy_numbers_of_inputs_and_exits_and_is_cacheable x 21,708 ops/sec ±3.04% (69 runs sampled)
+ • exec_machine_with_crazy_numbers_of_inputs_and_exits_with_huge_exemplars x 23,585 ops/sec ±3.41% (69 runs sampled)
+ • exec_machine_with_crazy_numbers_of_inputs_and_exits_with_ref_exemplars x 21,805 ops/sec ±2.41% (65 runs sampled)
+Fastest is sanity_check
+Slowest is exec_machine_with_crazy_numbers_of_inputs_and_exits_and_is_cacheable,exec_machine_with_crazy_numbers_of_inputs_and_exits_with_ref_exemplars
+․ • sanity_check x 712,777 ops/sec ±1.00% (81 runs sampled)
+ • execSync_very_simple_machine x 36,050 ops/sec ±4.42% (69 runs sampled)
+ • execSync_machine_with_inputs_and_exits_but_nothing_crazy x 30,311 ops/sec ±2.72% (57 runs sampled)
+ • execSync_machine_with_inputs_and_exits_that_have_big_ole_exemplars x 29,416 ops/sec ±3.81% (62 runs sampled)
+ • execSync_machine_with_crazy_numbers_of_inputs_and_exits x 21,353 ops/sec ±3.84% (69 runs sampled)
+ • execSync_machine_with_crazy_numbers_of_inputs_and_exits_and_is_cacheable x 21,188 ops/sec ±3.76% (59 runs sampled)
+ • execSync_machine_with_crazy_numbers_of_inputs_and_exits_with_huge_exemplars x 22,878 ops/sec ±3.49% (72 runs sampled)
+ • execSync_machine_with_crazy_numbers_of_inputs_and_exits_with_ref_exemplars x 21,315 ops/sec ±2.43% (69 runs sampled)
+Fastest is sanity_check
+Slowest is execSync_machine_with_crazy_numbers_of_inputs_and_exits_and_is_cacheable,execSync_machine_with_crazy_numbers_of_inputs_and_exits,execSync_machine_with_crazy_numbers_of_inputs_and_exits_with_ref_exemplars
+```
+
 
 
 ## License
