@@ -1,7 +1,5 @@
 module.exports = {
-
-  description: 'Do something that demands a crap ton of inputs and exits and is cacheable',
-  sideEffects: 'cacheable',
+  description: 'Do something that demands a crap ton of inputs and exits',
   inputs: {
     one: { example: 'stuff', required: true },
     two: { example: 'stuff', required: true },
