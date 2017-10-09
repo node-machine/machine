@@ -5,7 +5,7 @@
 var util = require('util');
 var _ = require('@sailshq/lodash');
 var assert = require('assert');
-var Machine = require('../lib/Machine.constructor');
+var Machine = require('../');
 
 var runSuite = require('../node_modules/rttc/spec/helpers/run-suite');
 var TEST_SUITE = require('../node_modules/rttc/spec/coercion.spec.js');

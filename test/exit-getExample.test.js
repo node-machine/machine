@@ -1,6 +1,6 @@
 var assert = require('assert');
 var _ = require('@sailshq/lodash');
-var M = require('../lib/Machine.constructor');
+var M = require('../');
 
 describe('Machine exits getExample', function() {
 

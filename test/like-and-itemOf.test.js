@@ -13,6 +13,7 @@ describe('`like` and `itemOf`', function (){
 
   describe('using `like` in one of its exits', function (){
     testMachineWithMocha().machine(Machine.build({
+      identity: 'test',
       inputs: { fullName: { example: 'Roger Rabbit' } },
       exits: { success: { like: 'fullName' } },
       fn: function (inputs, exits) { return exits.success(123); }
@@ -25,6 +26,7 @@ describe('`like` and `itemOf`', function (){
 
     describe('and referenced input is configured with an invalid (and incompatible) input value', function (){
       testMachineWithMocha().machine(Machine.build({
+        identity: 'test',
         inputs: { fullName: { example: 'Roger Rabbit' } },
         exits: { success: { like: 'fullName' } },
         fn: function (inputs, exits) { return exits.success(123); }
@@ -38,6 +40,7 @@ describe('`like` and `itemOf`', function (){
     it('should not .build() the machine if an input refers to another input w/ a `like` or `itemOf` instead of an example', function (){
       assert.throws(function (){
         Machine.build({
+          identity: 'test',
           inputs: {
             fullName: { example: 'Roger Rabbit' },
             firstName: { like: 'fullName' },
@@ -49,6 +52,7 @@ describe('`like` and `itemOf`', function (){
 
       assert.throws(function (){
         Machine.build({
+          identity: 'test',
           inputs: {
             nameParts: { example: ['Roger'] },
             firstName: { itemOf: 'fullName' },
@@ -60,80 +64,87 @@ describe('`like` and `itemOf`', function (){
     });
   });
 
-  describe('using `like` in one of its inputs', function (){
-    testMachineWithMocha().machine(Machine.build({
-      inputs: {
-        fullName: { example: 'Roger Rabbit' },
-        firstName: { like: 'fullName' }
-      },
-      exits: { success: { example: '===' } },
-      fn: function (inputs, exits) { return exits.success(inputs.firstName); }
-    }))
-    .use({ firstName: 123 })
-    .expect({
-      outcome: 'success',
-      output: '123'
-    });
+  // No longer supported:
+  // describe('using `like` in one of its inputs', function (){
+  //   testMachineWithMocha().machine(Machine.build({
+  //     identity: 'test',
+  //     inputs: {
+  //       fullName: { example: 'Roger Rabbit' },
+  //       firstName: { like: 'fullName' }
+  //     },
+  //     exits: { success: { example: '===' } },
+  //     fn: function (inputs, exits) { return exits.success(inputs.firstName); }
+  //   }))
+  //   .use({ firstName: 123 })
+  //   .expect({
+  //     outcome: 'success',
+  //     output: '123'
+  //   });
 
-    describe('and referenced input is configured with an invalid (and incompatible) input value', function (){
-      testMachineWithMocha().machine(Machine.build({
-        inputs: {
-          fullName: { example: 'Roger Rabbit' },
-          firstName: { like: 'fullName' }
-        },
-        exits: { success: { example: '===' } },
-        fn: function (inputs, exits) { return exits.success(inputs.firstName); }
-      }))
-      .use({ firstName: 123, fullName: [] })
-      .expect({
-        outcome: 'error'
-      });
-    });
+  //   describe('and referenced input is configured with an invalid (and incompatible) input value', function (){
+  //     testMachineWithMocha().machine(Machine.build({
+  //       identity: 'test',
+  //       inputs: {
+  //         fullName: { example: 'Roger Rabbit' },
+  //         firstName: { like: 'fullName' }
+  //       },
+  //       exits: { success: { example: '===' } },
+  //       fn: function (inputs, exits) { return exits.success(inputs.firstName); }
+  //     }))
+  //     .use({ firstName: 123, fullName: [] })
+  //     .expect({
+  //       outcome: 'error'
+  //     });
+  //   });
 
 
-    it('should not .build() the machine if an input refers to itself', function (){
-      assert.throws(function (){
-        Machine.build({
-          inputs: {
-            fullName: { example: 'Roger Rabbit' },
-            firstName: { like: 'firstName' }
-          },
-          exits: { success: { example: '===' } },
-          fn: function (inputs, exits) { return exits.error(); }
-        });
-      });
-    });
+  //   it('should not .build() the machine if an input refers to itself', function (){
+  //     assert.throws(function (){
+  //       Machine.build({
+  //         identity: 'test',
+  //         inputs: {
+  //           fullName: { example: 'Roger Rabbit' },
+  //           firstName: { like: 'firstName' }
+  //         },
+  //         exits: { success: { example: '===' } },
+  //         fn: function (inputs, exits) { return exits.error(); }
+  //       });
+  //     });
+  //   });
 
-    it('should not .build() the machine if an input refers to another input w/ a `like` or `itemOf` instead of an example', function (){
-      assert.throws(function (){
-        Machine.build({
-          inputs: {
-            fullName: { example: 'Roger Rabbit' },
-            lastName: { like: 'firstName' },
-            firstName: { like: 'fullName' }
-          },
-          exits: { success: { example: '===' } },
-          fn: function (inputs, exits) { return exits.error(); }
-        });
-      });
+  //   it('should not .build() the machine if an input refers to another input w/ a `like` or `itemOf` instead of an example', function (){
+  //     assert.throws(function (){
+  //       Machine.build({
+  //         identity: 'test',
+  //         inputs: {
+  //           fullName: { example: 'Roger Rabbit' },
+  //           lastName: { like: 'firstName' },
+  //           firstName: { like: 'fullName' }
+  //         },
+  //         exits: { success: { example: '===' } },
+  //         fn: function (inputs, exits) { return exits.error(); }
+  //       });
+  //     });
 
-      assert.throws(function (){
-        Machine.build({
-          inputs: {
-            namePieces: { example: ['Roger'] },
-            lastName: { itemOf: 'namePieces' },
-            firstName: { like: 'lastName' }
-          },
-          exits: { success: { example: '===' } },
-          fn: function (inputs, exits) { return exits.error(); }
-        });
-      });
-    });
+  //     assert.throws(function (){
+  //       Machine.build({
+  //         identity: 'test',
+  //         inputs: {
+  //           namePieces: { example: ['Roger'] },
+  //           lastName: { itemOf: 'namePieces' },
+  //           firstName: { like: 'lastName' }
+  //         },
+  //         exits: { success: { example: '===' } },
+  //         fn: function (inputs, exits) { return exits.error(); }
+  //       });
+  //     });
+  //   });
 
-  });
+  // });
 
   describe('using `itemOf` in one of its exits', function (){
     testMachineWithMocha().machine(Machine.build({
+      identity: 'test',
       inputs: {
         fullName: { example: ['Roger'] }
       },
@@ -148,23 +159,35 @@ describe('`like` and `itemOf`', function (){
   });
 
   describe('using `itemOf` in one of its inputs', function (){
-    testMachineWithMocha().machine(Machine.build({
-      inputs: {
-        fullName: { example: ['Roger'] },
-        firstName: { itemOf: 'fullName' }
-      },
-      exits: { success: { example: '===' } },
-      fn: function (inputs, exits) { return exits.success(inputs.firstName); }
-    }))
-    .use({ firstName: 123 })
-    .expect({
-      outcome: 'success',
-      output: '123'
+    it('should no longer work!', function(){
+      try {
+        testMachineWithMocha().machine(Machine.build({
+          identity: 'test',
+          inputs: {
+            fullName: { example: ['Roger'] },
+            firstName: { itemOf: 'fullName' }
+          },
+          exits: { success: { example: '===' } },
+          fn: function (inputs, exits) { return exits.success(inputs.firstName); }
+        }))
+        .use({ firstName: 123 })
+        .expect({
+          outcome: 'success',
+          output: '123'
+        });
+      } catch (err) {
+        if (err.name === 'ImplementationError') {
+          // ok that's what we expected.
+        }
+        else  { throw err; }
+      }
+      throw new Error('should not have made it here');
     });
   });
 
   describe('using `like` in one of its contract\'s exits', function (){
     testMachineWithMocha().machine(Machine.build({
+      identity: 'test',
       inputs: {
         fullName: { example: 'Roger' },
         getFullName: {
@@ -175,7 +198,7 @@ describe('`like` and `itemOf`', function (){
           }
         }
       },
-      exits: { success: { example: '===' } },
+      exits: { success: { outputExample: '===' } },
       fn: function (inputs, exits) { return exits.success( inputs.getFullName().execSync() ); }
     }))
     .use({
@@ -191,6 +214,7 @@ describe('`like` and `itemOf`', function (){
 
   describe('using `like` in one of its contract\'s inputs', function (){
     testMachineWithMocha().machine(Machine.build({
+      identity: 'test',
       inputs: {
         fullName: { example: 'Roger' },
         getFullName: {
@@ -218,6 +242,7 @@ describe('`like` and `itemOf`', function (){
 
   describe('using `itemOf` in one of its contract\'s exits', function (){
     testMachineWithMocha().machine(Machine.build({
+      identity: 'test',
       inputs: {
         fullName: { example: ['Roger'] },
         getFullName: {
@@ -244,6 +269,7 @@ describe('`like` and `itemOf`', function (){
 
   describe('using `itemOf` in one of its contract\'s inputs', function (){
     testMachineWithMocha().machine(Machine.build({
+      identity: 'test',
       inputs: {
         fullName: { example: ['Roger'] },
         getFullName: {
@@ -271,6 +297,7 @@ describe('`like` and `itemOf`', function (){
 
   describe('using `like` in one of its contract\'s inputs\' contract\'s exits', function (){
     testMachineWithMocha().machine(Machine.build({
+      identity: 'test',
       inputs: {
         fullName: { example: 'Roger' },
         getFullName: {
@@ -312,6 +339,7 @@ describe('`like` and `itemOf`', function (){
 
   describe('using `like` in one of its contract\'s inputs\' contract\'s inputs', function (){
     testMachineWithMocha().machine(Machine.build({
+      identity: 'test',
       inputs: {
         fullName: { example: 'Roger' },
         getFullName: {
@@ -354,6 +382,7 @@ describe('`like` and `itemOf`', function (){
 
   describe('using `itemOf` in one of its contract\'s inputs\' contract\'s exits', function (){
     testMachineWithMocha().machine(Machine.build({
+      identity: 'test',
       inputs: {
         fullName: { example: ['Roger'] },
         getFullName: {
@@ -395,6 +424,7 @@ describe('`like` and `itemOf`', function (){
 
   describe('using `itemOf` in one of its contract\'s inputs\' contract\'s inputs', function (){
     testMachineWithMocha().machine(Machine.build({
+      identity: 'test',
       inputs: {
         fullName: { example: ['Roger'] },
         getFullName: {

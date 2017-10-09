@@ -184,7 +184,7 @@ console.log(result);
 
 ## Benchmarks
 
-As of [morning, Friday, August 18, 2017](https://github.com/node-machine/machine/tree/35548a4a1425d5a21bff481470a615c0561a536b):
+As of [morning, Friday, August 18, 2017](https://github.com/node-machine/machine/tree/35548a4a1425d5a21bff481470a615c0561a536b), without any build-time normalization of definitions, and with runtime data type validation disabled:
 
 ```
 ∑ NODE_ENV=production npm run bench
