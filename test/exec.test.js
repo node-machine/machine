@@ -266,11 +266,11 @@ describe('Machine.prototype.exec()', function (){
         try {
           _origMachineInstance.exec(function (err) {
             if (err) {
-              if (err.code === 'E_MACHINE_RUNTIME_VALIDATION') {
-                if (err.machineInstance !== _origMachineInstance) { return done(new Error('The `E_MACHINE_RUNTIME_VALIDATION` error should have had a `machineInstance` property which is the same reference as the original machine instance-- but instead, got: '+util.inspect(err.machineInstance, {depth: null}))); }
+              if (err.code === 'E_INVALID_ARGINS') {
+                if (err.machineInstance !== _origMachineInstance) { return done(new Error('The `E_INVALID_ARGINS` error should have had a `machineInstance` property which is the same reference as the original machine instance-- but instead, got: '+util.inspect(err.machineInstance, {depth: null}))); }
                 else { return done(); }
               }
-              else { return done(new Error('Error should have had `code: \'E_MACHINE_RUNTIME_VALIDATION\', but instead, got: `'+err.code+'`.  Here is the stack:'+err.stack)); }
+              else { return done(new Error('Error should have had `code: \'E_INVALID_ARGINS\', but instead, got: `'+err.code+'`.  Here is the stack:'+err.stack)); }
             }
             else { return done(new Error('There should have been a validation error provided to this callback!')); }
           });
@@ -292,11 +292,11 @@ describe('Machine.prototype.exec()', function (){
             _origMachineInstance.exec({
               error: function (err) {
                 if (err) {
-                  if (err.code === 'E_MACHINE_RUNTIME_VALIDATION') {
-                    if (err.machineInstance !== _origMachineInstance) { return done(new Error('The `E_MACHINE_RUNTIME_VALIDATION` error should have had a `machineInstance` property which is the same reference as the original machine instance-- but instead, got: '+util.inspect(err.machineInstance, {depth: null}))); }
+                  if (err.code === 'E_INVALID_ARGINS') {
+                    if (err.machineInstance !== _origMachineInstance) { return done(new Error('The `E_INVALID_ARGINS` error should have had a `machineInstance` property which is the same reference as the original machine instance-- but instead, got: '+util.inspect(err.machineInstance, {depth: null}))); }
                     else { return done(); }
                   }
-                  else { return done(new Error('Error should have had `code: \'E_MACHINE_RUNTIME_VALIDATION\', but instead, got: `'+err.code+'`.  Here is the stack:'+err.stack)); }
+                  else { return done(new Error('Error should have had `code: \'E_INVALID_ARGINS\', but instead, got: `'+err.code+'`.  Here is the stack:'+err.stack)); }
                 }
                 else { return done(new Error('There should have been a validation error provided to this callback!')); }
               },
@@ -400,11 +400,11 @@ describe('Machine.prototype.exec()', function (){
         try {
           _origMachineInstance.exec(function (err) {
             if (err) {
-              if (err.code === 'E_MACHINE_RUNTIME_VALIDATION') {
-                if (err.machineInstance !== _origMachineInstance) { return done(new Error('The `E_MACHINE_RUNTIME_VALIDATION` error should have had a `machineInstance` property which is the same reference as the original machine instance-- but instead, got: '+util.inspect(err.machineInstance, {depth: null}))); }
+              if (err.code === 'E_INVALID_ARGINS') {
+                if (err.machineInstance !== _origMachineInstance) { return done(new Error('The `E_INVALID_ARGINS` error should have had a `machineInstance` property which is the same reference as the original machine instance-- but instead, got: '+util.inspect(err.machineInstance, {depth: null}))); }
                 else { return done(); }
               }
-              else { return done(new Error('Error should have had `code: \'E_MACHINE_RUNTIME_VALIDATION\', but instead, got: `'+err.code+'`.  Here is the stack:'+err.stack)); }
+              else { return done(new Error('Error should have had `code: \'E_INVALID_ARGINS\', but instead, got: `'+err.code+'`.  Here is the stack:'+err.stack)); }
             }
             else { return done(new Error('There should have been a validation error provided to this callback!')); }
           });
@@ -426,11 +426,11 @@ describe('Machine.prototype.exec()', function (){
             _origMachineInstance.exec({
               error: function (err) {
                 if (err) {
-                  if (err.code === 'E_MACHINE_RUNTIME_VALIDATION') {
-                    if (err.machineInstance !== _origMachineInstance) { return done(new Error('The `E_MACHINE_RUNTIME_VALIDATION` error should have had a `machineInstance` property which is the same reference as the original machine instance-- but instead, got: '+util.inspect(err.machineInstance, {depth: null}))); }
+                  if (err.code === 'E_INVALID_ARGINS') {
+                    if (err.machineInstance !== _origMachineInstance) { return done(new Error('The `E_INVALID_ARGINS` error should have had a `machineInstance` property which is the same reference as the original machine instance-- but instead, got: '+util.inspect(err.machineInstance, {depth: null}))); }
                     else { return done(); }
                   }
-                  else { return done(new Error('Error should have had `code: \'E_MACHINE_RUNTIME_VALIDATION\', but instead, got: `'+err.code+'`.  Here is the stack:'+err.stack)); }
+                  else { return done(new Error('Error should have had `code: \'E_INVALID_ARGINS\', but instead, got: `'+err.code+'`.  Here is the stack:'+err.stack)); }
                 }
                 else { return done(new Error('There should have been a validation error provided to this callback!')); }
               },
@@ -561,11 +561,11 @@ describe('Machine.prototype.exec()', function (){
         try {
           _origMachineInstance.exec(function (err) {
             if (err) {
-              if (err.code === 'E_MACHINE_RUNTIME_VALIDATION') {
-                if (err.machineInstance !== _origMachineInstance) { return done(new Error('The `E_MACHINE_RUNTIME_VALIDATION` error should have had a `machineInstance` property which is the same reference as the original machine instance-- but instead, got: '+util.inspect(err.machineInstance, {depth: null}))); }
+              if (err.code === 'E_INVALID_ARGINS') {
+                if (err.machineInstance !== _origMachineInstance) { return done(new Error('The `E_INVALID_ARGINS` error should have had a `machineInstance` property which is the same reference as the original machine instance-- but instead, got: '+util.inspect(err.machineInstance, {depth: null}))); }
                 else { return done(); }
               }
-              else { return done(new Error('Error should have had `code: \'E_MACHINE_RUNTIME_VALIDATION\', but instead, got: `'+err.code+'`.  Here is the stack:'+err.stack)); }
+              else { return done(new Error('Error should have had `code: \'E_INVALID_ARGINS\', but instead, got: `'+err.code+'`.  Here is the stack:'+err.stack)); }
             }
             else { return done(new Error('There should have been a validation error provided to this callback!')); }
           });
@@ -616,11 +616,11 @@ describe('Machine.prototype.exec()', function (){
         try {
           _origMachineInstance.exec(function (err) {
             if (err) {
-              if (err.code === 'E_MACHINE_RUNTIME_VALIDATION') {
-                if (err.machineInstance !== _origMachineInstance) { return done(new Error('The `E_MACHINE_RUNTIME_VALIDATION` error should have had a `machineInstance` property which is the same reference as the original machine instance-- but instead, got: '+util.inspect(err.machineInstance, {depth: null}))); }
+              if (err.code === 'E_INVALID_ARGINS') {
+                if (err.machineInstance !== _origMachineInstance) { return done(new Error('The `E_INVALID_ARGINS` error should have had a `machineInstance` property which is the same reference as the original machine instance-- but instead, got: '+util.inspect(err.machineInstance, {depth: null}))); }
                 else { return done(); }
               }
-              else { return done(new Error('Error should have had `code: \'E_MACHINE_RUNTIME_VALIDATION\', but instead, got: `'+err.code+'`.  Here is the stack:'+err.stack)); }
+              else { return done(new Error('Error should have had `code: \'E_INVALID_ARGINS\', but instead, got: `'+err.code+'`.  Here is the stack:'+err.stack)); }
             }
             else { return done(new Error('There should have been a validation error provided to this callback!')); }
           });
