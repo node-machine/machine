@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "convert-to-ecmascript-compatible-varname": "0.1.4",
-    "debug": "2.2.0",
+    "debug": "3.1.0",
     "lodash": "3.10.1",
     "object-hash": "0.3.0",
     "rttc": "~9.3.0",
