@@ -54,8 +54,6 @@ module.exports.pack = pack;
 
 
 
-
-
 /**
  * .VERSION
  * .version
@@ -63,7 +61,7 @@ module.exports.pack = pack;
  * @type {String}
  */
 module.exports.VERSION = RELEASE_VERSION;
-module.exports.version = RELEASE_VERSION;
+module.exports.version = RELEASE_VERSION;//« for backwards compatibility
 
 
 
@@ -97,10 +95,7 @@ module.exports.inspect = function () {
  * @returns {Function}
  */
 module.exports.build = build;
-// function(){
-//   // console.warn('WARNING: As of v15, machine should be called directly instead of using `.build()`.  (Adjusting for you this time...)');
-//   return this.apply(undefined, arguments);
-// };
+
 
 /**
  * .buildWithCustomUsage()
