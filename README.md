@@ -30,6 +30,7 @@ Call `Machine.build()` (or just `Machine()`) with a machine definition to build 
 const Machine = require('machine');
 
 const callable = Machine({
+  identity: 'do-something',
   inputs: {
     foo: { type: 'string', required: true }
   },
@@ -157,6 +158,7 @@ const customCallable = Machine.buildWithCustomUsage({
   arginStyle: 'serial',
   execStyle: 'immediate',
   def: {
+    identity: 'do-something',
     sync: true,
     args: ['foo', 'bar'],
     inputs: {
@@ -173,7 +175,7 @@ const customCallable = Machine.buildWithCustomUsage({
   }
 });//ƒ
 
-let result = callable('abc', 123);
+let result = customCallable('abc', 123);
 console.log(result);
 
 // => 'The result, based on "abc" and "123"'.
