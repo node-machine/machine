@@ -12,6 +12,7 @@
   ],
   "main": "index.js",
   "scripts": {
+    "sandbox": "node -i -e '_ = require(\"@sailshq/lodash\"); global[require(\"./package.json\").name] = require(\"./\"); console.log(\"\\n\\n\\n\\n--\");'",
     "test": "npm run lint && npm run custom-tests && npm run bench",
     "custom-tests": "node ./node_modules/mocha/bin/mocha -R dot test/*.test.js",
     "lint": "node ./node_modules/eslint/bin/eslint . --max-warnings=0 --ignore-pattern 'test/' && echo '✔  Your code looks good.'",
