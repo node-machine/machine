@@ -39,7 +39,7 @@
     "anchor": "^1.1.2",
     "flaverr": "^1.7.0",
     "parley": "^3.1.0",
-    "rttc": "^10.0.0-1"
+    "rttc": "^10.0.0-3"
   },
   "devDependencies": {
     "async": "2.0.1",
