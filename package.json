@@ -44,7 +44,7 @@
   "devDependencies": {
     "async": "2.0.1",
     "benchmark": "2.1.0",
-    "eslint": "3.5.0",
+    "eslint": "4.11.0",
     "mocha": "3.0.2",
     "test-machinepack-mocha": "^2.1.3"
   }
