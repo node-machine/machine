@@ -1,6 +1,6 @@
 {
   "name": "machine",
-  "version": "15.0.0-17",
+  "version": "15.0.0-18",
   "description": "Build functions in standardized containers.",
   "keywords": [
     "functions",
