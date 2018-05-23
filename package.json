@@ -38,7 +38,7 @@
     "@sailshq/lodash": "^3.10.2",
     "anchor": "^1.2.0",
     "flaverr": "^1.7.0",
-    "parley": "^3.1.0",
+    "parley": "^3.5.2",
     "rttc": "^10.0.0-3"
   },
   "devDependencies": {

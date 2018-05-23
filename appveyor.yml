@@ -16,6 +16,7 @@ environment:
     - nodejs_version: "4"
     - nodejs_version: "6"
     - nodejs_version: "8"
+    - nodejs_version: "10"
 
 # Install scripts. (runs after repo cloning)
 install:
@@ -34,7 +35,7 @@ test_script:
   - node --version
   - npm --version
   # Run the actual tests.
-  - npm test
+  - npm run custom-tests
 
 
 # Don't actually build.
