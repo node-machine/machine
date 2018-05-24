@@ -31,8 +31,7 @@
     "url": "http://sailsjs.com/bugs"
   },
   "engines": {
-    "node": ">= 4.0.0",
-    "npm": ">= 2.0.0"
+    "node": ">= 4.0.0"
   },
   "dependencies": {
     "@sailshq/lodash": "^3.10.2",
