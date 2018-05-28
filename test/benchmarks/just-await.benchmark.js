@@ -38,7 +38,7 @@ describe('benchmark :: just `await`  (assuming machines have already been built)
   this.timeout(240000);
 
   // Skip these tests if node version is too old.
-  if (+(process.version.match(/^v([0-9]+)\./)[1]) < 8) {
+  if ((+(process.version.match(/^v([0-9]+)\./)[1])) < 8) {
     return;
   }//•
 
