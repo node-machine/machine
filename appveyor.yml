@@ -43,3 +43,6 @@ test_script:
 #  I'm not sure what we're not building... but I'm OK with not
 #  building it.  I guess.)
 build: off
+
+cache:
+ - node_modules

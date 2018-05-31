@@ -18,6 +18,10 @@ node_js:
   - "10"
   - "node"
 
+cache:
+  directories:
+    - node_modules
+
 branches:
   only:
     - master
