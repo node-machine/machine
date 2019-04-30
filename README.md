@@ -1,7 +1,5 @@
-<h1>
-  <a href="http://node-machine.org"><img alt="node-machine logo" title="The Node-Machine Project" src="http://node-machine.org/images/machine-anthropomorph-for-white-bg.png" width="50" /></a>
-  machine (runner)
-</h1>
+
+# [<img alt="node-machine logo" title="The Node-Machine Project" src="http://node-machine.org/images/machine-anthropomorph-for-white-bg.png" width="50" />](http://node-machine.org) machine (runner)
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/balderdashy/sails?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
