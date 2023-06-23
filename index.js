@@ -74,7 +74,7 @@ module.exports.version = RELEASE_VERSION;//« for backwards compatibility
  *
  * @returns {String}
  */
-module.exports.inspect = function () {
+module.exports[Symbol.for('nodejs.util.inspect.custom')] = function () {
   return ''+
   '---------------------------------------------------\n'+
   ' machine'+/*'   (runtime environment)'+*/'\n'+
