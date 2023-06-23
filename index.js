@@ -66,7 +66,9 @@ module.exports.version = RELEASE_VERSION;//« for backwards compatibility
 
 
 /**
- * .inspect()
+ * [Symbol.for('nodejs.util.inspect.custom')]
+ * (formerly known as ".inspect()")
+ * https://github.com/node-machine/machine/pull/50/
  *
  * When the Machine constructor is inspected (e.g. `util.inspect()` / `console.log()`),
  * pretty print the current version of node-machine, with license information and a link
@@ -74,7 +76,7 @@ module.exports.version = RELEASE_VERSION;//« for backwards compatibility
  *
  * @returns {String}
  */
-module.exports.inspect = function () {
+module.exports[Symbol.for('nodejs.util.inspect.custom')] = function () {
   return ''+
   '---------------------------------------------------\n'+
   ' machine'+/*'   (runtime environment)'+*/'\n'+

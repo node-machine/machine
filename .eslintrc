@@ -24,8 +24,8 @@
   },
 
   "globals": {
-    "Promise": true
-    // ^^Available since Node v4
+    "Promise": true,
+    "Symbol": true
   },
 
   "rules": {
